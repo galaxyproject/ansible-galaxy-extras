@@ -1,0 +1,20 @@
+
+- name: Install web related system packages
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - uwsgi
+    - uwsgi-plugin-python
+    - supervisor
+  when: galaxy_extras_install_packages
+
+- name: Create Galaxy configuration file
+  template: src=supervisor.conf.j2 dest={{ supervisor_conf_path }}
+
+- name: Disable init scripts for stuff managed by supervisor.
+  command: update-rc.d -f {{ item }} remove || true
+  with_items:
+  - nginx
+  - uwsgi
+  - proftp
+  - munge
+  - slurm-llnl

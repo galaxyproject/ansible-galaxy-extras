@@ -1,0 +1,29 @@
+
+- name: Install psutil
+  command: pip install psutil
+
+- name: Create Munge Key
+  command: /usr/sbin/create-munge-key
+
+- name: Setup Munge
+  shell: "mkdir -p /var/run/munge && chown root:root /var/lib/munge/ /var/log/munge/ /var/run/munge /etc/munge/ /etc/munge/munge.key"
+
+- name: Setup tmp area for slurm.
+  shell: "mkdir /tmp/slurm && chown {{ galaxy_user_name }}:{{ galaxy_user_name }} /tmp/slurm"
+
+- name: Create slurm configuration file
+  template: src=configure_slurm.py.j2 dest=/usr/sbin/configure_slurm.py
+
+- name: Install web related system packages
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - slurm-llnl
+    - slurm-llnl-torque 
+    - slurm-drmaa-dev
+  when: galaxy_extras_install_packages
+
+- name: "Fetch DRMAA egg for Galaxy"
+  shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_root }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
+
+- name: "Install Galaxy job conf"
+  template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}}

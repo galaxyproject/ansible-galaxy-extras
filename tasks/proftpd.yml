@@ -1,0 +1,13 @@
+
+- name: Install proftpd related system packages
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - proftpd
+    - proftpd-mod-pgsql
+  when: galaxy_extras_install_packages
+
+- name: Create Galaxy configuration file
+  template: src=proftpd.conf.j2 dest={{ proftpd_conf_path }}
+
+- name: Load Proftpd modules
+  shell: "echo 'LoadModule mod_sql.c' >> /etc/proftpd/modules.conf && echo 'LoadModule mod_sql_passwd.c' >> /etc/proftpd/modules.conf && echo 'LoadModule mod_sql_postgres.c' >> /etc/proftpd/modules.conf"

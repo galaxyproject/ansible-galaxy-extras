@@ -1,0 +1,10 @@
+# TODO: following task is kind of a crutch - shouldn't be needed.
+- name: "Run common_startup.sh to create welcome.html from sample"
+  shell: "cd {{ galaxy_root}} && scripts/common_startup.sh"
+  sudo: True
+  sudo_user: "{{ galaxy_user_name }}"
+
+- name: "Install watchdog for galaxy"
+  shell: ". {{ galaxy_venv_dir }}/bin/activate && pip install watchdog"
+  sudo: True
+  sudo_user: "{{ galaxy_user_name }}"

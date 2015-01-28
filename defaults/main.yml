@@ -1,0 +1,54 @@
+# All default values here based on usage within
+# https://github.com/bgruening/docker-galaxy-stable.
+
+galaxy_extras_config_nginx: true
+galaxy_extras_config_proftpd: true
+galaxy_extras_config_slurm: true
+galaxy_extras_config_supervisor: true
+galaxy_extras_config_galaxy_root: true
+
+# Install OS packages corresponding to each service being configured.
+galaxy_extras_install_packages: false
+
+# Point at the existing Galaxy configuration.
+galaxy_root: "/galaxy-central"
+galaxy_ini_path: "{{galaxy_root}}/config/galaxy.ini"
+galaxy_job_conf_path: "{{galaxy_root}}/config/job_conf.xml"
+galaxy_venv_dir: /home/galaxy/venv
+galxy_egg_cache: /home/galaxy/.python-eggs
+galaxy_user_name: "galaxy"
+
+# Nginx configuration.
+nginx_conf_path: /etc/nginx/nginx.conf
+nginx_upload_store_path: "/tmp/nginx_upload_store"
+
+## Development Box Configuration
+# Configure nginx to setup a proxy to an IDE.
+nginx_proxy_ide: false
+# Configure proxy to planemo-machine-web.
+nginx_serve_planemo_machine_web: false
+
+## Proftp Configuration.
+proftpd_conf_path:  /etc/proftpd/proftpd.conf
+proftpd_db_connection: galaxy@localhost
+proftpd_db_username: galaxy
+proftpd_db_password: galaxy
+proftpd_welcome: "Public Galaxy FTP"
+proftpd_files_dir: /export/galaxy-central/database/ftp
+
+## Supervisor Configuration.
+supervisor_conf_path: "/etc/supervisor/conf.d/galaxy.conf"
+supervisor_manage_slurm: true
+supervisor_slurm_config_dir: "/home/galaxy"
+supervisor_manage_postgres: true
+supervisor_postgres_database_path: "/export/postgresql/9.3/main"
+supervisor_manage_proftp: true
+supervisor_manage_nginx: true
+supervisor_manage_reports: true
+supervisor_manage_nodeproxy: true
+supervisor_manage_docker: true
+
+supervisor_webserver: true
+supervisor_webserver_port: "0.0.0.0:9001"
+supervisor_webserver_username: null
+supervisor_webserver_password: changeme

@@ -1,0 +1,15 @@
+
+- include: galaxy_root.yml
+  when: galaxy_extras_config_galaxy_root
+
+- include: nginx.yml
+  when: galaxy_extras_config_nginx
+
+- include: proftpd.yml
+  when: galaxy_extras_config_proftpd
+
+- include: slurm.yml
+  when: galaxy_extras_config_slurm
+
+- include: supervisor.yml
+  when: galaxy_extras_config_supervisor
