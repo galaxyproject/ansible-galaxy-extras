@@ -9,6 +9,7 @@ galaxy_extras_config_galaxy_root: true
 
 # Install OS packages corresponding to each service being configured.
 galaxy_extras_install_packages: false
+galaxy_log_dir: /home/galaxy/
 
 # Point at the existing Galaxy configuration.
 galaxy_root: "/galaxy-central"
@@ -17,6 +18,7 @@ galaxy_job_conf_path: "{{galaxy_root}}/config/job_conf.xml"
 galaxy_venv_dir: /home/galaxy/venv
 galxy_egg_cache: /home/galaxy/.python-eggs
 galaxy_user_name: "galaxy"
+galaxy_config_file: "{{ galaxy_root }}/config/galaxy.ini"
 
 # Nginx configuration.
 nginx_conf_path: /etc/nginx/nginx.conf
