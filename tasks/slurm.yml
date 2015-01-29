@@ -1,3 +1,12 @@
+- name: Install pip
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - python-pip
+  when: galaxy_extras_install_packages
+
+- name: Install psutil
+  command: pip install psutil
+
 - name: Create Munge Key
   command: /usr/sbin/create-munge-key
 
@@ -11,12 +20,11 @@
   template: src=configure_slurm.py.j2 dest=/usr/sbin/configure_slurm.py
 
 - name: Install web related system packages
-  apt: pkg={{ item }} state=latest
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
     - slurm-llnl
     - slurm-llnl-torque 
     - slurm-drmaa-dev
-    - python-psutil # needed by startup script...
   when: galaxy_extras_install_packages
 
 - name: "Fetch DRMAA egg for Galaxy"

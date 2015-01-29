@@ -1,6 +1,6 @@
 
 - name: Install web related system packages
-  apt: pkg={{ item }} state=latest
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
     - uwsgi
     - uwsgi-plugin-python
