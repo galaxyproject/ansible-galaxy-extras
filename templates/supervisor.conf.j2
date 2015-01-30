@@ -60,7 +60,7 @@ user            = root
 {% endif %}
 
 [program:galaxy_uwsgi]
-command         = /usr/bin/uwsgi --plugin python --ini-paste {{ galaxy_ini_path }}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_ini_path }}
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
