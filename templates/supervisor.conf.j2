@@ -60,7 +60,7 @@ user            = root
 {% endif %}
 
 [program:galaxy_uwsgi]
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_ini_path }}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_config_file }}
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
@@ -72,7 +72,7 @@ numprocs        = 1
 stopsignal      = INT
 
 [program:handler]
-command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve config/galaxy.ini --server-name=handler%(process_num)s --pid-file={{ galaxy_log_dir }}/handler%(process_num)s.pid --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
+command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=handler%(process_num)s --pid-file={{ galaxy_log_dir }}/handler%(process_num)s.pid --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
 directory       = {{ galaxy_root }}
 process_name    = handler%(process_num)s
 numprocs        = 2
@@ -85,7 +85,7 @@ environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
 
 {% if supervisor_manage_reports %}
 [program:reports]
-command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve config/reports_wsgi.ini --server-name=main --pid-file={{ galaxy_log_dir }}/reports.pid --log-file={{ galaxy_log_dir }}/reports.log
+command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_reports_config_file }} --server-name=main --pid-file={{ galaxy_log_dir }}/reports.pid --log-file={{ galaxy_log_dir }}/reports.log
 directory       = {{ galaxy_root }}
 process_name    = reports
 umask           = 022
