@@ -7,7 +7,7 @@ ServerName                      "{{ proftpd_welcome }}"
 ServerType                      standalone
 DefaultServer                   on
 Port                            21
-Umask                           000
+Umask                           022
 #SyslogFacility                 DAEMON
 #SyslogLevel                    debug
 MaxInstances                    30
@@ -58,6 +58,6 @@ SQLDefaultHomedir               /var/opt/local/proftpd
 
 # Define a custom query for lookup that returns a passwd-like entry.  UID and GID should match your Galaxy user.
 SQLUserInfo                     custom:/LookupGalaxyUser
-SQLNamedQuery                   LookupGalaxyUser SELECT "email,password,'galaxy','galaxy','{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
+SQLNamedQuery                   LookupGalaxyUser SELECT "email,password,'%{env:GALAXY_UID}','%{env:GALAXY_GID}','{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
 
 
