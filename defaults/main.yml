@@ -6,6 +6,7 @@ galaxy_extras_config_proftpd: true
 galaxy_extras_config_slurm: true
 galaxy_extras_config_supervisor: true
 galaxy_extras_config_galaxy_root: true
+galaxy_extras_config_galaxy_job_metrics: true
 
 # Install OS packages corresponding to each service being configured.
 galaxy_extras_install_packages: false
@@ -18,6 +19,7 @@ galaxy_log_dir: /home/galaxy/
 # Point at the existing Galaxy configuration.
 galaxy_root: "/galaxy-central"
 galaxy_job_conf_path: "{{galaxy_root}}/config/job_conf.xml"
+galaxy_job_metrics_conf_path: "{{galaxy_root}}/config/job_metric_conf.xml"
 galaxy_venv_dir: /home/galaxy/venv
 galxy_egg_cache: /home/galaxy/.python-eggs
 galaxy_user_name: "galaxy"
@@ -34,6 +36,14 @@ nginx_upload_store_path: "/tmp/nginx_upload_store"
 nginx_proxy_ide: false
 # Configure proxy to planemo-machine-web.
 nginx_serve_planemo_machine_web: false
+
+galaxy_job_metrics_core: true
+galaxy_job_metrics_env: false
+galaxy_job_metrics_cpuinfo: true
+galaxy_job_metrics_meminfo: true
+galaxy_job_metrics_uname: true
+# TODO: configure collectl, individual env files
+# TODO: alternative to configure metrics all at once using yml datastructure.
 
 ## Proftp Configuration.
 proftpd_conf_path:  /etc/proftpd/proftpd.conf

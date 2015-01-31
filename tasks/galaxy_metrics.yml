@@ -1,0 +1,4 @@
+# TODO: I believe job_metrics_conf.xml can just be specified as YML now (at
+# least it can in pulsar) so that should be a separate option.
+- name: "Setup job metrics"
+  template: src=job_metrics_conf.xml.j2 dest={{galaxy_job_metrics_conf_path}}

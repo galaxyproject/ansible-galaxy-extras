@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<job_metrics>
+{% if galaxy_job_metrics_core %}
+  <core />
+{% endif %}
+{% if galaxy_job_metrics_cpuinfo and galaxy_job_metrics_cpuinfo == "verbose" %}
+  <cpuinfo verbose="true" />
+{% elif galaxy_job_metrics_cpuinfo %}
+  <cpuinfo />
+{% endif %}
+{% if galaxy_job_metrics_meminfo %}
+  <meminfo />
+{% endif %}
+{% if galaxy_job_metrics_uname %}
+  <uname />
+{% endif %}
+{% if galaxy_job_metrics_env %}
+  <env />
+{% endif %}
+</job_metrics>
