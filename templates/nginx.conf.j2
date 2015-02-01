@@ -27,6 +27,36 @@ http {
     uwsgi_read_timeout 300;
 
     server {
+        # Galaxy report app
+        listen 9003;
+        server_name localhost;
+
+        location / {
+            proxy_pass http://127.0.0.1:9001;
+        }
+
+        # serve static content
+        location /static {
+            alias {{ galaxy_root }}/static;
+            gzip on;
+            gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
+            expires 24h;
+        }
+        location /static/style {
+            alias {{ galaxy_root }}/static/style/blue;
+            gzip on;
+            gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
+            expires 24h;
+        }
+        location /static/scripts {
+            alias {{ galaxy_root }}/static/scripts/packed;
+            gzip on;
+            gzip_types text/plain text/javascript application/x-javascript;
+            expires 24h;
+        }
+    }
+
+    server {
         listen 80 default_server;
         server_name  localhost;
 
