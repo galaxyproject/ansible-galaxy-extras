@@ -13,7 +13,7 @@ password={{ supervisor_webserver_password }}
 {% if supervisor_manage_slurm %}
 [program:munge]
 user=root
-command=/usr/sbin/munged -F
+command=/bin/bash -c "mkdir -p /var/run/munge && /usr/sbin/munged -F"
 redirect_stderr=true
 
 [program:slurmctld]
@@ -111,8 +111,8 @@ redirect_stderr = true
 [program:docker]
 directory       = /
 command         = /usr/bin/docker -d
-autostart       = false
-autorestart     = true
+autostart       = {{ supervisor_docker_autostart }}
+autorestart     = {{ supervisor_docker_autorestart }}
 user            = root
 startsecs       = 5
 redirect_stderr = true

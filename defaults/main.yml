@@ -69,6 +69,9 @@ supervisor_manage_reports: true
 supervisor_manage_nodeproxy: true
 supervisor_manage_docker: true
 
+supervisor_docker_autostart: false
+supervisor_docker_autorestart: true
+
 supervisor_webserver: true
 supervisor_webserver_port: "0.0.0.0:9002"
 supervisor_webserver_username: null
