@@ -36,6 +36,7 @@ nginx_upload_store_path: "/tmp/nginx_upload_store"
 ## Development Box Configuration
 # Configure nginx to setup a proxy to an IDE.
 nginx_proxy_ide: false
+codebox_port: 8991
 # Configure proxy to planemo-machine-web.
 nginx_serve_planemo_machine_web: false
 nginx_proxy_reports: true
