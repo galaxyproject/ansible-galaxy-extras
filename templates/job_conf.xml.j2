@@ -6,8 +6,9 @@
         </plugin>
     </plugins>
     <handlers default="handlers">
-        <handler id="handler0" tags="handlers"/>
-        <handler id="handler1" tags="handlers"/>
+{% for i in range(galaxy_handler_processes) %}
+        <handler id="handler{{ i }}" tags="handlers"/>
+{% endfor %}
     </handlers>
     <destinations default="cluster">
         <destination id="cluster" runner="slurm">

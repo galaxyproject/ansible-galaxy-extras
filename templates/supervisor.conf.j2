@@ -59,7 +59,8 @@ exitcodes       = 0
 user            = root
 {% endif %}
 
-[program:galaxy_uwsgi]
+[program:galaxy_web]
+{% if galaxy_uwsgi %}
 command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_config_file }}
 directory       = {{ galaxy_root }}
 umask           = 022
@@ -70,12 +71,28 @@ user            = {{ galaxy_user_name }}
 environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONPATH={{ galaxy_root }}/eggs/PasteDeploy-1.5.0-py2.7.egg
 numprocs        = 1
 stopsignal      = INT
+{% else %}
+command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=web%(process_num)s --pid-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.pid --log-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.log
+directory       = {{ galaxy_root }}
+process_name    = web%(process_num)s
+numprocs        = {{ galaxy_web_processes }}
+umask           = 022
+autostart       = true
+autorestart     = true
+startsecs       = 15
+user            = {{ galaxy_user_name }}
+environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+{% endif %}
 
 [program:handler]
+{% if not galaxy_paste_handlers %}
+command         = {{ galaxy_venv_dir }}/bin/python ./lib/galaxy/main.py -c {{ galaxy_config_file }} --server-name=handler%(process_num)s --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
+{% else %}
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=handler%(process_num)s --pid-file={{ galaxy_log_dir }}/handler%(process_num)s.pid --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
+{% endif %}
 directory       = {{ galaxy_root }}
 process_name    = handler%(process_num)s
-numprocs        = 2
+numprocs        = {{ galaxy_handler_processes }}
 umask           = 022
 autostart       = true
 autorestart     = true
@@ -120,7 +137,7 @@ redirect_stderr = true
 
 [group:galaxy]
 {% if supervisor_manage_nodeproxy %}
-programs = handler, galaxy_uwsgi, galaxy_nodejs_proxy
+programs = handler, galaxy_web, galaxy_nodejs_proxy
 {% else %}
-programs = handler, galaxy_uwsgi
+programs = handler, galaxy_web
 {% endif %}

@@ -3,3 +3,12 @@
 
 - name: Create nginx upload_store dir
   file: state=directory path={{ nginx_upload_store_path }}
+
+- name: Create nginx uwsgi configuration
+  template: src=nginx_uwsgi.conf.j2 dest={{ nginx_conf_directory }}/uwsgi.conf
+
+- name: Create nginx Galaxy web configuration
+  template: src=nginx_galaxy_web.conf.j2 dest={{ nginx_conf_directory }}/galaxy_web.conf
+
+- name: Create nginx IDE configuration
+  template: src=nginx_ide.conf.j2 dest={{ nginx_conf_directory }}/ide.conf

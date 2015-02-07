@@ -1,0 +1,10 @@
+# pass to uWSGI by default
+location / {
+	proxy_pass http://galaxy_web_app;
+	proxy_set_header X-Forwarded-Host $host;
+	proxy_set_header X-Forwarded-For  $proxy_add_x_forwarded_for;     
+{% if galaxy_admin_user is defined and galaxy_admin_user %}
+    # hard-code a fixed user to pass to Galaxy to auto-login
+	proxy_set_header REMOTE_USER '{{ galaxy_admin_user }}';
+{% endif %}
+}

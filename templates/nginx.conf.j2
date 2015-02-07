@@ -26,7 +26,7 @@ http {
     client_max_body_size 50g;
     uwsgi_read_timeout 300;
 
-    {% if nginx_proxy_reports %}
+{% if nginx_proxy_reports %}
     server {
         # Galaxy report app
         listen {{ nginx_proxy_reports_port }};
@@ -56,37 +56,34 @@ http {
             expires 24h;
         }
     }
-    {% endif %}
+{% endif %}
+
+{% if not galaxy_uwsgi %}
+    upstream galaxy_web_app {
+       server localhost:8080;
+    }
+{% endif %}
 
     server {
         listen 80 default_server;
         server_name  localhost;
 
         # pass to uWSGI by default
-        location / {
-            uwsgi_pass 127.0.0.1:4001;
-            include uwsgi_params;
-            {% if galaxy_admin_user is defined and galaxy_admin_user %}
-            # hard-code a fixed user to pass to Galaxy to auto-login
-            uwsgi_param HTTP_REMOTE_USER '{{ galaxy_admin_user }}';
-            {% endif %}
-        }
+{% if galaxy_uwsgi %}
+        include {{ nginx_conf_directory }}/uwsgi.conf;
+{% else %}
+        include {{ nginx_conf_directory }}/galaxy_web.conf;
+{% endif %}
 
-        {% if nginx_proxy_ide %}
-        location /ide {
-            rewrite /ide/(.*) /$1  break;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_pass http://localhost:{{ codebox_port }};
-        }
-        {% endif %}
+{% if nginx_proxy_ide %}
+        include {{ nginx_conf_directory }}/ide.conf;
+{% endif %}
 
-        {% if nginx_serve_planemo_machine_web %}
+{% if nginx_serve_planemo_machine_web %}
         location /planemo {
             alias {{ planemo_machine_web_dir }};
         }
-        {% endif %}
-
+{% endif %}
 
         # serve static content
         location /static {
