@@ -6,9 +6,13 @@
         </plugin>
     </plugins>
     <handlers default="handlers">
+{% if galaxy_handler_processes == 0 %}
+        <handler id="web0" tags="handlers"/>
+{% else %}
 {% for i in range(galaxy_handler_processes) %}
         <handler id="handler{{ i }}" tags="handlers"/>
 {% endfor %}
+{% endif %}
     </handlers>
     <destinations default="cluster">
         <destination id="cluster" runner="slurm">
