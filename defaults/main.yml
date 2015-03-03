@@ -15,6 +15,7 @@ galaxy_extras_install_packages: false
 galaxy_extras_apt_package_state: present
 
 galaxy_docker_enabled: false
+galaxy_docker_sudo: false
 galaxy_docker_volumes_from: galaxy
 
 galaxy_log_dir: /home/galaxy/
