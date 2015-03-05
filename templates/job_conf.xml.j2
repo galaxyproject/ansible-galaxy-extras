@@ -18,9 +18,10 @@
         <destination id="cluster" runner="slurm">
             <param id="docker_enabled" from_environ="GALAXY_DOCKER_ENABLED">{{ galaxy_docker_enabled }}</param>
             <param id="docker_sudo" from_environ="GALAXY_DOCKER_SUDO">{{ galaxy_docker_sudo }}</param>
-{% if galaxy_docker_volumes_from %}
+            <!-- The empty volumes from shouldn't affect
+                 Galaxy, set GALAXY_DOCKER_VOLUMES_FROM to use.
+            -->
             <param id="docker_volumes_from" from_environ="GALAXY_DOCKER_VOLUMES_FROM">{{ galaxy_docker_volumes_from }}</param>
-{% endif %}
         </destination>
     </destinations>
     <limits>
