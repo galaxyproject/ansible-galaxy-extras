@@ -23,7 +23,7 @@ galaxy_log_dir: /home/galaxy/
 # Point at the existing Galaxy configuration.
 galaxy_root: "/galaxy-central"
 galaxy_job_conf_path: "{{galaxy_root}}/config/job_conf.xml"
-galaxy_job_metrics_conf_path: "{{galaxy_root}}/config/job_metric_conf.xml"
+galaxy_job_metrics_conf_path: "{{galaxy_root}}/config/job_metrics_conf.xml"
 galaxy_venv_dir: /home/galaxy/venv
 galxy_egg_cache: /home/galaxy/.python-eggs
 galaxy_user_name: "galaxy"
