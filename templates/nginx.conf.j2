@@ -111,6 +111,15 @@ http {
             alias /;
         }
 
+        # this is needed if 'welcome_url' is set to /etc/galaxy
+        location /root/welcome {
+            alias /etc/galaxy;
+            index welcome.html;
+            gzip on;
+            gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
+            expires 24h;
+        }
+
         location ~ ^/plugins/visualizations/ipython/static/(?<static_file>.*?)$ {
             alias {{ galaxy_root }}/config/plugins/interactive_environments/ipython/static/$static_file;
         }
