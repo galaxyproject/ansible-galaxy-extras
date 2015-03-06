@@ -26,38 +26,6 @@ http {
     client_max_body_size 50g;
     uwsgi_read_timeout 300;
 
-{% if nginx_proxy_reports %}
-    server {
-        # Galaxy report app
-        listen {{ nginx_proxy_reports_port }};
-        server_name localhost;
-
-        location / {
-            proxy_pass http://127.0.0.1:{{ galaxy_reports_port }};
-        }
-
-        # serve static content
-        location /static {
-            alias {{ galaxy_root }}/static;
-            gzip on;
-            gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
-            expires 24h;
-        }
-        location /static/style {
-            alias {{ galaxy_root }}/static/style/blue;
-            gzip on;
-            gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
-            expires 24h;
-        }
-        location /static/scripts {
-            alias {{ galaxy_root }}/static/scripts/packed;
-            gzip on;
-            gzip_types text/plain text/javascript application/x-javascript;
-            expires 24h;
-        }
-    }
-{% endif %}
-
 {% if not galaxy_uwsgi %}
     upstream galaxy_web_app {
        server localhost:8080;
