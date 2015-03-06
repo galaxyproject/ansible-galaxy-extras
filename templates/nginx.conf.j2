@@ -36,6 +36,41 @@ http {
         listen 80 default_server;
         server_name  localhost;
 
+{% if nginx_proxy_reports %}
+        # enable reports under :80/reports/
+        # if the file /etc/nginx/htpasswd exists authentification is enabled
+        location /reports/ {
+            set $auth "Galaxy reports are restricted. Please contact your administrator.";
+
+            if (!-f /etc/nginx/htpasswd) {
+                set $auth off;
+            }
+
+            auth_basic $auth;
+            auth_basic_user_file htpasswd;
+            proxy_pass http://127.0.0.1:{{ nginx_proxy_reports_port }}/;
+        }
+        # serve static content for report app
+        location /reports/static {
+            alias /galaxy-central/static;
+            gzip on;
+            gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
+            expires 24h;
+        }
+        location /reports/static/style {
+            alias /galaxy-central/static/style/blue;
+            gzip on;
+            gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
+            expires 24h;
+        }
+        location /reports/static/scripts {
+            alias /galaxy-central/static/scripts/packed;
+            gzip on;
+            gzip_types text/plain text/javascript application/x-javascript;
+            expires 24h;
+        }
+{% endif %}
+
         # pass to uWSGI by default
 {% if galaxy_uwsgi %}
         include {{ nginx_conf_directory }}/uwsgi.conf;
