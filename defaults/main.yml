@@ -54,7 +54,6 @@ codebox_port: 8991
 # Configure proxy to planemo-machine-web.
 nginx_serve_planemo_machine_web: false
 nginx_proxy_reports: true
-nginx_proxy_reports_port: "9003"
 
 galaxy_job_metrics_core: true
 galaxy_job_metrics_env: false
