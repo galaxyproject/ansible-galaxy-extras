@@ -115,9 +115,8 @@ http {
         }
 
         # this is needed if 'welcome_url' is set to /etc/galaxy
-        location /root/welcome {
+        location /etc/galaxy {
             alias /etc/galaxy;
-            index welcome.html;
             gzip on;
             gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
             expires 24h;
