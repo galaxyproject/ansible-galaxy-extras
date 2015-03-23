@@ -5,6 +5,9 @@
 - include: galaxy_metrics.yml
   when: galaxy_extras_config_galaxy_root
 
+- include: uwsgi.yml
+  when: galaxy_extras_config_uwsgi
+
 - include: nginx.yml
   when: galaxy_extras_config_nginx
 
