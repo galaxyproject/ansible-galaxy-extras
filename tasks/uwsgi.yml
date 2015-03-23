@@ -1,0 +1,4 @@
+- name: "Install uwsgi for galaxy"
+  shell: ". {{ galaxy_venv_dir }}/bin/activate && pip install uwsgi"
+  sudo: True
+  sudo_user: "{{ galaxy_user_name }}"

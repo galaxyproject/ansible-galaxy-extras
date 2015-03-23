@@ -7,6 +7,7 @@ galaxy_extras_config_slurm: true
 galaxy_extras_config_supervisor: true
 galaxy_extras_config_galaxy_root: true
 galaxy_extras_config_galaxy_job_metrics: true
+galaxy_extras_config_uwsgi: true
 
 # Install OS packages corresponding to each service being configured.
 galaxy_extras_install_packages: false
