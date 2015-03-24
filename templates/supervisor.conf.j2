@@ -61,7 +61,7 @@ user            = root
 
 [program:galaxy_web]
 {% if galaxy_uwsgi %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_config_file }}
+command         = {{ uwsgi_path }} --master --paste config:{{ galxy_config_file }} --processes {{ uwsgi_processes }} --threads {{ uwsgi_threads }} --logto {{ uwsgi_log }} --socket {{ uwsgi_socket }} --pythonpath lib --stats {{ uwsgi_stats }}
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
