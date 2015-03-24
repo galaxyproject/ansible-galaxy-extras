@@ -1,3 +1,9 @@
+- name: Install nginx related system packages
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - nginx-extras
+  when: galaxy_extras_install_packages
+
 - name: Create nginx configuration file
   template: src=nginx.conf.j2 dest={{ nginx_conf_path }}
 
