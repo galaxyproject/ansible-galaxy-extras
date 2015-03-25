@@ -1,5 +1,5 @@
 [supervisord]
-nodaemon=false
+nodaemon={{ supervisor_nodaemon }}
 
 {% if supervisor_webserver %}
 [inet_http_server]

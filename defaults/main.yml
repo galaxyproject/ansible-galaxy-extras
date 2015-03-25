@@ -80,6 +80,8 @@ proftpd_files_dir: /export/galaxy-central/database/ftp
 
 ## Supervisor Configuration.
 supervisor_conf_path: "/etc/supervisor/conf.d/galaxy.conf"
+supervisor_nodaemon: false
+
 supervisor_manage_slurm: true
 supervisor_slurm_config_dir: "/home/galaxy"
 supervisor_manage_postgres: true
