@@ -1,0 +1,5 @@
+
+- name: "Install proxy dependencies."
+  shell: "cd {{ galaxy_root}}/lib/galaxy/web/proxy/js && npm install"
+  sudo: True
+  sudo_user: "{{ galaxy_user_name }}"

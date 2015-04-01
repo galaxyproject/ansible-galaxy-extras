@@ -8,6 +8,7 @@ galaxy_extras_config_supervisor: true
 galaxy_extras_config_galaxy_root: true
 galaxy_extras_config_galaxy_job_metrics: true
 galaxy_extras_config_uwsgi: true
+galaxy_extras_config_ie_proxy: true
 
 # Install OS packages corresponding to each service being configured.
 galaxy_extras_install_packages: false
@@ -81,7 +82,7 @@ supervisor_postgres_database_path: "/export/postgresql/9.3/main"
 supervisor_manage_proftp: true
 supervisor_manage_nginx: true
 supervisor_manage_reports: true
-supervisor_manage_nodeproxy: true
+supervisor_manage_ie_proxy: true
 supervisor_manage_docker: true
 
 supervisor_docker_autostart: false
