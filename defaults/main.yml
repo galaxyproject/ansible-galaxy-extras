@@ -85,6 +85,8 @@ supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_docker: true
 
+supervisor_ie_proxy_autostart: false
+
 supervisor_docker_autostart: false
 supervisor_docker_autorestart: true
 

@@ -117,7 +117,7 @@ environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
 [program:galaxy_nodejs_proxy]
 directory       = {{ galaxy_root }}
 command         = {{ galaxy_root }}/lib/galaxy/web/proxy/js/lib/main.js --sessions database/session_map.sqlite --ip 0.0.0.0 --port 8800
-autostart       = false
+autostart       = {{ supervisor_ie_proxy_autostart }}
 autorestart     = unexpected
 user            = {{ galaxy_user_name }}
 startsecs       = 5
