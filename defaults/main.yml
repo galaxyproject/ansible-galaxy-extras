@@ -16,6 +16,8 @@ galaxy_extras_install_packages: false
 # be 'present' or 'latest'.
 galaxy_extras_apt_package_state: present
 
+galaxy_extras_ie_fetch_containers: false
+
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
 galaxy_docker_volumes_from: galaxy
