@@ -10,6 +10,9 @@
 - name: Create Galaxy configuration file
   template: src=supervisor.conf.j2 dest={{ supervisor_conf_path }}
 
+- name: Create Dynamic Supervisor Replace
+  template: src=dynamic_supervisor_replace.py.j2 dest=/usr/local/bin/dynamic_supervisor_replace.py
+
 - name: Disable init scripts for stuff managed by supervisor.
   command: update-rc.d -f {{ item }} remove || true
   with_items:
