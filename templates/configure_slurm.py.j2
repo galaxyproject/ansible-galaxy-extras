@@ -86,7 +86,7 @@ def main():
         "hostname": gethostname(),
         "user": '{{ galaxy_user_name }}',
         "cpus": environ.get("SLURM_CPUS", psutil.NUM_CPUS),
-        "memory": environ.get("SLURM_MEMORY", int(psutil.psutil.TOTAL_PHYMEM / (1024 * 1024)))
+        "memory": environ.get("SLURM_MEMORY", int(psutil.TOTAL_PHYMEM / (1024 * 1024)))
     }
     config_contents = Template(SLURM_CONFIG_TEMPLATE).substitute(template_params)
     open("/etc/slurm-llnl/slurm.conf", "w").write(config_contents)
