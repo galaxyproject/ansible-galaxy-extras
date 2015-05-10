@@ -13,4 +13,9 @@
 - name: "Install IPython container."
   shell: "docker pull bgruening/docker-ipython-notebook"
   sudo: True
-  when: galaxy_extras_ie_fetch_containers
+  when: galaxy_extras_ie_fetch_ipython
+
+- name: "Install RStudio container."
+  shell: "docker pull bgruening/docker-ipython-notebook"
+  sudo: True
+  when: galaxy_extras_ie_fetch_rstudio

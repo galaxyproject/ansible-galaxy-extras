@@ -16,9 +16,12 @@ galaxy_extras_install_packages: false
 # be 'present' or 'latest'.
 galaxy_extras_apt_package_state: present
 
-galaxy_extras_ie_fetch_containers: false
+galaxy_extras_ie_fetch_ipython: false
+galaxy_extras_ie_ipython_image: bgruening/docker-ipython-notebook:dev
+galaxy_extras_ie_fetch_rstudio: false
+galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:dev
 
-galaxy_docker_enabled: false
+sgalaxy_docker_enabled: false
 galaxy_docker_sudo: false
 galaxy_docker_volumes_from: galaxy
 
