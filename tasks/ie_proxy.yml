@@ -11,11 +11,11 @@
   sudo_user: "{{ galaxy_user_name }}"
 
 - name: "Install IPython container."
-  shell: "docker pull bgruening/docker-ipython-notebook"
+  shell: "docker pull {{ galaxy_extras_ie_ipython_image }}"
   sudo: True
   when: galaxy_extras_ie_fetch_ipython
 
 - name: "Install RStudio container."
-  shell: "docker pull bgruening/docker-ipython-notebook"
+  shell: "docker pull {{ galaxy_extras_ie_rstudio_image }}"
   sudo: True
   when: galaxy_extras_ie_fetch_rstudio
