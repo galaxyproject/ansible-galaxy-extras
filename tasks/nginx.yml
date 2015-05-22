@@ -12,3 +12,6 @@
 
 - name: Create nginx IDE configuration
   template: src=nginx_ide.conf.j2 dest={{ nginx_conf_directory }}/ide.conf
+
+- name: "Add htpasswd file."
+  template: src=htpasswd.j2 dest=/etc/nginx/htpasswd

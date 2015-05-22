@@ -22,3 +22,9 @@
 
 - include: ie_proxy.yml
   when: galaxy_extras_config_ie_proxy
+
+- include: galaxy_scripts.yml
+  when: galaxy_extras_config_scripts
+
+- include: startup.yml
+  when: galaxy_extras_config_startup
