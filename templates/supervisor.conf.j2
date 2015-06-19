@@ -15,18 +15,21 @@ password={{ supervisor_webserver_password }}
 user=root
 command=/bin/bash -c "mkdir -p /var/run/munge && /usr/sbin/munged -F"
 redirect_stderr=true
+priority=100
 
 [program:slurmctld]
 user=root
 command=/bin/bash -c "python /usr/sbin/configure_slurm.py && /usr/sbin/slurmctld -D -L {{supervisor_slurm_config_dir}}/slurmctld.log"
 redirect_stderr=true 
 autorestart     = true
+priority=200
 
 [program:slurmd]
 user=root
 command=/usr/sbin/slurmd -D -L {{supervisor_slurm_config_dir}}/slurmd.log
 redirect_stderr=true 
 autorestart     = true
+priority=300
 {% endif %}
 
 {% if supervisor_manage_postgres %}
@@ -38,6 +41,7 @@ stopsignal      = INT
 autostart       = true
 autorestart     = true
 redirect_stderr = true
+priority        = 100
 {% endif %}
 
 {% if supervisor_manage_proftp %}
@@ -57,6 +61,7 @@ autorestart     = unexpected
 startsecs       = 5
 exitcodes       = 0
 user            = root
+priority        = 200
 {% endif %}
 
 [program:galaxy_web]
@@ -66,11 +71,12 @@ directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
 autorestart     = true
-startsecs       = 10
+startsecs       = 20
 user            = {{ galaxy_user_name }}
 environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONPATH={{ galaxy_root }}/eggs/PasteDeploy-1.5.0-py2.7.egg
 numprocs        = 1
 stopsignal      = INT
+startretries    = 30
 {% else %}
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=web%(process_num)s --pid-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.pid --log-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.log
 directory       = {{ galaxy_root }}
@@ -79,9 +85,10 @@ numprocs        = {{ galaxy_web_processes }}
 umask           = 022
 autostart       = true
 autorestart     = true
-startsecs       = 15
+startsecs       = 20
 user            = {{ galaxy_user_name }}
 environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+startretries    = 30
 {% endif %}
 
 [program:handler]
@@ -99,6 +106,7 @@ autorestart     = true
 startsecs       = 15
 user            = {{ galaxy_user_name }}
 environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+startretries    = 30
 
 {% if supervisor_manage_reports %}
 [program:reports]
