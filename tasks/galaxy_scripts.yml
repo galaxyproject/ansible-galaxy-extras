@@ -3,3 +3,6 @@
 
 - name: "Install galaxy user creation script."
   template: src=create_galaxy_user.py.j2 dest=/usr/local/bin/create_galaxy_user.py mode=a+x
+
+- name: "Install export user files script."
+  template: src=export_user_files.py.j2 dest=/usr/local/bin/export_user_files.py mode=a+x

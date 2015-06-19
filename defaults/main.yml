@@ -56,6 +56,9 @@ galaxy_paste_handlers: false
 galaxy_web_processes: 2
 galaxy_handler_processes: 2
 
+startup_export_user_files: true
+startup_chown_on_directory: false
+
 # Nginx configuration.
 nginx_conf_path: /etc/nginx/nginx.conf
 nginx_conf_directory: /etc/nginx/conf.d
