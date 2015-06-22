@@ -71,12 +71,12 @@ directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
 autorestart     = true
-startsecs       = 20
+startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
 environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONPATH={{ galaxy_root }}/eggs/PasteDeploy-1.5.0-py2.7.egg
 numprocs        = 1
 stopsignal      = INT
-startretries    = 30
+startretries    = {{ supervisor_galaxy_startretries }}
 {% else %}
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=web%(process_num)s --pid-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.pid --log-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.log
 directory       = {{ galaxy_root }}
@@ -85,10 +85,10 @@ numprocs        = {{ galaxy_web_processes }}
 umask           = 022
 autostart       = true
 autorestart     = true
-startsecs       = 20
+startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
 environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
-startretries    = 30
+startretries    = {{ supervisor_galaxy_startretries }}
 {% endif %}
 
 [program:handler]
@@ -103,10 +103,10 @@ numprocs        = {{ galaxy_handler_processes }}
 umask           = 022
 autostart       = true
 autorestart     = true
-startsecs       = 15
+startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
 environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
-startretries    = 30
+startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_reports %}
 [program:reports]
@@ -116,9 +116,24 @@ process_name    = reports
 umask           = 022
 autostart       = false
 autorestart     = true
-startsecs       = 5
+startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
 environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+startretries    = {{ supervisor_galaxy_startretries }}
+{% endif %}
+
+{% if supervisor_manage_toolshed %}
+[program:toolshed]
+command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_toolshed_config_file }} --server-name=main --pid-file={{ galaxy_log_dir }}/toolshed.pid --log-file={{ galaxy_log_dir }}/toolshed.log
+directory       = {{ galaxy_root }}
+process_name    = toolshed
+umask           = 022
+autostart       = true
+autorestart     = true
+startsecs       = {{ supervisor_galaxy_startsecs }}
+user            = {{ galaxy_user_name }}
+environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+startretries    = {{ supervisor_galaxy_startretries }}
 {% endif %}
 
 {% if supervisor_manage_nodeproxy %}

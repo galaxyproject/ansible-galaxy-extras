@@ -40,6 +40,7 @@ galxy_egg_cache: "{{ galaxy_home_dir }}/.python-eggs"
 
 galaxy_config_dir: "{{ galaxy_root }}/config"
 galaxy_reports_config_file: "{{ galaxy_config_dir }}/reports_wsgi.ini"
+galaxy_toolshed_config_file: "{{ galaxy_config_dir }}/tool_shed.ini"
 galaxy_config_file: "{{ galaxy_config_dir }}/galaxy.ini"
 galaxy_reports_port: "9001"
 
@@ -99,6 +100,12 @@ supervisor_manage_nginx: true
 supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_docker: true
+supervisor_manage_toolshed: false
+
+supervisor_galaxy_startsecs: 20
+# had to increase retries to ensure the postgres database is available,
+# wasn't needed in the past.
+supervisor_galaxy_startretries: 15
 
 supervisor_ie_proxy_autostart: false
 
