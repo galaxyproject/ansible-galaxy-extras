@@ -1,0 +1,5 @@
+- name: "Install cgroupfs_mount.sh for startup script."
+  template: src=cgroupfs_mount.sh.j2 dest=/root/cgroupfs_mount.sh mode=a+x
+
+- name: "Install startup script used to configure container."
+  template: src=startup.sh.j2 dest=/usr/bin/startup mode=a+x

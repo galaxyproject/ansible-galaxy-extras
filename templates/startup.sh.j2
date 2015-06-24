@@ -1,0 +1,96 @@
+#!/bin/bash
+
+cd {{ galaxy_root }}
+umount /var/lib/docker
+
+{% if startup_export_user_files is defined and startup_export_user_files %}
+# If /export/ is mounted, export_user_files file moving all data to /export/
+# symlinks will point from the original location to the new path under /export/
+# If /export/ is not given, nothing will happen in that step
+python /usr/local/bin/export_user_files.py $PG_DATA_DIR_DEFAULT
+{% endif %}
+
+{% if startup_chown_on_directory is defined and startup_chown_on_directory %}
+if [ -e {{ startup_chown_on_directory }}  ];
+then
+    old_uid=`stat -c '%u' "{{ galaxy_home_dir }}"`
+    old_gid=`stat -c '%g' "{{ galaxy_home_dir }}"`
+    old_perms="$old_uid:$old_gid"
+
+    source_uid=`stat -c '%u' "{{ startup_chown_on_directory }}"`
+    source_gid=`stat -c '%g' "{{ startup_chown_on_directory }}"`
+    source_perms="$source_uid:$source_gid"
+
+    deluser {{ galaxy_user_name }}
+    groupadd -r {{ galaxy_user_name }} -g $source_gid
+    useradd -u $source_uid -r -g {{ galaxy_user_name }} -d "{{ galaxy_home_dir }}" -c "Galaxy User" {{ galaxy_user_name }}
+
+    for target_path in /opt /home /tmp/slurm;
+    do
+        chown --from=$old_perms -R $source_perms $target_path
+    done
+fi
+{% endif %}
+
+# Configure SLURM with runtime hostname.
+python /usr/sbin/configure_slurm.py
+
+# $NONUSE can be set to include proftp, reports or nodejs
+# if included we will _not_ start these services.
+function start_supersisor {
+    /usr/bin/supervisord
+    sleep 5
+    if [[ $NONUSE != *"proftp"* ]]
+    then
+        echo "Starting ProFTP"
+        supervisorctl start proftpd
+    fi
+    if [[ $NONUSE != *"reports"* ]]
+    then
+        echo "Starting Galaxy reports webapp"
+        supervisorctl start reports
+    fi
+    if [[ $NONUSE != *"nodejs"* ]]
+    then
+        echo "Starting nodejs"
+        supervisorctl start galaxy:galaxy_nodejs_proxy
+    fi
+}
+
+
+# Try to guess if we are running under --privileged mode
+if mount | grep "/proc/kcore"; then
+    echo "Disable Galaxy Interactive Environments. Start with --privileged to enable IE's."
+    export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY=""
+    start_supersisor
+else
+    echo "Enable Galaxy Interactive Environments."
+    export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY="config/plugins/interactive_environments"
+    if [ x$DOCKER_PARENT == "x" ]; then 
+        #build the docker in docker environment
+        bash /root/cgroupfs_mount.sh
+        start_supersisor
+        supervisorctl start docker
+    else
+        #inheriting /var/run/docker.sock from parent, assume that you need to
+        #run docker with sudo to validate
+        echo "{{ galaxy_user_name }} ALL = NOPASSWD : ALL" >> /etc/sudoers
+        start_supersisor
+    fi
+fi
+
+# Enable verbose output
+if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
+    then
+        tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_home_dir }}/*.log
+    else
+        tail -f {{ galaxy_home_dir }}/*.log
+fi
+
+# Disable authentication of Galaxy reports
+if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
+    then
+        # disable authentification by deleting the htpasswd file
+        echo "Disable Galaxy reports authentification "
+        rm /etc/nginx/htpasswd
+fi

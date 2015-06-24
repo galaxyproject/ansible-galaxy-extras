@@ -9,6 +9,8 @@ galaxy_extras_config_galaxy_root: true
 galaxy_extras_config_galaxy_job_metrics: true
 galaxy_extras_config_uwsgi: true
 galaxy_extras_config_ie_proxy: true
+galaxy_extras_config_scripts: true
+galaxy_extras_config_startup: true
 
 # Install OS packages corresponding to each service being configured.
 galaxy_extras_install_packages: false
@@ -21,23 +23,29 @@ galaxy_extras_ie_ipython_image: bgruening/docker-ipython-notebook:dev
 galaxy_extras_ie_fetch_rstudio: false
 galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:dev
 
-sgalaxy_docker_enabled: false
+galaxy_docker_enabled: false
 galaxy_docker_sudo: false
 galaxy_docker_volumes_from: galaxy
 
-galaxy_log_dir: /home/galaxy/
 
 # Point at the existing Galaxy configuration.
 galaxy_root: "/galaxy-central"
 galaxy_job_conf_path: "{{galaxy_root}}/config/job_conf.xml"
 galaxy_job_metrics_conf_path: "{{galaxy_root}}/config/job_metrics_conf.xml"
-galaxy_venv_dir: /home/galaxy/venv
-galxy_egg_cache: /home/galaxy/.python-eggs
 galaxy_user_name: "galaxy"
+galaxy_home_dir: "/home/{{ galaxy_user_name }}"
+galaxy_log_dir: "{{ galaxy_home_dir }}/"
+galaxy_venv_dir: "{{ galaxy_home_dir }}/venv"
+galxy_egg_cache: "{{ galaxy_home_dir }}/.python-eggs"
+
 galaxy_config_dir: "{{ galaxy_root }}/config"
 galaxy_reports_config_file: "{{ galaxy_config_dir }}/reports_wsgi.ini"
+galaxy_toolshed_config_file: "{{ galaxy_config_dir }}/tool_shed.ini"
 galaxy_config_file: "{{ galaxy_config_dir }}/galaxy.ini"
 galaxy_reports_port: "9001"
+
+galaxy_db_port: "5432"
+galaxy_database_connection: "postgres://{{ galaxy_user_name }}@localhost:{{ galaxy_db_port }}/galaxy"
 
 # Port to serve uwsgi on.
 galaxy_uwsgi: true
@@ -48,6 +56,9 @@ uwsgi_port: 4001
 galaxy_paste_handlers: false
 galaxy_web_processes: 2
 galaxy_handler_processes: 2
+
+startup_export_user_files: true
+startup_chown_on_directory: ""
 
 # Nginx configuration.
 nginx_conf_path: /etc/nginx/nginx.conf
@@ -89,6 +100,12 @@ supervisor_manage_nginx: true
 supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_docker: true
+supervisor_manage_toolshed: false
+
+supervisor_galaxy_startsecs: 20
+# had to increase retries to ensure the postgres database is available,
+# wasn't needed in the past.
+supervisor_galaxy_startretries: 15
 
 supervisor_ie_proxy_autostart: false
 
