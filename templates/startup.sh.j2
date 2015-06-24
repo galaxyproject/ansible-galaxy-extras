@@ -15,17 +15,19 @@ if [ -e {{ startup_chown_on_directory }}  ];
 then
     old_uid=`stat -c '%u' "{{ galaxy_home_dir }}"`
     old_gid=`stat -c '%g' "{{ galaxy_home_dir }}"`
+    old_perms="$old_uid:$old_gid"
 
     source_uid=`stat -c '%u' "{{ startup_chown_on_directory }}"`
     source_gid=`stat -c '%g' "{{ startup_chown_on_directory }}"`
+    source_perms="$source_uid:$source_gid"
 
     deluser {{ galaxy_user_name }}
     groupadd -r {{ galaxy_user_name }} -g $source_gid
     useradd -u $source_uid -r -g {{ galaxy_user_name }} -d "{{ galaxy_home_dir }}" -c "Galaxy User" {{ galaxy_user_name }}
 
-    for $target_path in /opt /home;
+    for target_path in /opt /home;
     do
-        chown --from=$old_uid:$old_gid -R $source_perms $target_path
+        chown --from=$old_perms -R $source_perms $target_path
     done
 fi
 {% endif %}
