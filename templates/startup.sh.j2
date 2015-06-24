@@ -13,15 +13,15 @@ python /usr/local/bin/export_user_files.py $PG_DATA_DIR_DEFAULT
 {% if startup_chown_on_directory is defined and startup_chown_on_directory %}
 if [ -e {{ startup_chown_on_directory }}  ];
 then
-    old_uid=`stat -c '%u' {{ galaxy_home_dir }}`
-    old_gid=`stat -c '%g' {{ galaxy_home_dir }}`
+    old_uid=`stat -c '%u' "{{ galaxy_home_dir }}"`
+    old_gid=`stat -c '%g' "{{ galaxy_home_dir }}"`
 
-    source_uid=`stat -c '%u' {{ startup_chown_on_directory }}`
-    source_gid=`stat -c '%g' {{ startup_chown_on_directory }}`
+    source_uid=`stat -c '%u' "{{ startup_chown_on_directory }}"`
+    source_gid=`stat -c '%g' "{{ startup_chown_on_directory }}"`
 
     deluser {{ galaxy_user_name }}
     groupadd -r {{ galaxy_user_name }} -g $source_gid
-    useradd -u $source_uid -r -g {{ galaxy_user_name }} -d {{ galaxy_home_dir }} -c "Galaxy User" {{ galaxy_user_name }}
+    useradd -u $source_uid -r -g {{ galaxy_user_name }} -d "{{ galaxy_home_dir }}" -c "Galaxy User" {{ galaxy_user_name }}
 
     for $target_path in /opt /home;
     do
