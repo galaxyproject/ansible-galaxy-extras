@@ -25,7 +25,7 @@ then
     groupadd -r {{ galaxy_user_name }} -g $source_gid
     useradd -u $source_uid -r -g {{ galaxy_user_name }} -d "{{ galaxy_home_dir }}" -c "Galaxy User" {{ galaxy_user_name }}
 
-    for target_path in /opt /home;
+    for target_path in /opt /home /tmp/slurm;
     do
         chown --from=$old_perms -R $source_perms $target_path
     done
@@ -82,9 +82,9 @@ fi
 # Enable verbose output
 if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
     then
-        tail -f /var/log/supervisor/* /var/log/nginx/* /home/galaxy/*.log
+        tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_home_dir }}/*.log
     else
-        tail -f /home/galaxy/*.log
+        tail -f {{ galaxy_home_dir }}/*.log
 fi
 
 # Disable authentication of Galaxy reports
