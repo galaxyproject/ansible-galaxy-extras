@@ -40,21 +40,27 @@ python /usr/sbin/configure_slurm.py
 function start_supersisor {
     /usr/bin/supervisord
     sleep 5
+    {% if supervisor_manage_proftp %}
     if [[ $NONUSE != *"proftp"* ]]
     then
         echo "Starting ProFTP"
         supervisorctl start proftpd
     fi
+    {% endif %}
+    {% if supervisor_manage_reports %}
     if [[ $NONUSE != *"reports"* ]]
     then
         echo "Starting Galaxy reports webapp"
         supervisorctl start reports
     fi
+    {% endif %}
+    {% if supervisor_manage_ie_proxy %}
     if [[ $NONUSE != *"nodejs"* ]]
     then
         echo "Starting nodejs"
         supervisorctl start galaxy:galaxy_nodejs_proxy
     fi
+    {% endif %}
 }
 
 
@@ -79,6 +85,7 @@ else
     fi
 fi
 
+{% if not startup_bash %}
 # Enable verbose output
 if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
     then
@@ -94,3 +101,4 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         echo "Disable Galaxy reports authentification "
         rm /etc/nginx/htpasswd
 fi
+{% endif %}
