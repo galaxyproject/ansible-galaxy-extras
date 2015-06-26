@@ -16,6 +16,7 @@ user=root
 command=/bin/bash -c "mkdir -p /var/run/munge && /usr/sbin/munged -F"
 redirect_stderr=true
 priority=100
+stopasgroup     = true
 
 [program:slurmctld]
 user=root
@@ -23,6 +24,7 @@ command=/bin/bash -c "python /usr/sbin/configure_slurm.py && /usr/sbin/slurmctld
 redirect_stderr=true 
 autorestart     = true
 priority=200
+stopasgroup     = true
 
 [program:slurmd]
 user=root
@@ -90,6 +92,8 @@ startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
 environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
 startretries    = {{ supervisor_galaxy_startretries }}
+# needed for bash wrapper
+stopasgroup     = true
 {% endif %}
 
 [program:handler]
