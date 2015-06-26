@@ -85,12 +85,13 @@ else
     fi
 fi
 
-{% if not startup_bash %}
-# Enable verbose output
-if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
+LOGGING=`echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]`
+# full to enable verbose output, notail to skip tailing
+if [ "$LOGGING" = "full" ]
     then
         tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_home_dir }}/*.log
-    else
+    elif [ "$LOGGING" != "notail" ]
+    then
         tail -f {{ galaxy_home_dir }}/*.log
 fi
 
@@ -101,4 +102,3 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         echo "Disable Galaxy reports authentification "
         rm /etc/nginx/htpasswd
 fi
-{% endif %}

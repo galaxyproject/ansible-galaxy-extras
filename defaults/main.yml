@@ -59,7 +59,6 @@ galaxy_handler_processes: 2
 
 startup_export_user_files: true
 startup_chown_on_directory: ""
-startup_bash: false
 
 # Nginx configuration.
 nginx_conf_path: /etc/nginx/nginx.conf
