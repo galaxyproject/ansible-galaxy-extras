@@ -78,7 +78,8 @@ numprocs        = 1
 stopsignal      = INT
 startretries    = {{ supervisor_galaxy_startretries }}
 {% else %}
-command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=web%(process_num)s --pid-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.pid --log-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.log
+# template cache hack https://github.com/galaxyproject/planemo-machine/issues/38
+command         = /bin/bash -c "rm -rf {{ galaxy_root }}/database/template_cache; {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=web%(process_num)s --pid-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.pid --log-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.log"
 directory       = {{ galaxy_root }}
 process_name    = web%(process_num)s
 numprocs        = {{ galaxy_web_processes }}
