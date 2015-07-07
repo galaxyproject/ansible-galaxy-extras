@@ -16,6 +16,9 @@
     </handlers>
     <destinations default="cluster">
         <destination id="cluster" runner="slurm">
+{% if galaxy_source_shellrc %}
+            <env file="{{ galaxy_user_shellrc }}" />
+{% endif %}
             <param id="docker_enabled" from_environ="GALAXY_DOCKER_ENABLED">{{ galaxy_docker_enabled }}</param>
             <param id="docker_sudo" from_environ="GALAXY_DOCKER_SUDO">{{ galaxy_docker_sudo }}</param>
             <!-- The empty volumes from shouldn't affect

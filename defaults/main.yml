@@ -34,6 +34,8 @@ galaxy_job_conf_path: "{{galaxy_root}}/config/job_conf.xml"
 galaxy_job_metrics_conf_path: "{{galaxy_root}}/config/job_metrics_conf.xml"
 galaxy_user_name: "galaxy"
 galaxy_home_dir: "/home/{{ galaxy_user_name }}"
+galaxy_source_shellrc: false
+galaxy_user_shellrc: "{{ galaxy_home_dir }}/.bashrc"
 galaxy_log_dir: "{{ galaxy_home_dir }}/"
 galaxy_venv_dir: "{{ galaxy_home_dir }}/venv"
 galxy_egg_cache: "{{ galaxy_home_dir }}/.python-eggs"
