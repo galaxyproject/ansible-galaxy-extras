@@ -23,7 +23,8 @@ then
 
     deluser {{ galaxy_user_name }}
     groupadd -r {{ galaxy_user_name }} -g $source_gid
-    useradd -u $source_uid -r -g {{ galaxy_user_name }} -d "{{ galaxy_home_dir }}" -c "Galaxy User" {{ galaxy_user_name }}
+    useradd -u $source_uid -r -g {{ galaxy_user_name }} -d "{{ galaxy_home_dir }}" -c "Galaxy User" {{ galaxy_user_name }} -s /bin/bash
+    echo {{ galaxy_user_name }} | passwd {{ galaxy_user_name }} --stdin
 
     for target_path in /opt /home /tmp/slurm;
     do
