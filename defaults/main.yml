@@ -26,7 +26,7 @@ galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:dev
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
 galaxy_docker_volumes_from: galaxy
-
+galaxy_docker_volumes : "$defaults"
 
 # Point at the existing Galaxy configuration.
 galaxy_root: "/galaxy-central"
