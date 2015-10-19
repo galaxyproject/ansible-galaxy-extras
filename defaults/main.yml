@@ -71,6 +71,10 @@ nginx_upload_store_path: "/tmp/nginx_upload_store"
 # Configure nginx to setup a proxy to an IDE.
 nginx_proxy_ide: false
 codebox_port: 8991
+
+# Additional configurations to be appended to nginx config
+nginx_additional_config : []
+
 # Configure proxy to planemo-machine-web.
 nginx_serve_planemo_machine_web: false
 nginx_proxy_reports: true
