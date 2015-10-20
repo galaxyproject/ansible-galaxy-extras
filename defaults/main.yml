@@ -26,7 +26,7 @@ galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:dev
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
 galaxy_docker_volumes_from: galaxy
-
+galaxy_docker_volumes : "$defaults"
 
 # Point at the existing Galaxy configuration.
 galaxy_root: "/galaxy-central"
@@ -71,6 +71,10 @@ nginx_upload_store_path: "/tmp/nginx_upload_store"
 # Configure nginx to setup a proxy to an IDE.
 nginx_proxy_ide: false
 codebox_port: 8991
+
+# Additional configurations to be appended to nginx config
+nginx_additional_config : []
+
 # Configure proxy to planemo-machine-web.
 nginx_serve_planemo_machine_web: false
 nginx_proxy_reports: true

@@ -82,6 +82,9 @@ http {
         include {{ nginx_conf_directory }}/ide.conf;
 {% endif %}
 
+{% for a in nginx_additional_config %}
+        include {{ nginx_conf_directory }}/{{ a }}.conf;
+{% endfor %}
 {% if nginx_serve_planemo_machine_web %}
         location /planemo {
             alias {{ planemo_machine_web_dir }};
