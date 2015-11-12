@@ -106,6 +106,7 @@ supervisor_manage_nginx: true
 supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_docker: true
+supervisor_manage_nodeproxy: true
 supervisor_manage_toolshed: false
 
 supervisor_galaxy_startsecs: 20
