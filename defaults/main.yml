@@ -4,6 +4,8 @@
 galaxy_extras_config_nginx: true
 galaxy_extras_config_proftpd: true
 galaxy_extras_config_slurm: true
+galaxy_extras_config_pbs: false
+pbs_server_name: pbsqueue
 galaxy_extras_config_supervisor: true
 galaxy_extras_config_galaxy_root: true
 galaxy_extras_config_galaxy_job_metrics: true

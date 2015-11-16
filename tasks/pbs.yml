@@ -1,0 +1,22 @@
+- name: Install pip
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - python-pip
+  when: galaxy_extras_install_packages
+
+- name: Install PBS/torque system packages
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - torque-client
+    - pbs-drmaa-dev
+    - python-psutil
+  when: galaxy_extras_install_packages
+
+- name: "Fetch DRMAA egg for Galaxy"
+  shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_root }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
+
+- name: "Install Galaxy job conf"
+  template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}}
+
+- name: "Set PBS/torque server name"
+  shell: "echo {{ pbs_server_name }} >> /etc/torque/server_name"

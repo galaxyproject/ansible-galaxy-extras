@@ -17,6 +17,9 @@
 - include: slurm.yml
   when: galaxy_extras_config_slurm
 
+- include: pbs.yml
+  when: galaxy_extras_config_pbs
+
 - include: supervisor.yml
   when: galaxy_extras_config_supervisor
 
