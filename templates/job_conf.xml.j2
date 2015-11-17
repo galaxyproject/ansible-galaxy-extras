@@ -7,7 +7,7 @@
         </plugin>
 {% endif %}
 {% if galaxy_extras_config_pbs == True %}
-        <plugin id="pbs" type="runner" load="galaxy.jobs.runners.pbs:PBSJobRunner">
+        <plugin id="pbs" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner">
           <param id="drmaa_library_path">/usr/lib/pbs-drmaa/lib/libdrmaa.so.1</param>
         </plugin>
 {% endif %}
