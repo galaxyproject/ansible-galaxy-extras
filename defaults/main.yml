@@ -2,6 +2,7 @@
 # https://github.com/bgruening/docker-galaxy-stable.
 
 galaxy_extras_config_nginx: true
+galaxy_extras_config_nginx_upload: true
 galaxy_extras_config_proftpd: true
 galaxy_extras_config_slurm: true
 galaxy_extras_config_pbs: false
