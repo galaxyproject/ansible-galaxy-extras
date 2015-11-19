@@ -26,8 +26,5 @@
 - name: Create slurm configuration file
   template: src=configure_slurm.py.j2 dest=/usr/sbin/configure_slurm.py
 
-- name: "Fetch DRMAA egg for Galaxy"
-  shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_root }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
-
 - name: "Install Galaxy job conf"
   template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}}
