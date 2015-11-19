@@ -141,7 +141,7 @@ environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
 startretries    = {{ supervisor_galaxy_startretries }}
 {% endif %}
 
-{% if supervisor_manage_nodeproxy %}
+{% if supervisor_manage_ie_proxy %}
 [program:galaxy_nodejs_proxy]
 directory       = {{ galaxy_root }}
 command         = {{ galaxy_root }}/lib/galaxy/web/proxy/js/lib/main.js --sessions database/session_map.sqlite --ip 0.0.0.0 --port 8800
@@ -164,7 +164,7 @@ redirect_stderr = true
 {% endif %}
 
 [group:galaxy]
-{% if supervisor_manage_nodeproxy %}
+{% if supervisor_manage_ie_proxy %}
 programs = handler, galaxy_web, galaxy_nodejs_proxy
 {% else %}
 programs = handler, galaxy_web
