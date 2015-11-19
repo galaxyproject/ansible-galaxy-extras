@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd {{ galaxy_root }}
+. {{ galaxy_root }}/.venv/bin/activate
 umount /var/lib/docker
 
 {% if startup_export_user_files is defined and startup_export_user_files %}
