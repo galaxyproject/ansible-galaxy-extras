@@ -80,13 +80,21 @@ NodeName=$hostname CPUs=$cpus RealMemory=$memory State=UNKNOWN
 PartitionName=debug Nodes=$hostname Default=YES MaxTime=INFINITE State=UP
 '''
 
+try:
+    # psutil version 0.2
+    cpus = psutil.NUM_CPUS
+    mem = psutil.TOTAL_PHYMEM
+except:
+    # psutil version 0.3
+    cpus = psutil.cpu_count()
+    mem = psutil.virtual_memory().total
 
 def main():
     template_params = {
         "hostname": gethostname(),
         "user": '{{ galaxy_user_name }}',
-        "cpus": environ.get("SLURM_CPUS", psutil.cpu_count()),
-        "memory": environ.get("SLURM_MEMORY", int(psutil.virtual_memory().total / (1024 * 1024)))
+        "cpus": environ.get("SLURM_CPUS", cpus),
+        "memory": environ.get("SLURM_MEMORY", int(mem / (1024 * 1024)))
     }
     config_contents = Template(SLURM_CONFIG_TEMPLATE).substitute(template_params)
     open("/etc/slurm-llnl/slurm.conf", "w").write(config_contents)
