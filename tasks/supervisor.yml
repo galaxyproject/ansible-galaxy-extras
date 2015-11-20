@@ -10,11 +10,20 @@
 - name: Create Galaxy configuration file
   template: src=supervisor.conf.j2 dest={{ supervisor_conf_path }}
 
+- name: Stop services before removing them.
+  service: name={{ item }} state=stopped
+  with_items:
+  - nginx
+  - uwsgi
+  - proftpd
+  - munge
+  - slurm-llnl
+
 - name: Disable init scripts for stuff managed by supervisor.
   command: update-rc.d -f {{ item }} remove || true
   with_items:
   - nginx
   - uwsgi
-  - proftp
+  - proftpd
   - munge
   - slurm-llnl
