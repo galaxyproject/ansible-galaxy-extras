@@ -18,7 +18,7 @@ security_agent = GalaxyRBACAgent( bunch )
 security_agent.sa_session = sa_session
 
 
-def add_user(email, password, key=None):
+def add_user(email, password, key=None, username="admin"):
     """
         Add Galaxy User.
         From John https://gist.github.com/jmchilton/4475646
@@ -29,6 +29,7 @@ def add_user(email, password, key=None):
     else:
         User.use_pbkdf2 = False
         user = User(email)
+        user.username = username
         user.set_password_cleartext(password)
         sa_session.add(user)
         sa_session.flush()
@@ -55,6 +56,8 @@ if __name__ == "__main__":
     parser.add_argument("--password", required=True,
                     help="Password.")
     parser.add_argument("--key", help="API-Key.")
+    parser.add_argument("--username",
+                    help="The public username. Public names must be at least three characters in length and contain only lower-case letters, numbers, and the '-' character.")
 
     options = parser.parse_args()
 
