@@ -27,3 +27,5 @@
   - proftpd
   - munge
   - slurm-llnl
+
+- service: name=supervisor state=restart
