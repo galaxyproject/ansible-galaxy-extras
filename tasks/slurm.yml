@@ -21,7 +21,7 @@
   shell: "mkdir -p /var/run/munge && chown root:root /var/lib/munge/ /var/log/munge/ /var/run/munge /etc/munge/ /etc/munge/munge.key"
 
 - name: Setup tmp area for slurm.
-  shell: "mkdir /tmp/slurm && chown {{ galaxy_user_name }}:{{ galaxy_user_name }} /tmp/slurm"
+  shell: "mkdir -p /tmp/slurm && chown {{ galaxy_user_name }}:{{ galaxy_user_name }} /tmp/slurm"
 
 - name: Create slurm configuration file
   template: src=configure_slurm.py.j2 dest=/usr/sbin/configure_slurm.py
