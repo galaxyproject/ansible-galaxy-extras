@@ -49,7 +49,7 @@ priority        = 100
 {% if supervisor_manage_proftp %}
 [program:proftpd]
 command         = /usr/sbin/proftpd -n -c {{proftpd_conf_path}}
-autostart       = false
+autostart       = true
 autorestart     = true
 {% endif %}
 
@@ -68,7 +68,7 @@ priority        = 200
 
 [program:galaxy_web]
 {% if galaxy_uwsgi %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_config_file }}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --ini-paste {{ galaxy_config_file }}
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
