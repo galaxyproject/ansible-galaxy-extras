@@ -70,7 +70,7 @@ fi
 # $NONUSE can be set to include proftp, reports or nodejs
 # if included we will _not_ start these services.
 function start_supervisor {
-    /usr/bin/supervisord
+    supervisord -c /etc/supervisor/supervisord.conf
     sleep 5
     {% if supervisor_manage_proftp %}
     if [[ $NONUSE != *"proftp"* ]]
