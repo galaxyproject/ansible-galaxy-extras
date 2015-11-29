@@ -4,6 +4,9 @@ cd {{ galaxy_root }}
 . {{ galaxy_root }}/.venv/bin/activate
 umount /var/lib/docker
 
+# Set number of Galaxy handlers via GALAXY_HANDLER_NUMPROCS or default to 2
+ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}"
+
 {% if startup_export_user_files is defined and startup_export_user_files %}
 # If /export/ is mounted, export_user_files file moving all data to /export/
 # symlinks will point from the original location to the new path under /export/
