@@ -28,11 +28,17 @@
 - name: Create Munge Key
   command: /usr/sbin/create-munge-key creates=/etc/munge/munge.key
 
-- name: Setup Munge
-  shell: "mkdir -p /var/run/munge && chown root:root /var/lib/munge/ /var/log/munge/ /var/run/munge /etc/munge/ /etc/munge/munge.key"
-
+- name: Setup Munge permissions and folder
+  file: path={{ item }} state=directory owner=root group=root recurse=yes
+  with_items:
+    - /var/run/munge
+    - /var/lib/munge
+    - /var/log/munge
+    - /var/run/munge
+    - /etc/munge
+    
 - name: Setup tmp area for slurm.
-  shell: "mkdir -p /tmp/slurm && chown {{ galaxy_user_name }}:{{ galaxy_user_name }} /tmp/slurm"
+  file: path=/tmp/slurm state=directory owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
 
 - name: Create slurm configuration file
   template: src=configure_slurm.py.j2 dest=/usr/sbin/configure_slurm.py
