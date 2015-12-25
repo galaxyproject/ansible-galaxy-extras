@@ -13,7 +13,11 @@ password={{ supervisor_webserver_password }}
 {% if supervisor_manage_slurm %}
 [program:munge]
 user=root
+{% if ansible_distribution_version | version_compare('15.04', '<=') %}
 command=/bin/bash -c "mkdir -p /var/run/munge && /usr/sbin/munged -F"
+{% elif ansible_distribution_version | version_compare('15.04', '>') %}
+command=/bin/bash -c "mkdir -p /run/munge && chown root:root /run/munge && /usr/sbin/munged -F"
+{% endif %}
 redirect_stderr=true
 priority=100
 stopasgroup     = true
