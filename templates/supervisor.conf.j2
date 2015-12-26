@@ -1,4 +1,4 @@
-`[supervisord]
+[supervisord]
 nodaemon=false
 
 {% if supervisor_webserver %}
@@ -38,7 +38,6 @@ priority=300
 [program:postgresql]
 user            = postgres
 command         = /usr/lib/postgresql/{{ postgresql_version }}/bin/postmaster -D "{{supervisor_postgres_database_path}}"
-{% endif %}
 process_name    = %(program_name)s
 stopsignal      = INT
 autostart       = true
@@ -69,7 +68,11 @@ priority        = 200
 
 [program:galaxy_web]
 {% if galaxy_uwsgi %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+{% if galaxy_uwsgi_static_conf %}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ uwsgi_processes }} --threads {{ uwsgi_threads }} --logto {{ galaxy_log_dir }}/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+{% else %}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads {{ uwsgi_threads }} --logto {{ galaxy_log_dir }}/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+{% endif %}
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
