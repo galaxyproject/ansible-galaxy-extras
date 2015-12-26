@@ -68,7 +68,7 @@ priority        = 200
 
 [program:galaxy_web]
 {% if galaxy_uwsgi %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
