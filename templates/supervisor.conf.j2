@@ -37,7 +37,11 @@ priority=300
 {% if supervisor_manage_postgres %}
 [program:postgresql]
 user            = postgres
+{% if  ansible_distribution_version | version_compare('15.04', '<=') %}
 command         = /usr/lib/postgresql/9.3/bin/postmaster -D "{{supervisor_postgres_database_path}}"
+{% elif  ansible_distribution_version | version_compare('15.04', '>') %}
+command         = /usr/lib/postgresql/9.4/bin/postmaster -D "{{supervisor_postgres_database_path}}"
+{% endif %}
 process_name    = %(program_name)s
 stopsignal      = INT
 autostart       = true
