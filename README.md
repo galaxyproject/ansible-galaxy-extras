@@ -29,3 +29,9 @@ Example Usage
 
 See [planemo-machine](https://github.com/jmchilton/planemo-machine) for
 an example of how to use this role.
+
+
+Project Organization
+--------------------
+
+See the [Project Organization](https://github.com/galaxyproject/ansible-galaxy-extras/blob/master/organization.rst) document for a description of project governance.
