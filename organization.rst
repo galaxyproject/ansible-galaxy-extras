@@ -24,9 +24,10 @@ process to a minimum and centralize important decisions with a trusted
 developer. The BDFN is explicitly meant to be replaced with a more formal and
 democratice process if the project grows to a sufficient size or importance.
 
-The *committers* group is the group of trusted developers and advocates who
-manage the Planemo code base. They assume many roles required to achieve
-the project's goals, especially those that require a high level of trust.
+The *committers* group is the group of trusted developers and
+advocates who manage the ansible-galaxy-extras code base. They assume
+many roles required to achieve the project's goals, especially those
+that require a high level of trust.
 
 The BDFN will add committers as he or she see fits, usually after a few
 successful pull requests. Committers may commit directly or merge pull

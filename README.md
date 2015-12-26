@@ -27,7 +27,7 @@ of `hosts` setting in the corresponding playbook.
 Example Usage
 ----------------
 
-See [planemo-machine](https://github.com/jmchilton/planemo-machine) for
+See [planemo-machine](https://github.com/galaxyproject/planemo-machine) for
 an example of how to use this role.
 
 
