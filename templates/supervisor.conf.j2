@@ -35,6 +35,13 @@ priority=300
 {% endif %}
 
 {% if supervisor_manage_postgres %}
+{% if ansible_virtualization_type != "docker" %}
+[program:pre_postgresql]
+user            = root
+startsecs       = 0
+command         = /bin/bash -c "install -d -m 2775 -o postgres -g postgres /var/run/postgresql"
+{% endif %}
+
 [program:postgresql]
 user            = postgres
 command         = /usr/lib/postgresql/{{ postgresql_version }}/bin/postmaster -D "{{supervisor_postgres_database_path}}"
