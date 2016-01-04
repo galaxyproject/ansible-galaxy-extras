@@ -53,6 +53,11 @@ galaxy_database_connection: "postgres://{{ galaxy_user_name }}@localhost:{{ gala
 galaxy_uwsgi: true
 uwsgi_port: 4001
 
+# Set to true to write thread/process number into supervisor config. If false, uses environmental variables.
+galaxy_uwsgi_static_conf: false
+# number of uwsgi threads to use if galaxy_uwsgi_static_conf is true
+uwsgi_threads: 2
+
 # Set the following to true - to run paste processes for Galaxy
 # handlers (should not longer be needed).
 galaxy_paste_handlers: false
