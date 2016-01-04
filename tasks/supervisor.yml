@@ -11,19 +11,49 @@
   template: src=supervisor.conf.j2 dest={{ supervisor_conf_path }}
 
 - name: Stop services before removing them.
-  service: name={{ item }} state=stopped
-  with_items:
-  - nginx
-  - uwsgi
-  - proftpd
-  - munge
-  - slurm-llnl
+  service: name=postgresql state=stopped
+  when: supervisor_manage_postgresql
 
 - name: Disable init scripts for stuff managed by supervisor.
-  command: update-rc.d -f {{ item }} remove || true
-  with_items:
-  - nginx
-  - uwsgi
-  - proftpd
-  - munge
-  - slurm-llnl
+  command: update-rc.d -f postgresql remove || true
+  when: supervisor_manage_postgresql
+
+- name: Stop services before removing them.
+  service: name=slurm-llnl state=stopped
+  when: supervisor_manage_slurm
+
+- name: Disable init scripts for stuff managed by supervisor.
+  command: update-rc.d -f slurm-llnl remove || true
+  when: supervisor_manage_slurm
+
+- name: Stop services before removing them.
+  service: name=munge state=stopped
+  when: supervisor_manage_munge
+
+- name: Disable init scripts for stuff managed by supervisor.
+  command: update-rc.d -f munge remove || true
+  when: supervisor_manage_munge
+
+- name: Stop services before removing them.
+  service: name=proftpd state=stopped
+  when: supervisor_manage_proftpd
+
+- name: Disable init scripts for stuff managed by supervisor.
+  command: update-rc.d -f proftpd remove || true
+  when: supervisor_manage_proftpd
+
+- name: Stop services before removing them.
+  service: name=uwsgi state=stopped
+  when: supervisor_manage_uwsgi
+
+- name: Disable init scripts for stuff managed by supervisor.
+  command: update-rc.d -f uwsgi remove || true
+  when: supervisor_manage_uwsgi
+
+- name: Stop services before removing them.
+  service: name=nginx state=stopped
+  when: supervisor_manage_nginx
+
+- name: Disable init scripts for stuff managed by supervisor.
+  command: update-rc.d -f nginx remove || true
+  when: supervisor_manage_nginx
