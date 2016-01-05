@@ -10,6 +10,9 @@
 - name: Create Galaxy configuration file
   template: src=supervisor.conf.j2 dest={{ supervisor_conf_path }}
 
+- name: Stop supervisor
+  service: name=supervisor state=stopped
+
 - name: Stop services before removing them.
   service: name={{ item }} state=stopped enabled=no
   with_items:
@@ -36,3 +39,6 @@
   with_items:
   - postgresql
   when: supervisor_manage_postgres
+
+- name: Start supervisor
+  service: name=supervisor state=started
