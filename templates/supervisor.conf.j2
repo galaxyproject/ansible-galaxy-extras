@@ -35,6 +35,13 @@ priority=300
 {% endif %}
 
 {% if supervisor_manage_postgres %}
+{% if ansible_virtualization_type != "docker" %}
+[program:pre_postgresql]
+user            = root
+startsecs       = 0
+command         = /bin/bash -c "install -d -m 2775 -o postgres -g postgres /var/run/postgresql"
+{% endif %}
+
 [program:postgresql]
 user            = postgres
 command         = /usr/lib/postgresql/{{ postgresql_version }}/bin/postmaster -D "{{supervisor_postgres_database_path}}"
@@ -69,9 +76,9 @@ priority        = 200
 [program:galaxy_web]
 {% if galaxy_uwsgi %}
 {% if galaxy_uwsgi_static_conf %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ galaxy_log_dir }}/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ galaxy_log_dir }}/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
 {% else %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
 {% endif %}
 directory       = {{ galaxy_root }}
 umask           = 022
@@ -114,7 +121,7 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONHOME={{ galaxy_venv_dir }}
 startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_reports %}
