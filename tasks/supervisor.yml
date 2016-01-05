@@ -40,5 +40,7 @@
   - postgresql
   when: supervisor_manage_postgres
 
+# Do not start supervisor when building docker-galaxy-stable
 - name: Start supervisor
   service: name=supervisor state=started
+  when: galaxy_uwsgi_static_conf
