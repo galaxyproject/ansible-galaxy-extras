@@ -99,6 +99,10 @@ proftpd_db_username: galaxy
 proftpd_db_password: galaxy
 proftpd_welcome: "Public Galaxy FTP"
 proftpd_files_dir: /export/galaxy-central/database/ftp
+# Set masquearade to true if host is NAT'ed.
+proftpd_nat_masquerade: false
+proftpd_passive_port_low: 30000
+proftpd_passive_port_high: 40000
 
 ## Supervisor Configuration.
 supervisor_conf_path: "/etc/supervisor/conf.d/galaxy.conf"
@@ -120,6 +124,8 @@ supervisor_galaxy_startsecs: 20
 supervisor_galaxy_startretries: 15
 
 supervisor_ie_proxy_autostart: false
+supervisor_proftp_autostart: false
+supervisor_reports_autostart: false
 
 supervisor_docker_autostart: false
 supervisor_docker_autorestart: true
