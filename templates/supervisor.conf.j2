@@ -56,7 +56,7 @@ priority        = 100
 {% if supervisor_manage_proftp %}
 [program:proftpd]
 {% if proftpd_nat_masquerade %}
-command         = bash -c " export PUBLIC_IP=`/usr/bin/dig @ns1.google.com -t txt o-o.myaddr.l.google.com +short|/usr/bin/tr -d '\"'` && /usr/sbin/proftpd -n -c {{proftpd_conf_path}}"
+command         = bash -c " export PUBLIC_IP={{ public_ip }} && /usr/sbin/proftpd -n -c {{proftpd_conf_path}}"
 {% else %}
 command         = /usr/sbin/proftpd -n -c {{proftpd_conf_path}}
 {% endif %}
