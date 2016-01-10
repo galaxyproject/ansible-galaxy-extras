@@ -166,7 +166,7 @@ redirect_stderr = true
 {% if supervisor_manage_docker %}
 [program:docker]
 directory       = /
-command         = /usr/bin/docker -d --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=vfs
+command         = /usr/bin/docker daemon --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375
 autostart       = {{ supervisor_docker_autostart }}
 autorestart     = {{ supervisor_docker_autorestart }}
 user            = root
