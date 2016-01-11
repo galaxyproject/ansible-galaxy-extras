@@ -128,3 +128,5 @@ supervisor_webserver: true
 supervisor_webserver_port: "0.0.0.0:9002"
 supervisor_webserver_username: null
 supervisor_webserver_password: changeme
+
+supervisor_proftpd_autostart: false
