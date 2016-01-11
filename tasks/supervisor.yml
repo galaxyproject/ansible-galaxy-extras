@@ -52,5 +52,3 @@
 
 - name: Start supervisor
   service: name=supervisor state=started
-
-  
