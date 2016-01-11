@@ -35,9 +35,16 @@ priority=300
 {% endif %}
 
 {% if supervisor_manage_postgres %}
+{% if ansible_virtualization_type != "docker" %}
+[program:pre_postgresql]
+user            = root
+startsecs       = 0
+command         = /bin/bash -c "install -d -m 2775 -o postgres -g postgres /var/run/postgresql"
+{% endif %}
+
 [program:postgresql]
 user            = postgres
-command         = /usr/lib/postgresql/9.3/bin/postmaster -D "{{supervisor_postgres_database_path}}"
+command         = /usr/lib/postgresql/{{ postgresql_version }}/bin/postmaster -D "{{supervisor_postgres_database_path}}"
 process_name    = %(program_name)s
 stopsignal      = INT
 autostart       = true
@@ -68,7 +75,11 @@ priority        = 200
 
 [program:galaxy_web]
 {% if galaxy_uwsgi %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_config_file }}
+{% if galaxy_uwsgi_static_conf %}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ galaxy_log_dir }}/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+{% else %}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+{% endif %}
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
@@ -110,7 +121,7 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONHOME={{ galaxy_venv_dir }}
 startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_reports %}
@@ -155,7 +166,7 @@ redirect_stderr = true
 {% if supervisor_manage_docker %}
 [program:docker]
 directory       = /
-command         = /usr/bin/docker -d
+command         = /usr/bin/docker -d --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=vfs
 autostart       = {{ supervisor_docker_autostart }}
 autorestart     = {{ supervisor_docker_autorestart }}
 user            = root

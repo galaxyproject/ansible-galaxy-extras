@@ -27,5 +27,20 @@ of `hosts` setting in the corresponding playbook.
 Example Usage
 ----------------
 
-See [planemo-machine](https://github.com/jmchilton/planemo-machine) for
+See [planemo-machine](https://github.com/galaxyproject/planemo-machine) for
 an example of how to use this role.
+
+
+Code of Conduct
+--------------------
+
+Please note that this project follows the Galaxy `Contributor Code of Conduct 
+<https://github.com/galaxyproject/galaxy/blob/dev/CODE_OF_CONDUCT.md>`__. By
+participating in this project you agree to abide by its terms.
+
+
+Project Organization
+--------------------
+
+See the [Project Organization](https://github.com/galaxyproject/ansible-galaxy-extras/blob/master/organization.rst) document for a description of project governance.
+
