@@ -60,7 +60,7 @@ command         = bash -c " export MASQUERADE_ADDRESS={{ proftpd_masquerade_addr
 {% else %}
 command         = /usr/sbin/proftpd -n -c {{proftpd_conf_path}}
 {% endif %}
-autostart       = {{ supervisor_proftp_autostart }}
+autostart       = {{ supervisor_proftpd_autostart }}
 autorestart     = true
 stopasgroup     = true
 killasgroup     = true
