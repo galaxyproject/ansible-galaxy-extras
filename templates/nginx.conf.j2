@@ -125,12 +125,14 @@ http {
             expires 24h;
         }
 
+        location ~ ^/plugins/visualizations/ipython/static/(?<static_file>.*?)$ {
+            alias {{ galaxy_root }}/config/plugins/interactive_environments/ipython/static/$static_file;
+        }
+        location ~ ^/plugins/visualizations/rstudio/static/(?<static_file>.*?)$ {
+            alias {{ galaxy_root }}/config/plugins/interactive_environments/rstudio/static/$static_file;
+        }
         location ~ ^/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
             alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
-        }
-
-        location ~ ^/plugins/interactive_environments/(?<ie_name>.+?)/static/(?<static_file>.*?)$ {
-            alias /galaxy-central/config/plugins/interactive_environments/$ie_name/static/$static_file;
         }
 
 
