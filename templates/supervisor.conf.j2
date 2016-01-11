@@ -56,7 +56,7 @@ priority        = 100
 {% if supervisor_manage_proftp %}
 [program:proftpd]
 command         = /usr/sbin/proftpd -n -c {{proftpd_conf_path}}
-autostart       = true
+autostart       = {{ supervisor_proftpd_autostart }}
 autorestart     = true
 {% endif %}
 
