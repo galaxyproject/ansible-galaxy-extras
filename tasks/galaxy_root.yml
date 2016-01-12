@@ -5,6 +5,6 @@
   sudo_user: "{{ galaxy_user_name }}"
 
 - name: "Install watchdog for galaxy"
-  shell: ". {{ galaxy_venv_dir }}/bin/activate && pip install watchdog"
+  pip: name=watchdog virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
   sudo: True
   sudo_user: "{{ galaxy_user_name }}"
