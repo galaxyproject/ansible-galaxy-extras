@@ -44,7 +44,7 @@ command         = /bin/bash -c "install -d -m 2775 -o postgres -g postgres /var/
 
 [program:postgresql]
 user            = postgres
-command         = /usr/lib/postgresql/{{ postgresql_version }}/bin/postmaster -D "{{supervisor_postgres_database_path}}"
+command         = /usr/lib/postgresql/{{ postgresql_version }}/bin/postmaster -D {{supervisor_postgres_database_path}} -c "config_file={{ supervisor_postgres_database_config }}"
 process_name    = %(program_name)s
 stopsignal      = INT
 autostart       = true
