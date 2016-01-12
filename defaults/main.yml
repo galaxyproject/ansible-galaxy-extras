@@ -129,7 +129,6 @@ supervisor_galaxy_startsecs: 20
 supervisor_galaxy_startretries: 15
 
 supervisor_ie_proxy_autostart: false
-supervisor_proftpd_autostart: false
 supervisor_reports_autostart: false
 
 supervisor_docker_autostart: false
