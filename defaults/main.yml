@@ -99,13 +99,14 @@ proftpd_db_username: galaxy
 proftpd_db_password: galaxy
 proftpd_welcome: "Public Galaxy FTP"
 proftpd_files_dir: /export/galaxy-central/database/ftp
-# Set masquearade to true if host is NAT'ed.
-proftpd_nat_masquerade: false
 proftpd_passive_port_low: 30000
 proftpd_passive_port_high: 40000
+# Set masquearade to true if host is NAT'ed.
+proftpd_nat_masquerade: false
 # proftpd_masquerade_address refefers to the ip that clients use to establish an ftp connection.
 # Can be a command that returns an IP or an IP address and applies only if proftpd_nat_masquerade is true.
-proftpd_masquerade_address: "`curl ipv4.icanhazip.com`"
+# ec2metadata --public-ipv4 returns the public ip for amazon's ec2 service.
+proftpd_masquerade_address: "`ec2metadata --public-ipv4`"
 
 ## Supervisor Configuration.
 supervisor_conf_path: "/etc/supervisor/conf.d/galaxy.conf"
