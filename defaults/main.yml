@@ -115,6 +115,7 @@ supervisor_slurm_config_dir: "/home/galaxy"
 supervisor_manage_postgres: true
 postgresql_version: 9.3
 supervisor_postgres_database_path: "/export/postgresql/{{ postgresql_version }}/main"
+supervisor_postgres_database_config: "/export/postgresql/{{ postgresql_version }}/main/postgresql.conf"
 supervisor_manage_proftp: true
 supervisor_manage_nginx: true
 supervisor_manage_reports: true
@@ -128,7 +129,6 @@ supervisor_galaxy_startsecs: 20
 supervisor_galaxy_startretries: 15
 
 supervisor_ie_proxy_autostart: false
-supervisor_proftpd_autostart: false
 supervisor_reports_autostart: false
 
 supervisor_docker_autostart: false
@@ -138,3 +138,5 @@ supervisor_webserver: true
 supervisor_webserver_port: "0.0.0.0:9002"
 supervisor_webserver_username: null
 supervisor_webserver_password: changeme
+
+supervisor_proftpd_autostart: false
