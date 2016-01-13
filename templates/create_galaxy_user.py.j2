@@ -27,7 +27,7 @@ def add_user(email, password, key=None, username="admin"):
     if query.count() > 0:
         return query.first()
     else:
-        User.use_pbkdf2 = False
+        User.use_pbkdf2 = {{ use_pbkdf2 }}
         user = User(email)
         user.username = username
         user.set_password_cleartext(password)
