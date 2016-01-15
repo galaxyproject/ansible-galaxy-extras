@@ -20,8 +20,10 @@ galaxy_extras_apt_package_state: present
 
 galaxy_extras_ie_fetch_ipython: false
 galaxy_extras_ie_ipython_image: bgruening/docker-ipython-notebook:dev
+galaxy_extras_ie_fetch_jupyter: false
+galaxy_extras_ie_jupyter_image: bgruening/docker-jupyter-notebook:16.01
 galaxy_extras_ie_fetch_rstudio: false
-galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:dev
+galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:15.10
 
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false

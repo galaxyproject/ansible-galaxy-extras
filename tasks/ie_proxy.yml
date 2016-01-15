@@ -15,6 +15,11 @@
   sudo: True
   when: galaxy_extras_ie_fetch_ipython
 
+- name: "Install Juypter container."
+  shell: "docker pull {{ galaxy_extras_ie_juypter_image }}"
+  sudo: True
+  when: galaxy_extras_ie_fetch_juypter
+
 - name: "Install RStudio container."
   shell: "docker pull {{ galaxy_extras_ie_rstudio_image }}"
   sudo: True
