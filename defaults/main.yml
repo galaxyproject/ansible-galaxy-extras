@@ -113,6 +113,7 @@ proftpd_masquerade_address: "`ec2metadata --public-ipv4`"
 ## Supervisor Configuration.
 supervisor_conf_path: "/etc/supervisor/conf.d/galaxy.conf"
 supervisor_manage_slurm: true
+supervisor_manage_uwsgi: true
 supervisor_slurm_config_dir: "/home/galaxy"
 supervisor_manage_postgres: true
 postgresql_version: 9.3
