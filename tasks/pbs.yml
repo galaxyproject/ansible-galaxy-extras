@@ -19,4 +19,4 @@
   template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}}
 
 - name: "Set PBS/torque server name"
-  shell: "echo {{ pbs_server_name }} >> /etc/torque/server_name"
+  lineinfile: dest=/etc/torque/server_name line={{ pbs_server_name }} state=present create=yes
