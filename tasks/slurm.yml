@@ -36,7 +36,7 @@
     - /var/log/munge
     - /var/run/munge
     - /etc/munge
-    
+
 - name: Setup tmp area for slurm.
   file: path=/tmp/slurm state=directory owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
 
