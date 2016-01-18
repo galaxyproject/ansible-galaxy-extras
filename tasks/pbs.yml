@@ -1,9 +1,3 @@
-- name: Install pip
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
-    - python-pip
-  when: galaxy_extras_install_packages
-
 - name: Install PBS/torque system packages
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
