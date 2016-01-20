@@ -35,9 +35,16 @@ priority=300
 {% endif %}
 
 {% if supervisor_manage_postgres %}
+{% if ansible_virtualization_type != "docker" %}
+[program:pre_postgresql]
+user            = root
+startsecs       = 0
+command         = /bin/bash -c "install -d -m 2775 -o postgres -g postgres /var/run/postgresql"
+{% endif %}
+
 [program:postgresql]
 user            = postgres
-command         = /usr/lib/postgresql/9.3/bin/postmaster -D "{{supervisor_postgres_database_path}}"
+command         = /usr/lib/postgresql/{{ postgresql_version }}/bin/postmaster {{ supervisor_postgres_options }}
 process_name    = %(program_name)s
 stopsignal      = INT
 autostart       = true
@@ -48,9 +55,15 @@ priority        = 100
 
 {% if supervisor_manage_proftp %}
 [program:proftpd]
+{% if proftpd_nat_masquerade %}
+command         = bash -c " export MASQUERADE_ADDRESS={{ proftpd_masquerade_address }} && /usr/sbin/proftpd -n -c {{proftpd_conf_path}}"
+{% else %}
 command         = /usr/sbin/proftpd -n -c {{proftpd_conf_path}}
-autostart       = false
+{% endif %}
+autostart       = {{ supervisor_proftpd_autostart }}
 autorestart     = true
+stopasgroup     = true
+killasgroup     = true
 {% endif %}
 
 {% if supervisor_manage_nginx %}
@@ -68,7 +81,11 @@ priority        = 200
 
 [program:galaxy_web]
 {% if galaxy_uwsgi %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --plugin python --ini-paste {{ galaxy_config_file }}
+{% if galaxy_uwsgi_static_conf %}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ galaxy_log_dir }}/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+{% else %}
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+{% endif %}
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
@@ -110,7 +127,7 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONHOME={{ galaxy_venv_dir }}
 startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_reports %}
@@ -119,7 +136,7 @@ command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ 
 directory       = {{ galaxy_root }}
 process_name    = reports
 umask           = 022
-autostart       = false
+autostart       = {{ supervisor_reports_autostart }}
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
@@ -141,7 +158,7 @@ environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
 startretries    = {{ supervisor_galaxy_startretries }}
 {% endif %}
 
-{% if supervisor_manage_nodeproxy %}
+{% if supervisor_manage_ie_proxy %}
 [program:galaxy_nodejs_proxy]
 directory       = {{ galaxy_root }}
 command         = {{ galaxy_root }}/lib/galaxy/web/proxy/js/lib/main.js --sessions database/session_map.sqlite --ip 0.0.0.0 --port 8800
@@ -155,7 +172,7 @@ redirect_stderr = true
 {% if supervisor_manage_docker %}
 [program:docker]
 directory       = /
-command         = /usr/bin/docker -d
+command         = /usr/bin/docker daemon --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 -s aufs
 autostart       = {{ supervisor_docker_autostart }}
 autorestart     = {{ supervisor_docker_autorestart }}
 user            = root
@@ -164,7 +181,7 @@ redirect_stderr = true
 {% endif %}
 
 [group:galaxy]
-{% if supervisor_manage_nodeproxy %}
+{% if supervisor_manage_ie_proxy %}
 programs = handler, galaxy_web, galaxy_nodejs_proxy
 {% else %}
 programs = handler, galaxy_web

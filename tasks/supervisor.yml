@@ -10,11 +10,53 @@
 - name: Create Galaxy configuration file
   template: src=supervisor.conf.j2 dest={{ supervisor_conf_path }}
 
-- name: Disable init scripts for stuff managed by supervisor.
-  command: update-rc.d -f {{ item }} remove || true
+- name: Stop supervisor
+  service: name=supervisor state=stopped
+
+- name: Stop and remove uwsgi.
+  service: name={{ item }} state=stopped enabled=no
   with_items:
-  - nginx
-  - uwsgi
-  - proftp
-  - munge
-  - slurm-llnl
+    - uwsgi
+  when: galaxy_extras_config_uwsgi and supervisor_manage_uwsgi
+
+- name: Stop and remove munge.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - munge
+  when: galaxy_extras_config_slurm and supervisor_manage_slurm
+
+- name: Stop and remove slurm.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - slurm-llnl
+  when: galaxy_extras_config_slurm and supervisor_manage_slurm and ansible_distribution_version <= "15.04"
+
+- name: Stop and remove slurm.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - slurmd
+    - slurmctld
+  when: galaxy_extras_config_slurm and supervisor_manage_slurm and ansible_distribution_version > "15.04"
+
+- name: Stop and remove postgresql.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - postgresql
+  when: supervisor_manage_postgres
+
+- name: Stop and remove proftpd.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - proftpd
+  when: galaxy_extras_config_proftpd and supervisor_manage_proftp
+
+- name: Stop and remove nginx.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - nginx
+  when: galaxy_extras_config_nginx and supervisor_manage_nginx
+
+# Do not start supervisor when building docker-galaxy-stable
+- name: Start supervisor
+  service: name=supervisor state=started
+  when: galaxy_uwsgi_static_conf

@@ -15,6 +15,11 @@
   become: yes
   become_method: sudo
 
+- name: "Install Juypter container."
+  shell: "docker pull {{ galaxy_extras_ie_juypter_image }}"
+  sudo: True
+  when: galaxy_extras_ie_fetch_jupyter
+
 - name: "Install RStudio container."
   shell: "docker pull {{ galaxy_extras_ie_rstudio_image }}"
   become: yes

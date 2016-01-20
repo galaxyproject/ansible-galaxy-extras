@@ -5,6 +5,12 @@
   become_method: sudo
 
 - name: "Install watchdog for galaxy"
+<<<<<<< HEAD
   shell: ". {{ galaxy_venv_dir }}/bin/activate && pip install watchdog"
   become: yes
   become_method: sudo
+=======
+  pip: name=watchdog virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+  sudo: True
+  sudo_user: "{{ galaxy_user_name }}"
+>>>>>>> 83a1d88cd0539136d4c387e2ccbd35dc06addb30

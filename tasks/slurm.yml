@@ -9,25 +9,59 @@
   with_items:
     - munge
     - slurm-llnl
-    - slurm-llnl-torque 
     - slurm-drmaa-dev
     - python-psutil
   when: galaxy_extras_install_packages
 
-- name: Create Munge Key
-  command: /usr/sbin/create-munge-key
+- name: Install SLURM system packages
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - slurm-llnl-torque 
+  when: galaxy_extras_install_packages and ansible_distribution_version <= "15.04"
 
-- name: Setup Munge
-  shell: "mkdir -p /var/run/munge && chown root:root /var/lib/munge/ /var/log/munge/ /var/run/munge /etc/munge/ /etc/munge/munge.key"
+- name: Install SLURM system packages
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - slurm-wlm-torque 
+  when: galaxy_extras_install_packages and ansible_distribution_version >= "15.04"
+
+- name: Create Munge Key
+  command: /usr/sbin/create-munge-key creates=/etc/munge/munge.key
+
+- name: Setup Munge permissions and folder
+  file: path={{ item }} state=directory owner=root group=root recurse=yes
+  with_items:
+    - /var/run/munge
+    - /var/lib/munge
+    - /var/log/munge
+    - /var/run/munge
+    - /etc/munge
 
 - name: Setup tmp area for slurm.
-  shell: "mkdir /tmp/slurm && chown {{ galaxy_user_name }}:{{ galaxy_user_name }} /tmp/slurm"
+  file: path=/tmp/slurm state=directory owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
 
 - name: Create slurm configuration file
   template: src=configure_slurm.py.j2 dest=/usr/sbin/configure_slurm.py
 
-- name: "Fetch DRMAA egg for Galaxy"
+- name: Check if Galaxy uses eggs or wheels
+  stat:
+    path: "{{ galaxy_root }}/lib/galaxy/dependencies/requirements.txt"
+  register: requirements_txt
+
+- name: Fetch DRMAA egg for Galaxy
   shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_root }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
+  when: not requirements_txt.stat.exists
+
+# If job_conf.xml is installed before running galaxyprojectdotorg.galaxy, this would already be installed.
+- name: Fetch DRMAA wheel for Galaxy
+  pip:
+    name: "drmaa"
+    extra_args: "--index-url https://wheels.galaxyproject.org/simple/"
+    virtualenv: "{{ galaxy_venv_dir }}"
+  environment:
+    PYTHOPATH: null
+    VIRTUAL_ENV: "{{ galaxy_venv_dir }}"
+  when: requirements_txt.stat.exists
 
 - name: "Install Galaxy job conf"
   template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}}

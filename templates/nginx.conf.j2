@@ -125,17 +125,19 @@ http {
             expires 24h;
         }
 
-        location ~ ^/plugins/visualizations/ipython/static/(?<static_file>.*?)$ {
-            alias {{ galaxy_root }}/config/plugins/interactive_environments/ipython/static/$static_file;
-        }
-        location ~ ^/plugins/visualizations/rstudio/static/(?<static_file>.*?)$ {
-            alias {{ galaxy_root }}/config/plugins/interactive_environments/rstudio/static/$static_file;
-        }
         location ~ ^/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
             alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
         }
 
+<<<<<<< HEAD
 {% if galaxy_extras_config_nginx_upload == True %}
+=======
+        location ~ ^/plugins/interactive_environments/(?<ie_name>.+?)/static/(?<static_file>.*?)$ {
+            alias /galaxy-central/config/plugins/interactive_environments/$ie_name/static/$static_file;
+        }
+
+
+>>>>>>> 83a1d88cd0539136d4c387e2ccbd35dc06addb30
         # delegated uploads
         location /_upload {
             upload_store {{ nginx_upload_store_path }};
