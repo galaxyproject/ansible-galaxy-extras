@@ -18,18 +18,21 @@
   with_items:
     - uwsgi
   when: galaxy_extras_config_uwsgi and supervisor_manage_uwsgi
+  ignore_errors: yes # ignore error that occurs when service is not installed
 
 - name: Stop and remove munge.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - munge
   when: galaxy_extras_config_slurm and supervisor_manage_slurm
+  ignore_errors: yes # ignore error that occurs when service is not installed
 
 - name: Stop and remove slurm.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - slurm-llnl
   when: galaxy_extras_config_slurm and supervisor_manage_slurm and ansible_distribution_version <= "15.04"
+  ignore_errors: yes # ignore error that occurs when service is not installed
 
 - name: Stop and remove slurm.
   service: name={{ item }} state=stopped enabled=no
@@ -37,24 +40,28 @@
     - slurmd
     - slurmctld
   when: galaxy_extras_config_slurm and supervisor_manage_slurm and ansible_distribution_version > "15.04"
+  ignore_errors: yes # ignore error that occurs when service is not installed
 
 - name: Stop and remove postgresql.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - postgresql
   when: supervisor_manage_postgres
+  ignore_errors: yes # ignore error that occurs when service is not installed
 
 - name: Stop and remove proftpd.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - proftpd
   when: galaxy_extras_config_proftpd and supervisor_manage_proftp
+  ignore_errors: yes # ignore error that occurs when service is not installed
 
 - name: Stop and remove nginx.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - nginx
   when: galaxy_extras_config_nginx and supervisor_manage_nginx
+  ignore_errors: yes # ignore error that occurs when service is not installed
 
 # Do not start supervisor when building docker-galaxy-stable
 - name: Start supervisor

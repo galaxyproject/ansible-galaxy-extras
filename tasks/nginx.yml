@@ -15,3 +15,11 @@
 
 - name: "Add htpasswd file."
   template: src=htpasswd.j2 dest=/etc/nginx/htpasswd
+
+- name: "Copy SSL certificate"
+  copy: src={{ nginx_ssl_cert_file }} dest=/etc/nginx/ssl_cert.pem
+  when: nginx_ssl
+
+- name: "Copy SSL key"
+  copy: src={{ nginx_ssl_key_file }} dest=/etc/nginx/ssl_key.pem mode=0600 owner=root
+  when: nginx_ssl

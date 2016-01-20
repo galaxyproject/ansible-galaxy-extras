@@ -1,4 +1,3 @@
-
 - include: galaxy_root.yml
   when: galaxy_extras_config_galaxy_root
 
