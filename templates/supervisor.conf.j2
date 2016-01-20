@@ -86,20 +86,20 @@ command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_di
 {% else %}
 command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
 {% endif %}
-directory       = {{ galaxy_root }}
+directory       = {{ galaxy_server_dir }}
 umask           = 022
 autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONPATH={{ galaxy_root }}/eggs/PasteDeploy-1.5.0-py2.7.egg
+environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONPATH={{ galaxy_server_dir }}/eggs/PasteDeploy-1.5.0-py2.7.egg
 numprocs        = 1
 stopsignal      = INT
 startretries    = {{ supervisor_galaxy_startretries }}
 {% else %}
 # template cache hack https://github.com/galaxyproject/planemo-machine/issues/38
-command         = /bin/bash -c "rm -rf {{ galaxy_root }}/database/template_cache; {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=web%(process_num)s --pid-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.pid --log-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.log"
-directory       = {{ galaxy_root }}
+command         = /bin/bash -c "rm -rf {{ galaxy_server_dir }}/database/template_cache; {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=web%(process_num)s --pid-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.pid --log-file={{ galaxy_log_dir }}/galaxy_web%(process_num)s.log"
+directory       = {{ galaxy_server_dir }}
 process_name    = web%(process_num)s
 numprocs        = {{ galaxy_web_processes }}
 umask           = 022
@@ -119,7 +119,7 @@ command         = {{ galaxy_venv_dir }}/bin/python ./lib/galaxy/main.py -c {{ ga
 {% else %}
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=handler%(process_num)s --pid-file={{ galaxy_log_dir }}/handler%(process_num)s.pid --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
 {% endif %}
-directory       = {{ galaxy_root }}
+directory       = {{ galaxy_server_dir }}
 process_name    = handler%(process_num)s
 numprocs        = {{ galaxy_handler_processes }}
 umask           = 022
@@ -133,7 +133,7 @@ startretries    = {{ supervisor_galaxy_startretries }}
 {% if supervisor_manage_reports %}
 [program:reports]
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_reports_config_file }} --server-name=main --pid-file={{ galaxy_log_dir }}/reports.pid --log-file={{ galaxy_log_dir }}/reports.log
-directory       = {{ galaxy_root }}
+directory       = {{ galaxy_server_dir }}
 process_name    = reports
 umask           = 022
 autostart       = {{ supervisor_reports_autostart }}
@@ -147,7 +147,7 @@ startretries    = {{ supervisor_galaxy_startretries }}
 {% if supervisor_manage_toolshed %}
 [program:toolshed]
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_toolshed_config_file }} --server-name=main --pid-file={{ galaxy_log_dir }}/toolshed.pid --log-file={{ galaxy_log_dir }}/toolshed.log
-directory       = {{ galaxy_root }}
+directory       = {{ galaxy_server_dir }}
 process_name    = toolshed
 umask           = 022
 autostart       = true
@@ -160,8 +160,8 @@ startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_ie_proxy %}
 [program:galaxy_nodejs_proxy]
-directory       = {{ galaxy_root }}
-command         = {{ galaxy_root }}/lib/galaxy/web/proxy/js/lib/main.js --sessions database/session_map.sqlite --ip 0.0.0.0 --port 8800
+directory       = {{ galaxy_server_dir }}
+command         = {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js/lib/main.js --sessions database/session_map.sqlite --ip 0.0.0.0 --port 8800
 autostart       = {{ supervisor_ie_proxy_autostart }}
 autorestart     = unexpected
 user            = {{ galaxy_user_name }}
