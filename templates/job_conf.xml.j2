@@ -1,36 +1,45 @@
 <?xml version="1.0"?>
 <job_conf>
     <plugins workers="2">
+{% if galaxy_extras_config_slurm == True %}
         <plugin id="slurm" type="runner" load="galaxy.jobs.runners.slurm:SlurmJobRunner">
             <param id="drmaa_library_path">/usr/lib/slurm-drmaa/lib/libdrmaa.so</param>
         </plugin>
+{% endif %}
+{% if galaxy_extras_config_pbs == True %}
+        <plugin id="pbs" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner">
+          <param id="drmaa_library_path">/usr/lib/pbs-drmaa/lib/libdrmaa.so.1</param>
+        </plugin>
+{% endif %}
     </plugins>
     <handlers default="handlers">
 {% if galaxy_handler_processes == 0 %}
         <handler id="web0" tags="handlers"/>
 {% else %}
-{% for i in range(galaxy_handler_processes) %}
+  {% for i in range(galaxy_handler_processes) %}
         <handler id="handler{{ i }}" tags="handlers"/>
-{% endfor %}
+  {% endfor %}
 {% endif %}
     </handlers>
     <destinations default="cluster">
-        <destination id="cluster" runner="slurm">
-{% if galaxy_source_shellrc %}
-            <env file="{{ galaxy_user_shellrc }}" />
-{% endif %}
-            <param id="docker_enabled" from_environ="GALAXY_DOCKER_ENABLED">{{ galaxy_docker_enabled }}</param>
-            <param id="docker_sudo" from_environ="GALAXY_DOCKER_SUDO">{{ galaxy_docker_sudo }}</param>
-            <!-- The empty volumes from shouldn't affect
-                 Galaxy, set GALAXY_DOCKER_VOLUMES_FROM to use.
-            -->
-            <param id="docker_volumes_from" from_environ="GALAXY_DOCKER_VOLUMES_FROM">{{ galaxy_docker_volumes_from }}</param>
-          <!-- For a stock Galaxy instance and traditional job runner $defaults will
-               expand out as:
-               $galaxy_root:ro,$tool_directory:ro,$working_directory:rw,$default_file_path:rw
-          -->
+{% if galaxy_extras_config_slurm == True or galaxy_extras_config_pbs == True %}
+  {% if galaxy_extras_config_pbs == True %}
+      <destination id="cluster" runner="pbs">
+  {% elif galaxy_extras_config_slurm == True %}
+      <destination id="cluster" runner="slurm">
+  {% endif %}
+
+  {% if galaxy_source_shellrc %}
+          <env file="{{ galaxy_user_shellrc }}" />
+  {% endif %}
+          <param id="docker_enabled" from_environ="GALAXY_DOCKER_ENABLED">{{ galaxy_docker_enabled }}</param>
+          <param id="docker_sudo" from_environ="GALAXY_DOCKER_SUDO">{{ galaxy_docker_sudo }}</param>
+          <!-- The empty volumes from shouldn't affect Galaxy, set GALAXY_DOCKER_VOLUMES_FROM to use. -->
+          <param id="docker_volumes_from" from_environ="GALAXY_DOCKER_VOLUMES_FROM">{{ galaxy_docker_volumes_from }}</param>
+          <!-- For a stock Galaxy instance and traditional job runner $defaults will expand out as: $galaxy_root:ro,$tool_directory:ro,$working_directory:rw,$default_file_path:rw -->
           <param id="docker_volumes" from_environ="GALAXY_DOCKER_VOLUMES">{{ galaxy_docker_volumes }}</param>
         </destination>
+{% endif %}
     </destinations>
     <limits>
     </limits>

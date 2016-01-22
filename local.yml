@@ -9,6 +9,8 @@
   tasks:
   - include: tasks/slurm.yml
     tags: slurm
+  - include: tasks/pbs.yml
+    tags: pbs
   - include: tasks/nginx.yml
     tags: nginx
   - include: tasks/proftpd.yml

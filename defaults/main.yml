@@ -2,8 +2,10 @@
 # https://github.com/bgruening/docker-galaxy-stable.
 
 galaxy_extras_config_nginx: true
+galaxy_extras_config_nginx_upload: true
 galaxy_extras_config_proftpd: true
 galaxy_extras_config_slurm: true
+galaxy_extras_config_pbs: false
 galaxy_extras_config_supervisor: true
 galaxy_extras_config_galaxy_root: true
 galaxy_extras_config_galaxy_job_metrics: true
@@ -11,6 +13,9 @@ galaxy_extras_config_uwsgi: true
 galaxy_extras_config_ie_proxy: true
 galaxy_extras_config_scripts: true
 galaxy_extras_config_startup: true
+
+# set the FQDN for the pbs server, only used when galaxy_extras_config_pbs: true
+pbs_server_name: pbsqueue
 
 # Install OS packages corresponding to each service being configured.
 galaxy_extras_install_packages: false
@@ -124,6 +129,7 @@ supervisor_manage_nginx: true
 supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_docker: true
+supervisor_manage_nodeproxy: true
 supervisor_manage_toolshed: false
 
 supervisor_galaxy_startsecs: 20

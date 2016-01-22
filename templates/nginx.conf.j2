@@ -133,7 +133,7 @@ http {
             alias /galaxy-central/config/plugins/interactive_environments/$ie_name/static/$static_file;
         }
 
-
+{% if galaxy_extras_config_nginx_upload == True %}
         # delegated uploads
         location /_upload {
             upload_store {{ nginx_upload_store_path }};
@@ -153,11 +153,11 @@ http {
             }
             rewrite "" $dst;
         }
-
+{% endif  %}
         error_page 502  /502.html;
         location = /502.html {
             root  /root/;
-            proxy_intercept_errors on; 
+            proxy_intercept_errors on;
         }
 
 
