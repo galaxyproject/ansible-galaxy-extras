@@ -127,7 +127,7 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONHOME={{ galaxy_venv_dir }}
+environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONHOME={{ galaxy_venv_dir }},VIRTUAL_ENV={{ galaxy_venv_dir }}{%- if galaxy_handler_env is defined %},{% endif %}{{ galaxy_handler_env }}
 startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_reports %}
