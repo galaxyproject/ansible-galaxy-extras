@@ -10,6 +10,7 @@
 
 - include: nginx.yml
   when: galaxy_extras_config_nginx
+  tags: nginx_config
 
 - include: proftpd.yml
   when: galaxy_extras_config_proftpd

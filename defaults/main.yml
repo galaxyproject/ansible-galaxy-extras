@@ -78,6 +78,7 @@ startup_chown_on_directory: ""
 nginx_conf_path: /etc/nginx/nginx.conf
 nginx_conf_directory: /etc/nginx/conf.d
 nginx_upload_store_path: "/tmp/nginx_upload_store"
+
 # Use nginx_*_location variables to control serving apps at subdirectories.
 # If galaxy should be served at subdirectory (e.g. example.com/galaxy) set nginx_galaxy_location: /galaxy
 # If all apps should be served on a common subdirectory, use nginx_prefix_location: /your_common_dir
