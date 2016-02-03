@@ -93,19 +93,19 @@ http {
 
         # serve static content
         location /static {
-            alias {{ galaxy_root }}/static;
+            alias {{ galaxy_server_dir }}/static;
             gzip on;
             gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
             expires 24h;
         }
         location /static/style {
-            alias {{ galaxy_root }}/static/style/blue;
+            alias {{ galaxy_server_dir }}/static/style/blue;
             gzip on;
             gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
             expires 24h;
         }
         location /static/scripts {
-            alias {{ galaxy_root }}/static/scripts/packed;
+            alias {{ galaxy_server_dir }}/static/scripts/packed;
             gzip on;
             gzip_types text/plain text/javascript application/x-javascript;
             expires 24h;
@@ -126,7 +126,7 @@ http {
         }
 
         location ~ ^/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
-            alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
+            alias {{ galaxy_server_dir }}/config/plugins/visualizations/$vis_name/static/$static_file;
         }
 
         location ~ ^/plugins/interactive_environments/(?<ie_name>.+?)/static/(?<static_file>.*?)$ {
