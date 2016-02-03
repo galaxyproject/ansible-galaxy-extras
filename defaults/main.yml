@@ -78,6 +78,8 @@ startup_chown_on_directory: ""
 nginx_conf_path: /etc/nginx/nginx.conf
 nginx_conf_directory: /etc/nginx/conf.d
 nginx_upload_store_path: "/tmp/nginx_upload_store"
+# Set nginx_proxy_prefix to galaxy, if galaxy should be served at subdirectory (e.g. example.com/galaxy)
+nginx_proxy_prefix: ""
 
 ## Development Box Configuration
 # Configure nginx to setup a proxy to an IDE.
