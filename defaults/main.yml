@@ -79,6 +79,15 @@ nginx_conf_path: /etc/nginx/nginx.conf
 nginx_conf_directory: /etc/nginx/conf.d
 nginx_upload_store_path: "/tmp/nginx_upload_store"
 
+# Use nginx_*_location variables to control serving apps at subdirectories.
+# If galaxy should be served at subdirectory (e.g. example.com/galaxy) set nginx_galaxy_location: /galaxy
+# If all apps should be served on a common subdirectory, use nginx_prefix_location: /your_common_dir
+nginx_prefix_location: ""
+nginx_galaxy_location: "{{ nginx_prefix_location }}"
+nginx_reports_location: "{{ nginx_prefix_location }}/reports"
+nginx_planemo_web_location: "{{ nginx_prefix_location }}/planemo"
+nginx_ide_location: "{{ nginx_prefix_location }}/ide"
+
 ## Development Box Configuration
 # Configure nginx to setup a proxy to an IDE.
 nginx_proxy_ide: false

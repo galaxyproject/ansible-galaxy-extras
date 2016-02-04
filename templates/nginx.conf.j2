@@ -39,7 +39,7 @@ http {
 {% if nginx_proxy_reports %}
         # enable reports under :80/reports/
         # if the file /etc/nginx/htpasswd exists authentification is enabled
-        location /reports/ {
+        location {{ nginx_reports_location }} {
             set $auth "Galaxy reports are restricted. Please contact your administrator.";
 
             if (!-f /etc/nginx/htpasswd) {
@@ -48,22 +48,22 @@ http {
 
             auth_basic $auth;
             auth_basic_user_file htpasswd;
-            proxy_pass http://127.0.0.1:{{ galaxy_reports_port }}/;
+            proxy_pass http://127.0.0.1:{{ galaxy_reports_port }};
         }
         # serve static content for report app
-        location /reports/static {
+        location  {{ nginx_reports_location }}/static {
             alias /galaxy-central/static;
             gzip on;
             gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
             expires 24h;
         }
-        location /reports/static/style {
+        location {{ nginx_reports_location }}/static/style {
             alias /galaxy-central/static/style/blue;
             gzip on;
             gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
             expires 24h;
         }
-        location /reports/static/scripts {
+        location {{ nginx_reports_location }}/static/scripts {
             alias /galaxy-central/static/scripts/packed;
             gzip on;
             gzip_types text/plain text/javascript application/x-javascript;
@@ -86,25 +86,25 @@ http {
         include {{ nginx_conf_directory }}/{{ a }}.conf;
 {% endfor %}
 {% if nginx_serve_planemo_machine_web %}
-        location /planemo {
+        location {{ nginx_planemo_web_location }} {
             alias {{ planemo_machine_web_dir }};
         }
 {% endif %}
 
         # serve static content
-        location /static {
+        location {{ nginx_galaxy_location }}/static {
             alias {{ galaxy_server_dir }}/static;
             gzip on;
             gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
             expires 24h;
         }
-        location /static/style {
+        location {{ nginx_galaxy_location }}/static/style {
             alias {{ galaxy_server_dir }}/static/style/blue;
             gzip on;
             gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
             expires 24h;
         }
-        location /static/scripts {
+        location {{ nginx_galaxy_location }}/static/scripts {
             alias {{ galaxy_server_dir }}/static/scripts/packed;
             gzip on;
             gzip_types text/plain text/javascript application/x-javascript;
@@ -112,13 +112,13 @@ http {
         }
 
         # delegated downloads
-        location /_x_accel_redirect {
+        location {{ nginx_galaxy_location }}/_x_accel_redirect {
             internal;
             alias /;
         }
 
         # this is needed if 'welcome_url' is set to /etc/galaxy/web
-        location /etc/galaxy/web {
+        location {{ nginx_galaxy_location }}/etc/galaxy/web {
             alias /etc/galaxy/web;
             gzip on;
             gzip_types text/plain text/xml text/javascript text/css application/x-javascript;
@@ -135,7 +135,7 @@ http {
 
 {% if galaxy_extras_config_nginx_upload == True %}
         # delegated uploads
-        location /_upload {
+        location {{ nginx_galaxy_location }}/_upload {
             upload_store {{ nginx_upload_store_path }};
             upload_store_access user:rw;
             upload_pass_form_field "";
@@ -146,7 +146,7 @@ http {
             upload_pass_args on;
             upload_pass /_upload_done;
         }
-        location /_upload_done {
+        location {{ nginx_galaxy_location }}/_upload_done {
             set $dst /api/tools;
             if ($args ~ nginx_redir=([^&]+)) {
                 set $dst $1;
@@ -154,8 +154,8 @@ http {
             rewrite "" $dst;
         }
 {% endif  %}
-        error_page 502  /502.html;
-        location = /502.html {
+        error_page 502  {{ nginx_prefix_location }}/502.html;
+        location = {{ nginx_prefix_location }}/502.html {
             root  /root/;
             proxy_intercept_errors on;
         }

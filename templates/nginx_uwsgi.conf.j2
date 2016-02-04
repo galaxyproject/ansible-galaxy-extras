@@ -1,5 +1,5 @@
 # pass to uWSGI by default
-location / {
+location {{ nginx_galaxy_location }}/ {
     uwsgi_pass 127.0.0.1:{{ uwsgi_port }};
     include uwsgi_params;
 {% if galaxy_admin_user is defined and galaxy_admin_user %}
