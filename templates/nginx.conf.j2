@@ -144,10 +144,10 @@ http {
             upload_set_form_field "${upload_field_name}_name" "$upload_file_name";
             upload_set_form_field "${upload_field_name}_path" "$upload_tmp_path";
             upload_pass_args on;
-            upload_pass /_upload_done;
+            upload_pass {{ nginx_galaxy_location }}/_upload_done;
         }
         location {{ nginx_galaxy_location }}/_upload_done {
-            set $dst /api/tools;
+            set $dst {{ nginx_galaxy_location }}/api/tools;
             if ($args ~ nginx_redir=([^&]+)) {
                 set $dst $1;
             }
