@@ -30,6 +30,10 @@ galaxy_extras_ie_jupyter_image: bgruening/docker-jupyter-notebook:16.01
 galaxy_extras_ie_fetch_rstudio: false
 galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:15.10
 
+# The storage backend to use for docker-in-docker.
+# aufs on parent docker cannot be combined with aufs in child docker
+galaxy_extras_docker_storage_backend: aufs
+
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
 galaxy_docker_volumes_from: galaxy
@@ -84,6 +88,7 @@ nginx_upload_store_path: "/tmp/nginx_upload_store"
 # If all apps should be served on a common subdirectory, use nginx_prefix_location: /your_common_dir
 nginx_prefix_location: ""
 nginx_galaxy_location: "{{ nginx_prefix_location }}"
+nginx_interactive_environment_location: "gie_proxy"
 nginx_reports_location: "{{ nginx_prefix_location }}/reports"
 nginx_planemo_web_location: "{{ nginx_prefix_location }}/planemo"
 nginx_ide_location: "{{ nginx_prefix_location }}/ide"

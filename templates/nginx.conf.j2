@@ -125,11 +125,25 @@ http {
             expires 24h;
         }
 
-        location ~ ^{{ nginx_galaxy_location }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
+        location {{ nginx_galaxy_location }}/{{ nginx_interactive_environment_location }} {
+            proxy_pass http://localhost:8800/{{ nginx_interactive_environment_location }};
+            proxy_redirect off;
+        }
+
+        # IPython specific. Other IEs may require their own routes.
+        location {{ nginx_galaxy_location }}/{{ nginx_interactive_environment_location }}/ipython/api/kernels {
+            proxy_pass http://localhost:8800/{{ nginx_interactive_environment_location }}/ipython/api/kernels;
+            proxy_redirect off;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+
+        location ~ ^/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
             alias {{ galaxy_server_dir }}/config/plugins/visualizations/$vis_name/static/$static_file;
         }
 
-        location ~ ^{{ nginx_galaxy_location }}/plugins/interactive_environments/(?<ie_name>.+?)/static/(?<static_file>.*?)$ {
+        location ~ ^/plugins/interactive_environments/(?<ie_name>.+?)/static/(?<static_file>.*?)$ {
             alias {{ galaxy_server_dir }}/config/plugins/interactive_environments/$ie_name/static/$static_file;
         }
 

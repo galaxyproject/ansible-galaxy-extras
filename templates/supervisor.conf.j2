@@ -172,7 +172,7 @@ redirect_stderr = true
 {% if supervisor_manage_docker %}
 [program:docker]
 directory       = /
-command         = /usr/bin/docker daemon --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 -s aufs
+command         = /usr/bin/docker daemon --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 -s {{ galaxy_extras_docker_storage_backend }}
 autostart       = {{ supervisor_docker_autostart }}
 autorestart     = {{ supervisor_docker_autorestart }}
 user            = root
