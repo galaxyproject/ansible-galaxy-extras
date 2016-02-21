@@ -139,7 +139,7 @@ http {
             proxy_set_header Connection "upgrade";
         }
 
-        location ~ ^{{ nginx_galaxy)location }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
+        location ~ ^{{ nginx_galaxy_location }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
             alias {{ galaxy_server_dir }}/config/plugins/visualizations/$vis_name/static/$static_file;
         }
 
