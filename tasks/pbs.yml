@@ -12,7 +12,7 @@
   register: requirements_txt
 
 - name: Fetch DRMAA egg for Galaxy
-  shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_root }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
+  shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_server_dir }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
   when: not requirements_txt.stat.exists
 
 # If job_conf.xml is installed before running galaxyprojectdotorg.galaxy, this would already be installed.
