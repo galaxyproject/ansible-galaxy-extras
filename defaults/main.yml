@@ -88,7 +88,7 @@ nginx_upload_store_path: "/tmp/nginx_upload_store"
 # If all apps should be served on a common subdirectory, use nginx_prefix_location: /your_common_dir
 nginx_prefix_location: ""
 nginx_galaxy_location: "{{ nginx_prefix_location }}"
-nginx_interactive_environment_location: "gie_proxy"
+nginx_interactive_environment_location: "{{ nginx_galaxy_location }}/gie_proxy"
 nginx_reports_location: "{{ nginx_prefix_location }}/reports"
 nginx_planemo_web_location: "{{ nginx_prefix_location }}/planemo"
 nginx_ide_location: "{{ nginx_prefix_location }}/ide"
