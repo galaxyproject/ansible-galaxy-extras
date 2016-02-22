@@ -12,6 +12,7 @@
 
 - name: Stop supervisor
   service: name=supervisor state=stopped
+  tags: stop_supervisor
 
 - name: Stop and remove uwsgi.
   service: name={{ item }} state=stopped enabled=no
