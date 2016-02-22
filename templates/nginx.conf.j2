@@ -139,12 +139,8 @@ http {
             proxy_set_header Connection "upgrade";
         }
 
-        location ~ ^{{ nginx_galaxy_location }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
-            alias {{ galaxy_server_dir }}/config/plugins/visualizations/$vis_name/static/$static_file;
-        }
-
-        location ~ ^{{ nginx_galaxy_location }}/plugins/interactive_environments/(?<ie_name>.+?)/static/(?<static_file>.*?)$ {
-            alias {{ galaxy_server_dir }}/config/plugins/interactive_environments/$ie_name/static/$static_file;
+        location ~ ^{{ nginx_galaxy_location }}/plugins/(?<plug_type>.+?)/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
+            alias {{ galaxy_server_dir }}/config/plugins/$plug_type/$vis_name/static/$static_file;
         }
 
 {% if galaxy_extras_config_nginx_upload == True %}
