@@ -4,7 +4,7 @@
 ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}"
 
 cd {{ galaxy_server_dir }}
-. {{ galaxy_server_dir }}/.venv/bin/activate
+. {{ galaxy_venv_dir }}/bin/activate
 umount /var/lib/docker
 
 {% if startup_export_user_files is defined and startup_export_user_files %}
