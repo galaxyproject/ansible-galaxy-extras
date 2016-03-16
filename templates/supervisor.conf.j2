@@ -82,9 +82,9 @@ priority        = 200
 [program:galaxy_web]
 {% if galaxy_uwsgi %}
 {% if galaxy_uwsgi_static_conf %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ galaxy_log_dir }}/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ uwsgi_log }} --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
 {% else %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto %(ENV_GALAXY_HOME)s/uwsgi.log --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto {{ uwsgi_log }} --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
 {% endif %}
 directory       = {{ galaxy_server_dir }}
 umask           = 022
@@ -132,7 +132,7 @@ startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_reports %}
 [program:reports]
-command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_reports_config_file }} --server-name=main --pid-file={{ galaxy_log_dir }}/reports.pid --log-file={{ galaxy_log_dir }}/reports.log
+command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_reports_config_file }} --server-name=main --pid-file={{ galaxy_log_dir }}/reports.pid --log-file={{ galaxy_reports_log }}
 directory       = {{ galaxy_server_dir }}
 process_name    = reports
 umask           = 022
