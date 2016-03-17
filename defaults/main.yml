@@ -56,12 +56,14 @@ galaxy_reports_config_file: "{{ galaxy_config_dir }}/reports_wsgi.ini"
 galaxy_toolshed_config_file: "{{ galaxy_config_dir }}/tool_shed.ini"
 galaxy_config_file: "{{ galaxy_config_dir }}/galaxy.ini"
 galaxy_reports_port: "9001"
+galaxy_reports_log: "{{ galaxy_log_dir }}/reports.log"
 
 galaxy_db_port: "5432"
 galaxy_database_connection: "postgres://{{ galaxy_user_name }}@localhost:{{ galaxy_db_port }}/galaxy"
 
 # Port to serve uwsgi on.
 galaxy_uwsgi: true
+uwsgi_log: "{{ galaxy_log_dir }}/uwsgi.log"
 uwsgi_port: 4001
 
 # Set to true to write thread/process number into supervisor config. If false, uses environmental variables.
@@ -77,6 +79,8 @@ galaxy_handler_processes: 2
 
 startup_export_user_files: true
 startup_chown_on_directory: ""
+
+slurm_log_dir: "{{ galaxy_log_dir }}"
 
 # Nginx configuration.
 nginx_conf_path: /etc/nginx/nginx.conf

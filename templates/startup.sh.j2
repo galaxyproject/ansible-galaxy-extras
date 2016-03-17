@@ -119,12 +119,12 @@ function start_supervisor {
         if [[ $NONUSE != *"slurmctld"* ]]
         then
             echo "Starting slurmctld"
-            /usr/sbin/slurmctld -L /home/galaxy/slurmctld.log
+            /usr/sbin/slurmctld -L {{ slurm_log_dir }}/slurmctld.log
         fi
         if [[ $NONUSE != *"slurmd"* ]]
         then
             echo "Starting slurmd"
-            /usr/sbin/slurmd -L /home/galaxy/slurmd.log
+            /usr/sbin/slurmd -L {{ slurm_log_dir }}/slurmd.log
         fi
 
         # We need to run munged regardless
@@ -158,9 +158,9 @@ fi
 # Enable verbose output
 if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
     then
-        tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_home_dir }}/*.log
+        tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_log_dir }}/*.log
     else
-        tail -f {{ galaxy_home_dir }}/*.log
+        tail -f {{ galaxy_log_dir }}/*.log
 fi
 
 # Disable authentication of Galaxy reports
