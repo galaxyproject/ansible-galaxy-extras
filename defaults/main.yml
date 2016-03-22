@@ -67,6 +67,11 @@ nginx_conf_path: /etc/nginx/nginx.conf
 nginx_conf_directory: /etc/nginx/conf.d
 nginx_upload_store_path: "/tmp/nginx_upload_store"
 
+#web security
+nginx_use_passwords: False
+nginx_htpasswds:
+  - "admin:WiBKbsJTSQ8dc"
+
 ## Development Box Configuration
 # Configure nginx to setup a proxy to an IDE.
 nginx_proxy_ide: false
