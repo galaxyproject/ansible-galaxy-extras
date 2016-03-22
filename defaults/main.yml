@@ -97,6 +97,11 @@ nginx_reports_location: "{{ nginx_prefix_location }}/reports"
 nginx_planemo_web_location: "{{ nginx_prefix_location }}/planemo"
 nginx_ide_location: "{{ nginx_prefix_location }}/ide"
 
+#web security
+nginx_use_passwords: False
+nginx_htpasswds:
+  - "admin:WiBKbsJTSQ8dc"
+
 ## Development Box Configuration
 # Configure nginx to setup a proxy to an IDE.
 nginx_proxy_ide: false

@@ -36,6 +36,11 @@ http {
         listen 80 default_server;
         server_name  localhost;
 
+{% if nginx_use_passwords %}
+        auth_basic      "devbox";
+        auth_basic_user_file  /etc/nginx/htpasswd;
+{% endif %}
+
 {% if nginx_proxy_reports %}
         # enable reports under :80/reports/
         # if the file /etc/nginx/htpasswd exists authentification is enabled
@@ -164,6 +169,20 @@ http {
             rewrite "" $dst;
         }
 {% endif  %}
+
+{% if nginx_use_passwords %}
+        location /api {
+          auth_basic off;
+          proxy_pass http://galaxy_web_app/api;
+          proxy_set_header X-Forwarded-Host $host;
+          proxy_set_header X-Forwarded-For  $proxy_add_x_forwarded_for;     
+      {% if galaxy_admin_user is defined and galaxy_admin_user %}
+          # hard-code a fixed user to pass to Galaxy to auto-login
+          proxy_set_header REMOTE_USER '{{ galaxy_admin_user }}';
+      {% endif %}
+        }
+{% endif %}
+
         error_page 502  {{ nginx_prefix_location }}/502.html;
         location = {{ nginx_prefix_location }}/502.html {
             root  /root/;
