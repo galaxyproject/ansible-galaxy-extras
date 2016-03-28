@@ -21,7 +21,7 @@ stopasgroup     = true
 [program:slurmctld]
 user=root
 command=/bin/bash -c "/usr/bin/python /usr/sbin/configure_slurm.py && /usr/sbin/slurmctld -D -L {{supervisor_slurm_config_dir}}/slurmctld.log"
-redirect_stderr=true 
+redirect_stderr=true
 autorestart     = true
 priority=200
 stopasgroup     = true
@@ -29,7 +29,7 @@ stopasgroup     = true
 [program:slurmd]
 user=root
 command=/usr/sbin/slurmd -D -L {{supervisor_slurm_config_dir}}/slurmd.log
-redirect_stderr=true 
+redirect_stderr=true
 autorestart     = true
 priority=300
 {% endif %}
@@ -107,7 +107,7 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
+environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONPATH={{ galaxy_server_dir }}/eggs/PasteDeploy-1.5.0-py2.7.egg
 startretries    = {{ supervisor_galaxy_startretries }}
 # needed for bash wrapper
 stopasgroup     = true
