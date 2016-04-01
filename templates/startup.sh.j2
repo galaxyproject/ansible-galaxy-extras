@@ -21,6 +21,13 @@ if [ "x$ENABLE_TTS_INSTALL" != "x" ]
         export GALAXY_CONFIG_TOOL_SHEDS_CONFIG_FILE=$GALAXY_HOME/tool_sheds_conf.xml
 fi
 
+# Remove all default tools from Galaxy by default
+if [ "x$BARE" != "x" ]
+    then
+        echo "Remove all tools from the tool_conf.xml file."
+        export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_HOME/bare_tool_conf.xml
+fi
+
 # Backward compatibility for exported postgresql directories before version 15.08.
 # In previous versions postgres has the UID/GID of 102/106. We changed this in 
 # https://github.com/bgruening/docker-galaxy-stable/pull/71 to GALAXY_POSTGRES_UID=1550 and
