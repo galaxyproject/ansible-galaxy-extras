@@ -27,6 +27,7 @@
       <destination id="cluster" runner="pbs">
   {% elif galaxy_extras_config_slurm == True %}
       <destination id="cluster" runner="slurm">
+          <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=1 --share</param>
   {% endif %}
 
   {% if galaxy_source_shellrc %}
