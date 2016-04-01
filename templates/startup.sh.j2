@@ -25,7 +25,7 @@ fi
 if [ "x$BARE" != "x" ]
     then
         echo "Remove all tools from the tool_conf.xml file."
-        export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_HOME/bare_tool_conf.xml
+        export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_ROOT/test/functional/tools/upload_tool_conf.xml
 fi
 
 # Backward compatibility for exported postgresql directories before version 15.08.
