@@ -34,10 +34,10 @@
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
             {{ macros.docker_enabled() }}
         </destination>
-  {% endif %}
+ {% endif %}
   {% if galaxy_extras_config_slurm %}
         <destination id="slurm_cluster" runner="slurm">
-            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=1 --share</param>
+		<param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
             {{ macros.docker_enabled() }}
         </destination>
