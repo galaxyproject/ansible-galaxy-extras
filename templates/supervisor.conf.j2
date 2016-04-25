@@ -127,7 +127,6 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHONHOME={{ galaxy_venv_dir }}
 startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_reports %}
