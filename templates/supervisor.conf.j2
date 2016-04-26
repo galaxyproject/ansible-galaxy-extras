@@ -92,7 +92,7 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONPATH={{ galaxy_server_dir }}/eggs/PasteDeploy-1.5.0-py2.7.egg
+environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 numprocs        = 1
 stopsignal      = INT
 startretries    = {{ supervisor_galaxy_startretries }}
@@ -107,7 +107,7 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONPATH={{ galaxy_server_dir }}/eggs/PasteDeploy-1.5.0-py2.7.egg
+environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 startretries    = {{ supervisor_galaxy_startretries }}
 # needed for bash wrapper
 stopasgroup     = true
@@ -127,7 +127,6 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }},PYTHONHOME={{ galaxy_venv_dir }}
 startretries    = {{ supervisor_galaxy_startretries }}
 
 {% if supervisor_manage_reports %}
@@ -140,7 +139,6 @@ autostart       = {{ supervisor_reports_autostart }}
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
 startretries    = {{ supervisor_galaxy_startretries }}
 {% endif %}
 
@@ -154,7 +152,6 @@ autostart       = true
 autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
-environment     = PYTHON_EGG_CACHE={{ galxy_egg_cache }}
 startretries    = {{ supervisor_galaxy_startretries }}
 {% endif %}
 
