@@ -34,6 +34,16 @@ autorestart     = true
 priority=300
 {% endif %}
 
+{% if galaxy_extras_config_condor == True %}
+[program:condor]
+user=root
+command=condor_master
+redirect_stderr=true
+autorestart     = true
+priority=100
+{% endif %}
+
+
 {% if supervisor_manage_postgres %}
 {% if ansible_virtualization_type != "docker" %}
 [program:pre_postgresql]

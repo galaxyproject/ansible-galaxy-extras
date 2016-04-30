@@ -1,10 +1,16 @@
 <?xml version="1.0"?>
+{% import "macros.xml.j2" as macros with context %}
 <job_conf>
     <plugins workers="2">
 {% if galaxy_extras_config_slurm == True %}
         <plugin id="slurm" type="runner" load="galaxy.jobs.runners.slurm:SlurmJobRunner">
             <param id="drmaa_library_path">/usr/lib/slurm-drmaa/lib/libdrmaa.so</param>
         </plugin>
+{% endif %}
+{% if galaxy_extras_config_condor == True %}
+        <plugins>
+            <plugin id="condor" type="runner" load="galaxy.jobs.runners.condor:CondorJobRunner" />
+        </plugins>
 {% endif %}
 {% if galaxy_extras_config_pbs == True %}
         <plugin id="pbs" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner">
@@ -21,26 +27,28 @@
   {% endfor %}
 {% endif %}
     </handlers>
-    <destinations default="cluster">
-{% if galaxy_extras_config_slurm == True or galaxy_extras_config_pbs == True %}
+    <destinations default="slurm_cluster">
+{% if galaxy_extras_config_slurm == True or galaxy_extras_config_pbs == True or galaxy_extras_config_condor == True %}
   {% if galaxy_extras_config_pbs == True %}
-      <destination id="cluster" runner="pbs">
+        <destination id="pbs_cluster" runner="pbs">
+            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
+            {{macros.docker_enabled()}}
+        </destination>
   {% elif galaxy_extras_config_slurm == True %}
-      <destination id="cluster" runner="slurm">
-          <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=1 --share</param>
+        <destination id="slurm_cluster" runner="slurm">
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=1 --share</param>
+            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
+            {{macros.docker_enabled()}}
+        </destination>
+  {% elif galaxy_extras_config_condor == True %}
+        <destination id="condor_cluster" runner="condor">
+        {% if galaxy_extras_config_condor_docker == True %}
+            <param id="universe" from_environ="GALAXY_CONDA_UNIVERSE">docker</param>
+        {% endif %}
+            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
+        </destination>
   {% endif %}
 
-  {% if galaxy_source_shellrc %}
-          <env file="{{ galaxy_user_shellrc }}" />
-  {% endif %}
-          <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-          <param id="docker_enabled" from_environ="GALAXY_DOCKER_ENABLED">{{ galaxy_docker_enabled }}</param>
-          <param id="docker_sudo" from_environ="GALAXY_DOCKER_SUDO">{{ galaxy_docker_sudo }}</param>
-          <!-- The empty volumes from shouldn't affect Galaxy, set GALAXY_DOCKER_VOLUMES_FROM to use. -->
-          <param id="docker_volumes_from" from_environ="GALAXY_DOCKER_VOLUMES_FROM">{{ galaxy_docker_volumes_from }}</param>
-          <!-- For a stock Galaxy instance and traditional job runner $defaults will expand out as: $galaxy_root:ro,$tool_directory:ro,$working_directory:rw,$default_file_path:rw -->
-          <param id="docker_volumes" from_environ="GALAXY_DOCKER_VOLUMES">{{ galaxy_docker_volumes }}</param>
-        </destination>
 {% endif %}
     </destinations>
     <limits>
