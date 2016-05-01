@@ -2,19 +2,17 @@
 {% import "macros.xml.j2" as macros with context %}
 <job_conf>
     <plugins workers="2">
-{% if galaxy_extras_config_slurm == True %}
+{% if galaxy_extras_config_slurm %}
         <plugin id="slurm" type="runner" load="galaxy.jobs.runners.slurm:SlurmJobRunner">
             <param id="drmaa_library_path">/usr/lib/slurm-drmaa/lib/libdrmaa.so</param>
         </plugin>
 {% endif %}
-{% if galaxy_extras_config_condor == True %}
-        <plugins>
-            <plugin id="condor" type="runner" load="galaxy.jobs.runners.condor:CondorJobRunner" />
-        </plugins>
+{% if galaxy_extras_config_condor %}
+        <plugin id="condor" type="runner" load="galaxy.jobs.runners.condor:CondorJobRunner" />
 {% endif %}
-{% if galaxy_extras_config_pbs == True %}
+{% if galaxy_extras_config_pbs %}
         <plugin id="pbs" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner">
-          <param id="drmaa_library_path">/usr/lib/pbs-drmaa/lib/libdrmaa.so.1</param>
+            <param id="drmaa_library_path">/usr/lib/pbs-drmaa/lib/libdrmaa.so.1</param>
         </plugin>
 {% endif %}
     </plugins>
@@ -30,22 +28,24 @@
     </handlers>
     <!-- The default destination can be changed by specifying the GALAXY_DESTINATIONS_DEFAULT environment variable. -->
     <destinations default_from_environ="GALAXY_DESTINATIONS_DEFAULT" default="slurm_cluster">
-{% if galaxy_extras_config_slurm == True or galaxy_extras_config_pbs == True or galaxy_extras_config_condor == True %}
-  {% if galaxy_extras_config_pbs == True %}
+{% if galaxy_extras_config_slurm or galaxy_extras_config_pbs or galaxy_extras_config_condor %}
+  {% if galaxy_extras_config_pbs %}
         <destination id="pbs_cluster" runner="pbs">
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
             {{macros.docker_enabled()}}
         </destination>
-  {% elif galaxy_extras_config_slurm == True %}
+  {% endif %}
+  {% if galaxy_extras_config_slurm %}
         <destination id="slurm_cluster" runner="slurm">
             <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=1 --share</param>
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
             {{macros.docker_enabled()}}
         </destination>
-  {% elif galaxy_extras_config_condor == True %}
+  {% endif %}
+  {% if galaxy_extras_config_condor %}
         <destination id="condor_cluster" runner="condor">
-        {% if galaxy_extras_config_condor_docker == True %}
-            <param id="universe" from_environ="GALAXY_CONDA_UNIVERSE">docker</param>
+        {% if galaxy_extras_config_condor_docker %}
+            <param id="universe" from_environ="GALAXY_CONDA_UNIVERSE">vanilla</param>
         {% endif %}
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
         </destination>
