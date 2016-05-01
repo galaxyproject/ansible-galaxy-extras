@@ -14,8 +14,8 @@ password={{ supervisor_webserver_password }}
 [program:munge]
 user=root
 command=/bin/bash -c "mkdir -p /var/run/munge && /usr/sbin/munged -F"
-redirect_stderr=true
-priority=100
+redirect_stderr = true
+priority        = 100
 stopasgroup     = true
 
 [program:slurmctld]
@@ -23,24 +23,24 @@ user=root
 command=/bin/bash -c "/usr/bin/python /usr/sbin/configure_slurm.py && /usr/sbin/slurmctld -D -L {{supervisor_slurm_config_dir}}/slurmctld.log"
 redirect_stderr=true
 autorestart     = true
-priority=200
+priority        = 200
 stopasgroup     = true
 
 [program:slurmd]
 user=root
 command=/usr/sbin/slurmd -D -L {{supervisor_slurm_config_dir}}/slurmd.log
-redirect_stderr=true
+redirect_stderr = true
 autorestart     = true
-priority=300
+priority        = 300
 {% endif %}
 
-{% if galaxy_extras_config_condor == True %}
+{% if galaxy_extras_config_condor %}
 [program:condor]
 user=root
 command=condor_master
-redirect_stderr=true
+redirect_stderr = true
 autorestart     = true
-priority=100
+priority        = 100
 {% endif %}
 
 

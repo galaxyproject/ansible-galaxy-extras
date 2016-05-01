@@ -41,7 +41,7 @@ if [ -e /export/postgresql/ ];
 fi
 
 
-{% if galaxy_extras_config_condor == True %}
+{% if galaxy_extras_config_condor %}
 if [ "x$ENABLE_CONDOR" != "x" ]
 then
     echo "Enabling Condor"
