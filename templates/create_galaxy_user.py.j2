@@ -56,9 +56,9 @@ if __name__ == "__main__":
     parser.add_argument("--password", required=True,
                     help="Password.")
     parser.add_argument("--key", help="API-Key.")
-    parser.add_argument("--username",
+    parser.add_argument("--username", default="admin",
                     help="The public username. Public names must be at least three characters in length and contain only lower-case letters, numbers, and the '-' character.")
 
     options = parser.parse_args()
 
-    add_user(options.user, options.password, options.key)
+    add_user(options.user, options.password, key=options.key, username=options.username)
