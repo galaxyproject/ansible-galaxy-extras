@@ -40,6 +40,20 @@ if [ -e /export/postgresql/ ];
         fi
 fi
 
+
+{% if galaxy_extras_config_condor %}
+if [ "x$ENABLE_CONDOR" != "x" ]
+then
+    echo "Enabling Condor"
+    if [ -e /export/condor_config ]
+    then
+        rm -f /etc/condor/condor_config
+        ln -s /export/condor_config /etc/condor/condor_config
+    fi
+fi
+{% endif %}
+
+
 {% if startup_chown_on_directory is defined and startup_chown_on_directory %}
 if [ -e {{ startup_chown_on_directory }}  ];
 then

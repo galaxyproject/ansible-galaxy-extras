@@ -7,20 +7,20 @@
 
 - name: "Install proxy dependencies."
   shell: "cd {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js && npm install"
-  sudo: True
-  sudo_user: "{{ galaxy_user_name }}"
+  become: True
+  become_user: "{{ galaxy_user_name }}"
 
 - name: "Install IPython container."
   shell: "docker pull {{ galaxy_extras_ie_ipython_image }}"
-  sudo: True
+  become: True
   when: galaxy_extras_ie_fetch_ipython
 
 - name: "Install Juypter container."
   shell: "docker pull {{ galaxy_extras_ie_juypter_image }}"
-  sudo: True
+  become: True
   when: galaxy_extras_ie_fetch_jupyter
 
 - name: "Install RStudio container."
   shell: "docker pull {{ galaxy_extras_ie_rstudio_image }}"
-  sudo: True
+  become: True
   when: galaxy_extras_ie_fetch_rstudio

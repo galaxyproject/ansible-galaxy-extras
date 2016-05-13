@@ -1,0 +1,11 @@
+{% macro docker_enabled() -%}
+    {% if galaxy_source_shellrc %}
+        <env file="{{ galaxy_user_shellrc }}" />
+    {% endif %}
+        <param id="docker_enabled" from_environ="GALAXY_DOCKER_ENABLED">{{ galaxy_docker_enabled }}</param>
+        <param id="docker_sudo" from_environ="GALAXY_DOCKER_SUDO">{{ galaxy_docker_sudo }}</param>
+        <!-- The empty volumes from shouldn't affect Galaxy, set GALAXY_DOCKER_VOLUMES_FROM to use. -->
+        <param id="docker_volumes_from" from_environ="GALAXY_DOCKER_VOLUMES_FROM">{{ galaxy_docker_volumes_from }}</param>
+        <!-- For a stock Galaxy instance and traditional job runner $defaults will expand out as: $galaxy_root:ro,$tool_directory:ro,$working_directory:rw,$default_file_path:rw -->
+        <param id="docker_volumes" from_environ="GALAXY_DOCKER_VOLUMES">{{ galaxy_docker_volumes }}</param>
+{%- endmacro %}

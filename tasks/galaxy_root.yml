@@ -1,10 +1,10 @@
 # TODO: following task is kind of a crutch - shouldn't be needed.
 - name: "Run common_startup.sh to create welcome.html from sample"
   shell: "cd {{ galaxy_server_dir }} && scripts/common_startup.sh"
-  sudo: True
-  sudo_user: "{{ galaxy_user_name }}"
+  become: True
+  become_user: "{{ galaxy_user_name }}"
 
 - name: "Install watchdog for galaxy"
   pip: name=watchdog virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
-  sudo: True
-  sudo_user: "{{ galaxy_user_name }}"
+  become: True
+  become_user: "{{ galaxy_user_name }}"
