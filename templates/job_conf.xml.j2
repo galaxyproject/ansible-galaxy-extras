@@ -27,7 +27,7 @@
 {% endif %}
     </handlers>
     <!-- The default destination can be changed by specifying the GALAXY_DESTINATIONS_DEFAULT environment variable. -->
-    <destinations default_from_environ="GALAXY_DESTINATIONS_DEFAULT" default="slurm_cluster">
+    <destinations default_from_environ="GALAXY_DESTINATIONS_DEFAULT" default="cluster">
 {% if galaxy_extras_config_slurm or galaxy_extras_config_pbs or galaxy_extras_config_condor %}
   {% if galaxy_extras_config_pbs %}
         <destination id="pbs_cluster" runner="pbs">
