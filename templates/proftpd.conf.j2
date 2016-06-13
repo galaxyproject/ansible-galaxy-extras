@@ -6,7 +6,7 @@ Include /etc/proftpd/modules.conf
 ServerName                      "{{ proftpd_welcome }}"
 ServerType                      standalone
 DefaultServer                   on
-Port                            21
+Port                            {{ proftpd_ftp_port }}
 Umask                           022
 #SyslogFacility                 DAEMON
 #SyslogLevel                    debug
@@ -51,13 +51,17 @@ AuthPAM                         off
 
 # Set up mod_sql_password - Galaxy passwords are stored as hex-encoded SHA1
 SQLPasswordEngine               on
+{% if proftpd_sql_auth_type == "SHA-1" %}
 SQLPasswordEncoding             hex
+{% elif proftpd_sql_auth_type == "PBKDF2" %}
+SQLPasswordEncoding             base64
+{% endif %}
 
 # Set up mod_sql to authenticate against the Galaxy database
 SQLEngine                       on
 SQLBackend                      postgres
 SQLConnectInfo                  {{ proftpd_db_connection }} {{ proftpd_db_username }} {{ proftpd_db_password }}
-SQLAuthTypes                    SHA1
+SQLAuthTypes                    {{ proftpd_sql_auth_type }}
 SQLAuthenticate                 users
 
 # An empty directory in case chroot fails
@@ -65,6 +69,13 @@ SQLDefaultHomedir               /var/opt/local/proftpd
 
 # Define a custom query for lookup that returns a passwd-like entry.  UID and GID should match your Galaxy user.
 SQLUserInfo                     custom:/LookupGalaxyUser
+{% if proftpd_sql_auth_type == "SHA-1" %}
 SQLNamedQuery                   LookupGalaxyUser SELECT "email,password,'%{env:GALAXY_UID}','%{env:GALAXY_GID}','{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
-
-
+{% elif proftpd_sql_auth_type == "PBKDF2" %}
+SQLNamedQuery                   LookupGalaxyUser SELECT "email, (CASE WHEN substring(password from 1 for 6) = 'PBKDF2' THEN substring(password from 38 for 69) ELSE password END) AS password2,512,512,'{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
+SQLNamedQuery                   GetUserSalt SELECT "(CASE WHEN SUBSTRING (password from 1 for 6) = 'PBKDF2' THEN SUBSTRING (password from 21 for 16) END) AS salt FROM galaxy_user WHERE email='%U'"
+SQLDefaultGID                   %{env:GALAXY_GID}
+SQLDefaultUID                   %{env:GALAXY_UID}
+SQLPasswordPBKDF2               SHA256 10000 24
+SQLPasswordUserSalt             sql:/GetUserSalt
+{% endif %}
