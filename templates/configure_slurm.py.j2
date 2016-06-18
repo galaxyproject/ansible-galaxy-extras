@@ -94,6 +94,7 @@ def main():
     template_params = {
         "hostname": hostname,
         "control_machine": environ.get('SLURM_CONTROL_MACHINE', hostname),
+        "cluster_name": environ.get('SLURM_CLUSTER_NAME', 'cluster'),
         "user": environ.get('SLURM_USER_NAME', '{{ galaxy_user_name }}'),
         "cpus": environ.get("SLURM_CPUS", cpus),
         "partition_name": environ.get('SLURM_PARTITION_NAME', 'debug'),
