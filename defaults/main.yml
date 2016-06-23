@@ -134,7 +134,7 @@ proftpd_db_password: galaxy
 # or PBKDF2 if you have use_pbkd2=True or if you haven't changed the default.
 # If you want to use PBKDF-2 you will need proftpd version 1.3.5rc3 or later
 # (which is not available by default for ubuntu-12.04)
-proftpd_sql_auth_type: SHA-1
+proftpd_sql_auth_type: SHA1
 proftpd_welcome: "Public Galaxy FTP"
 proftpd_files_dir: /export/galaxy-central/database/ftp
 proftpd_ftp_port: 21
