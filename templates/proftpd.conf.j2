@@ -51,7 +51,7 @@ AuthPAM                         off
 
 # Set up mod_sql_password - Galaxy passwords are stored as hex-encoded SHA1
 SQLPasswordEngine               on
-{% if proftpd_sql_auth_type == "SHA-1" %}
+{% if proftpd_sql_auth_type == "SHA1" %}
 SQLPasswordEncoding             hex
 {% elif proftpd_sql_auth_type == "PBKDF2" %}
 SQLPasswordEncoding             base64
@@ -69,7 +69,7 @@ SQLDefaultHomedir               /var/opt/local/proftpd
 
 # Define a custom query for lookup that returns a passwd-like entry.  UID and GID should match your Galaxy user.
 SQLUserInfo                     custom:/LookupGalaxyUser
-{% if proftpd_sql_auth_type == "SHA-1" %}
+{% if proftpd_sql_auth_type == "SHA1" %}
 SQLNamedQuery                   LookupGalaxyUser SELECT "email,password,'%{env:GALAXY_UID}','%{env:GALAXY_GID}','{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
 {% elif proftpd_sql_auth_type == "PBKDF2" %}
 SQLNamedQuery                   LookupGalaxyUser SELECT "email, (CASE WHEN substring(password from 1 for 6) = 'PBKDF2' THEN substring(password from 38 for 69) ELSE password END) AS password2,512,512,'{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
