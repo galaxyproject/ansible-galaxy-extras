@@ -148,6 +148,26 @@ http {
             alias {{ galaxy_server_dir }}/config/plugins/$plug_type/$vis_name/static/$static_file;
         }
 
+{% if galaxy_extras_config_neo4j_ie == True %}
+        # Suppport for the Neo4j IE
+        location {{ nginx_interactive_environment_location }}/neo {
+            proxy_pass http://localhost:8800/;
+            proxy_redirect default;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+
+        # needed for the Neo4j IE because the Neo4j shell does XMLRPC calls to this URL
+        location /db/data {
+            proxy_pass http://localhost:8800/db/data;
+            proxy_redirect default;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+
+{% endif %}
 {% if galaxy_extras_config_nginx_upload == True %}
         # delegated uploads
         location {{ nginx_galaxy_location }}/_upload {
