@@ -136,8 +136,8 @@ http {
         }
 
         # IPython specific. Other IEs may require their own routes.
-        location {{ nginx_interactive_environment_location }}/ipython/api/kernels {
-            proxy_pass http://localhost:8800/{{ nginx_interactive_environment_location }}/ipython/api/kernels;
+        location ~ ^{{ nginx_interactive_environment_location }}/jupyter/(?<nbtype>[^/]+)/api/kernels(?<rest>.*?)$ {
+            proxy_pass http://localhost:8800/{{ nginx_interactive_environment_location }}/jupyter/$nbtype/api/kernels$rest;
             proxy_redirect off;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
