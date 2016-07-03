@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This is needed for Docker compose to have a unified alias for the main container.
+# Modifying /etc/hosts can only happen during runtime not during build-time
+echo "127.0.0.1      galaxy" >> /etc/hosts
+
 # Set number of Galaxy handlers via GALAXY_HANDLER_NUMPROCS or default to 2
 ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}"
 
