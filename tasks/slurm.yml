@@ -65,3 +65,4 @@
 
 - name: "Install Galaxy job conf"
   template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}}
+  tags: galaxy_extras_job_conf

@@ -21,6 +21,13 @@ galaxy_extras_galaxy_destination_default: slurm_cluster
 # set the FQDN for the pbs server, only used when galaxy_extras_config_pbs: true
 pbs_server_name: pbsqueue
 
+# Only used when galaxy_extras_config_slurm: true, sets slurm ntask in job_conf.xml.
+# Will be overwritten if NATIVE_SPEC environmental variable is set.
+# In the default setting controls the value of GALAXY_SLOTS.
+# Use ansible_processor_cores: "{{ ansible_processor_vcpus  }}" to set this to the number of
+# threads per core * processor count * cores per processor
+galaxy_extras_slurm_ntask: 1
+
 # Install OS packages corresponding to each service being configured.
 galaxy_extras_install_packages: false
 # If galaxy_extras_install_packages is enabled - should be these packages
