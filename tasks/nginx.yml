@@ -8,8 +8,8 @@
     owner=root group=root mode=0600
   with_items:
     - { src: 'htpasswd.j2',               dest: '/etc/nginx/htpasswd' }
-    - { src: 'nginx_ide.conf.j2',         dest: {{ nginx_conf_directory }}/ide.conf }
-    - { src: 'nginx_galaxy_web.conf.j2',  dest: {{ nginx_conf_directory }}/galaxy_web.conf }
-    - { src: 'nginx_uwsgi.conf.j2',       dest: {{ nginx_conf_directory }}/uwsgi.conf }
-    - { src: 'nginx.conf.j2',             dest: {{ nginx_conf_path }} }
+    - { src: 'nginx_ide.conf.j2',         dest: '{{ nginx_conf_directory }}/ide.conf' }
+    - { src: 'nginx_galaxy_web.conf.j2',  dest: '{{ nginx_conf_directory }}/galaxy_web.conf' }
+    - { src: 'nginx_uwsgi.conf.j2',       dest: '{{ nginx_conf_directory }}/uwsgi.conf' }
+    - { src: 'nginx.conf.j2',             dest: '{{ nginx_conf_path }}' }
   notify: restart nginx
