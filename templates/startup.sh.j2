@@ -9,7 +9,9 @@ ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf sectio
 
 cd {{ galaxy_server_dir }}
 . {{ galaxy_venv_dir }}/bin/activate
+{% if supervisor_manage_docker|bool %}
 umount /var/lib/docker
+{% endif %}
 
 {% if startup_export_user_files is defined and startup_export_user_files %}
 # If /export/ is mounted, export_user_files file moving all data to /export/
