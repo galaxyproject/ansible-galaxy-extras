@@ -83,7 +83,7 @@ then
 fi
 {% endif %}
 
-
+{% if supervisor_manage_slurm|bool %}
 # Copy or link the slurm/munge config files
 if [ -e /export/slurm.conf ]
 then
@@ -94,13 +94,14 @@ else
     # Use absolute path to python so virtualenv is not used.
     /usr/bin/python /usr/sbin/configure_slurm.py
 fi
+
 if [ -e /export/munge.key ]
 then
     rm -f /etc/munge/munge.key
     ln -s /export/munge.key /etc/munge/munge.key
     chmod 400 /export/munge.key
 fi
-
+{% endif %}
 # $NONUSE can be set to include proftp, reports or nodejs
 # if included we will _not_ start these services.
 function start_supervisor {
