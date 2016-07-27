@@ -1,16 +1,16 @@
 [supervisord]
 nodaemon=false
 
-{% if supervisor_webserver %}
+{% if supervisor_webserver|bool %}
 [inet_http_server]
 port={{ supervisor_webserver_port }}
-{% if supervisor_webserver_username %}
+{% if supervisor_webserver_username|bool %}
 username={{ supervisor_webserver_username }}
 password={{ supervisor_webserver_password }}
 {% endif %}
 {% endif %}
 
-{% if supervisor_manage_slurm %}
+{% if supervisor_manage_slurm|bool %}
 [program:munge]
 user=root
 command=/bin/bash -c "mkdir -p /var/run/munge && /usr/sbin/munged -F"
@@ -34,7 +34,7 @@ autorestart     = true
 priority        = 300
 {% endif %}
 
-{% if galaxy_extras_config_condor %}
+{% if galaxy_extras_config_condor|bool %}
 [program:condor]
 user=root
 command=condor_master
@@ -44,7 +44,7 @@ priority        = 100
 {% endif %}
 
 
-{% if supervisor_manage_postgres %}
+{% if supervisor_manage_postgres|bool %}
 {% if ansible_virtualization_type != "docker" %}
 [program:pre_postgresql]
 user            = root
@@ -63,7 +63,7 @@ redirect_stderr = true
 priority        = 100
 {% endif %}
 
-{% if supervisor_manage_proftp %}
+{% if supervisor_manage_proftp|bool %}
 [program:proftpd]
 {% if proftpd_nat_masquerade %}
 command         = bash -c " export MASQUERADE_ADDRESS={{ proftpd_masquerade_address }} && /usr/sbin/proftpd -n -c {{proftpd_conf_path}}"
@@ -76,7 +76,7 @@ stopasgroup     = true
 killasgroup     = true
 {% endif %}
 
-{% if supervisor_manage_nginx %}
+{% if supervisor_manage_nginx|bool %}
 [program:nginx]
 command         = /usr/sbin/nginx
 directory       = /
@@ -90,8 +90,8 @@ priority        = 200
 {% endif %}
 
 [program:galaxy_web]
-{% if galaxy_uwsgi %}
-{% if galaxy_uwsgi_static_conf %}
+{% if galaxy_uwsgi|bool %}
+{% if galaxy_uwsgi_static_conf|bool %}
 command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ uwsgi_log }} --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
 {% else %}
 command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto {{ uwsgi_log }} --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191
@@ -124,7 +124,7 @@ stopasgroup     = true
 {% endif %}
 
 [program:handler]
-{% if not galaxy_paste_handlers %}
+{% if not galaxy_paste_handlers|bool %}
 command         = {{ galaxy_venv_dir }}/bin/python ./lib/galaxy/main.py -c {{ galaxy_config_file }} --server-name=handler%(process_num)s --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
 {% else %}
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_config_file }} --server-name=handler%(process_num)s --pid-file={{ galaxy_log_dir }}/handler%(process_num)s.pid --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
@@ -139,7 +139,7 @@ startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
 startretries    = {{ supervisor_galaxy_startretries }}
 
-{% if supervisor_manage_reports %}
+{% if supervisor_manage_reports|bool %}
 [program:reports]
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_reports_config_file }} --server-name=main --pid-file={{ galaxy_log_dir }}/reports.pid --log-file={{ galaxy_reports_log }}
 directory       = {{ galaxy_server_dir }}
@@ -152,7 +152,7 @@ user            = {{ galaxy_user_name }}
 startretries    = {{ supervisor_galaxy_startretries }}
 {% endif %}
 
-{% if supervisor_manage_toolshed %}
+{% if supervisor_manage_toolshed|bool %}
 [program:toolshed]
 command         = {{ galaxy_venv_dir }}/bin/python ./scripts/paster.py serve {{ galaxy_toolshed_config_file }} --server-name=main --pid-file={{ galaxy_log_dir }}/toolshed.pid --log-file={{ galaxy_log_dir }}/toolshed.log
 directory       = {{ galaxy_server_dir }}
@@ -165,7 +165,7 @@ user            = {{ galaxy_user_name }}
 startretries    = {{ supervisor_galaxy_startretries }}
 {% endif %}
 
-{% if supervisor_manage_ie_proxy %}
+{% if supervisor_manage_ie_proxy|bool %}
 [program:galaxy_nodejs_proxy]
 directory       = {{ galaxy_server_dir }}
 command         = {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js/lib/main.js --sessions database/session_map.sqlite --ip 0.0.0.0 --port 8800
@@ -176,7 +176,7 @@ startsecs       = 5
 redirect_stderr = true
 {% endif %}
 
-{% if supervisor_manage_docker %}
+{% if supervisor_manage_docker|bool %}
 [program:docker]
 directory       = /
 command         = /usr/bin/docker daemon --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 -s {{ galaxy_extras_docker_storage_backend }}
@@ -188,7 +188,7 @@ redirect_stderr = true
 {% endif %}
 
 [group:galaxy]
-{% if supervisor_manage_ie_proxy %}
+{% if supervisor_manage_ie_proxy|bool %}
 programs = handler, galaxy_web, galaxy_nodejs_proxy
 {% else %}
 programs = handler, galaxy_web
