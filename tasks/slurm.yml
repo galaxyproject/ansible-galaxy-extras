@@ -17,13 +17,13 @@
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
     - slurm-llnl-torque 
-  when: galaxy_extras_install_packages and ansible_distribution_version <= "15.04"
+  when: galaxy_extras_install_packages|bool and ansible_distribution_version <= "15.04"
 
 - name: Install SLURM system packages
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
     - slurm-wlm-torque 
-  when: galaxy_extras_install_packages and ansible_distribution_version >= "15.04"
+  when: galaxy_extras_install_packages|bool and ansible_distribution_version >= "15.04"
 
 - name: Create Munge Key
   command: /usr/sbin/create-munge-key creates=/etc/munge/munge.key
