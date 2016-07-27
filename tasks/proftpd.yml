@@ -15,3 +15,6 @@
     - LoadModule mod_sql.c
     - LoadModule mod_sql_passwd.c
     - LoadModule mod_sql_postgres.c
+    - LoadModule mod_sftp.c
+    - LoadModule mod_sftp_pam.c
+    - LoadModule mod_sftp_sql.c
