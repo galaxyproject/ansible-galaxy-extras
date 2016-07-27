@@ -26,10 +26,10 @@ def change_path( src ):
             subprocess.call( 'chown -R %s:%s %s' % ( os.environ['GALAXY_UID'], os.environ['GALAXY_GID'], dest ), shell=True )
         # if destination exists (e.g. continuing a previous session), remove source and symlink
         else:
-            if os.path.isdir( src ):
+            if os.path.isdir( src ) and not os.path.islink( src.rstrip('/') ):
                 shutil.rmtree( src )
             else:
-                os.unlink( src )
+                os.unlink( src.rstrip('/') )
             os.symlink( dest, src.rstrip('/') )
 
 
