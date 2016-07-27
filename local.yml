@@ -1,7 +1,7 @@
 ---
 # file: local.yml
 #   Short-cut to run local install tasks without setting up an inventory.
-# 
+#
 # Run roles locally via following command:
 #   ansible-playbook -i localhost, local.yml [-e var=val]* --tags=<tag[,tag]> --skip-tags=<tag[,tag]>
 - hosts: localhost
@@ -17,3 +17,5 @@
     tags: proftpd
   - include: tasks/supervisor.yml
     tags: supervisor
+  - include: tasks/letsencrypt.yml
+    tags: letsencrypt
