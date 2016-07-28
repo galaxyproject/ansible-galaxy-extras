@@ -51,7 +51,7 @@ if __name__ == "__main__":
     for filename in os.listdir('/export/'):
         if filename.startswith('welcome'):
             export_file = os.path.join( '/export/', filename)
-            image_file = os.path.join('/etc/galaxy/web/', filename)
+            image_file = os.path.join('{{ galaxy_config_dir }}/web/', filename)
             shutil.copy(export_file, image_file)
 
     if not os.path.exists( '/export{{ galaxy_server_dir }}/' ):
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # replace Galaxy's copy with these. Use symbolic link instead of copying so
     # deployer can update and reload Galaxy and changes will be reflected.
     for config in [ 'galaxy.ini', 'job_conf.xml' ]:
-        image_config = os.path.join('/etc/galaxy/', config)
+        image_config = os.path.join('{{ galaxy_config_dir }}/', config)
         export_config = os.path.join( '/export{{ galaxy_server_dir }}/config', config )
         export_sample = export_config + ".docker_sample"
         shutil.copy(image_config, export_sample)
