@@ -17,7 +17,7 @@ Group                           nogroup
 # Passive port range for the firewall
 PassivePorts                    {{ proftpd_passive_port_low }} {{ proftpd_passive_port_high }}
 
-{% if proftpd_use_sftp_instead %}
+{% if proftpd_use_sftp %}
 SFTPEngine                      on
 
 # Configure both the RSA and DSA host keys, using the same host key files that OpenSSH uses.
