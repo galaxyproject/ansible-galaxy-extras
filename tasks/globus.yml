@@ -1,5 +1,6 @@
----
- - hosts: headnode
+
+ - name: globus1
+   hosts: headnode
    gather_facts: yes
    tasks:
 
@@ -18,7 +19,9 @@
    - name: test
      shell: echo {{ ansible_hostname }}  > test1.tmp
 
- - hosts: headnode
+
+ - name: globus2
+   hosts: headnode
    gather_facts: yes
    tasks:
 
