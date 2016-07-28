@@ -83,7 +83,7 @@ then
 fi
 {% endif %}
 
-{% if supervisor_manage_slurm|bool %}
+{% if use_slurm|bool %}
 # Copy or link the slurm/munge config files
 if [ -e /export/slurm.conf ]
 then
@@ -144,6 +144,7 @@ function start_supervisor {
         supervisorctl start munge
 
     {% else %}
+      {% if use_slurm|bool %}
         if [[ $NONUSE != *"slurmctld"* ]]
         then
             echo "Starting slurmctld"
@@ -157,7 +158,7 @@ function start_supervisor {
 
         # We need to run munged regardless
         mkdir -p /var/run/munge && /usr/sbin/munged -f
-
+      {% endif %}
     {% endif %}
 }
 
