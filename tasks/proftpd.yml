@@ -18,6 +18,7 @@
 
 - name: Load Proftpd SFTP modules
   lineinfile: dest=/etc/proftpd/modules.conf line="{{ item }}"
+  with_items:
     - LoadModule mod_sftp.c
     - LoadModule mod_sftp_pam.c
     - LoadModule mod_sftp_sql.c
