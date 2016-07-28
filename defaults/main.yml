@@ -191,3 +191,4 @@ supervisor_webserver_password: changeme
 
 use_pbkdf2: false
 use_slurm: true
+use_docker: true

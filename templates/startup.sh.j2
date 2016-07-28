@@ -9,7 +9,7 @@ ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf sectio
 
 cd {{ galaxy_server_dir }}
 . {{ galaxy_venv_dir }}/bin/activate
-{% if supervisor_manage_docker|bool %}
+{% if use_docker|bool %}
 umount /var/lib/docker
 {% endif %}
 
