@@ -18,26 +18,26 @@
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - uwsgi
-  when: galaxy_extras_config_uwsgi and supervisor_manage_uwsgi
+  when: galaxy_extras_config_uwsgi|bool and supervisor_manage_uwsgi|bool
 
 - name: Stop and remove munge.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - munge
-  when: galaxy_extras_config_slurm and supervisor_manage_slurm
+  when: galaxy_extras_config_slurm|bool and supervisor_manage_slurm|bool
 
 - name: Stop and remove slurm.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - slurm-llnl
-  when: galaxy_extras_config_slurm and supervisor_manage_slurm and ansible_distribution_version <= "15.04"
+  when: galaxy_extras_config_slurm|bool and supervisor_manage_slurm|bool and ansible_distribution_version <= "15.04"
 
 - name: Stop and remove slurm.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - slurmd
     - slurmctld
-  when: galaxy_extras_config_slurm and supervisor_manage_slurm and ansible_distribution_version > "15.04"
+  when: galaxy_extras_config_slurm|bool and supervisor_manage_slurm|bool and ansible_distribution_version > "15.04"
 
 - name: Stop and remove postgresql.
   service: name={{ item }} state=stopped enabled=no
@@ -49,13 +49,13 @@
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - proftpd
-  when: galaxy_extras_config_proftpd and supervisor_manage_proftp
+  when: galaxy_extras_config_proftpd|bool and supervisor_manage_proftp|bool
 
 - name: Stop and remove nginx.
   service: name={{ item }} state=stopped enabled=no
   with_items:
     - nginx
-  when: galaxy_extras_config_nginx and supervisor_manage_nginx
+  when: galaxy_extras_config_nginx|bool and supervisor_manage_nginx|bool
 
 # Do not start supervisor when building docker-galaxy-stable
 - name: Start supervisor
