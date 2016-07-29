@@ -13,7 +13,7 @@ cd {{ galaxy_server_dir }}
 umount /var/lib/docker
 {% endif %}
 
-{% if startup_export_user_files is defined and startup_export_user_files %}
+{% if startup_export_user_files is defined and startup_export_user_files|bool %}
 # If /export/ is mounted, export_user_files file moving all data to /export/
 # symlinks will point from the original location to the new path under /export/
 # If /export/ is not given, nothing will happen in that step
@@ -47,7 +47,7 @@ if [ -e /export/postgresql/ ];
 fi
 
 
-{% if galaxy_extras_config_condor %}
+{% if galaxy_extras_config_condor|bool %}
 if [ "x$ENABLE_CONDOR" != "x" ]
 then
     echo "Enabling Condor"
@@ -60,7 +60,7 @@ fi
 {% endif %}
 
 
-{% if startup_chown_on_directory is defined and startup_chown_on_directory %}
+{% if startup_chown_on_directory is defined and startup_chown_on_directory|bool %}
 if [ -e {{ startup_chown_on_directory }}  ];
 then
     old_uid=`stat -c '%u' "{{ galaxy_home_dir }}"`
@@ -107,21 +107,21 @@ fi
 function start_supervisor {
     supervisord -c /etc/supervisor/supervisord.conf
     sleep 5
-    {% if supervisor_manage_proftp %}
+    {% if supervisor_manage_proftp|bool %}
     if [[ $NONUSE != *"proftp"* ]]
     then
         echo "Starting ProFTP"
         supervisorctl start proftpd
     fi
     {% endif %}
-    {% if supervisor_manage_reports %}
+    {% if supervisor_manage_reports|bool %}
     if [[ $NONUSE != *"reports"* ]]
     then
         echo "Starting Galaxy reports webapp"
         supervisorctl start reports
     fi
     {% endif %}
-    {% if supervisor_manage_ie_proxy %}
+    {% if supervisor_manage_ie_proxy|bool %}
     if [[ $NONUSE != *"nodejs"* ]]
     then
         echo "Starting nodejs"
