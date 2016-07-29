@@ -9,7 +9,7 @@ ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf sectio
 
 cd {{ galaxy_server_dir }}
 . {{ galaxy_venv_dir }}/bin/activate
-{% if use_docker|bool %}
+{% if galaxy_extras_config_docker|bool %}
 umount /var/lib/docker
 {% endif %}
 
@@ -83,7 +83,7 @@ then
 fi
 {% endif %}
 
-{% if use_slurm|bool %}
+{% if galaxy_extras_config_slurm|bool %}
 # Copy or link the slurm/munge config files
 if [ -e /export/slurm.conf ]
 then
@@ -129,36 +129,35 @@ function start_supervisor {
     fi
     {% endif %}
 
-
-    {% if supervisor_manage_slurm %}
-        if [[ $NONUSE != *"slurmctld"* ]]
-        then
-            echo "Starting slurmctld"
-            supervisorctl start slurmctld
-        fi
-        if [[ $NONUSE != *"slurmd"* ]]
-        then
-            echo "Starting slurmd"
-            supervisorctl start slurmd
-        fi
-        supervisorctl start munge
-
-    {% else %}
-      {% if use_slurm|bool %}
-        if [[ $NONUSE != *"slurmctld"* ]]
-        then
-            echo "Starting slurmctld"
-            /usr/sbin/slurmctld -L {{ slurm_log_dir }}/slurmctld.log
-        fi
-        if [[ $NONUSE != *"slurmd"* ]]
-        then
-            echo "Starting slurmd"
-            /usr/sbin/slurmd -L {{ slurm_log_dir }}/slurmd.log
-        fi
-
-        # We need to run munged regardless
-        mkdir -p /var/run/munge && /usr/sbin/munged -f
-      {% endif %}
+    {% if galaxy_extras_config_slurm|bool %}
+       {% if supervisor_manage_slurm|bool %}
+           if [[ $NONUSE != *"slurmctld"* ]]
+           then
+               echo "Starting slurmctld"
+               supervisorctl start slurmctld
+           fi
+           if [[ $NONUSE != *"slurmd"* ]]
+           then
+               echo "Starting slurmd"
+               supervisorctl start slurmd
+           fi
+           supervisorctl start munge
+   
+       {% else %}
+           if [[ $NONUSE != *"slurmctld"* ]]
+           then
+               echo "Starting slurmctld"
+               /usr/sbin/slurmctld -L {{ slurm_log_dir }}/slurmctld.log
+           fi
+           if [[ $NONUSE != *"slurmd"* ]]
+           then
+               echo "Starting slurmd"
+               /usr/sbin/slurmd -L {{ slurm_log_dir }}/slurmd.log
+           fi
+   
+           # We need to run munged regardless
+           mkdir -p /var/run/munge && /usr/sbin/munged -f
+       {% endif %}
     {% endif %}
 }
 

@@ -8,6 +8,7 @@ galaxy_extras_config_slurm: true
 galaxy_extras_config_pbs: false
 galaxy_extras_config_condor: false
 galaxy_extras_config_condor_docker: false
+galaxy_extras_config_docker: false
 galaxy_extras_config_supervisor: true
 galaxy_extras_config_galaxy_root: true
 galaxy_extras_config_galaxy_job_metrics: true
@@ -190,5 +191,3 @@ supervisor_webserver_username: null
 supervisor_webserver_password: changeme
 
 use_pbkdf2: false
-use_slurm: true
-use_docker: true
