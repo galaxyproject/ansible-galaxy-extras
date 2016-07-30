@@ -1,0 +1,4 @@
+- name: Restart Nginx
+  command: /usr/sbin/nginx -s reload
+  become: yes
+  become_user: root
