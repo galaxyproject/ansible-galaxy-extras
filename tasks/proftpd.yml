@@ -35,3 +35,12 @@
   args:
     creates: /root/.ssh/id_dsa
   when: proftpd_use_sftp
+
+- name: Generate new DHparams
+  shell:   openssl dhparam -outform PEM {{ item[0] }} {{ item[1] }} | tee -a "${THIS_DIR}/dhparams.pem"
+  with_nested:
+    - [2, 5]
+    - [1024, 1536, 2048, 4096, 6144, 8192]
+
+
+
