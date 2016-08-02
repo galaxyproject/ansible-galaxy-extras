@@ -41,6 +41,7 @@
   with_nested:
     - [2, 5]
     - [1024, 1536, 2048, 4096, 6144, 8192]
+  when: proftpd_use_sftp
 
 
 
