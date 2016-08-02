@@ -10,7 +10,6 @@
     - munge
     - slurm-llnl
     - slurm-drmaa-dev
-    - python-psutil
   when: galaxy_extras_install_packages
 
 - name: Install SLURM system packages
