@@ -23,3 +23,15 @@
     - LoadModule mod_sftp_pam.c
     - LoadModule mod_sftp_sql.c
   when: proftpd_use_sftp
+
+- name: Generate new SSH keys (rsa)
+  shell: ssh-keygen -b 2048 -t rsa -f /ssh_host_keys/rsa -N ""
+  args:
+    creates: /root/.ssh/id_rsa
+  when: proftpd_use_sftp
+
+- name: Generate new SSH keys (dsa)
+  shell: ssh-keygen -b 1024 -t dsa -f /ssh_host_keys/dsa -N ""
+  args:
+    creates: /root/.ssh/id_dsa
+  when: proftpd_use_sftp
