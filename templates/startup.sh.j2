@@ -125,6 +125,13 @@ function start_supervisor {
         supervisorctl start galaxy:galaxy_nodejs_proxy
     fi
     {% endif %}
+    {% if supervisor_manage_condor|bool %}
+            if [[ $NONUSE != *"condor"* ]]
+    then
+        echo "Starting condor"
+        supervisorctl start condor
+    fi
+    {% endif %}
 
 
     {% if supervisor_manage_slurm|bool %}

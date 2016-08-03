@@ -39,6 +39,7 @@ priority        = 300
 user=root
 command=condor_master
 redirect_stderr = true
+autostart       = {{ supervisor_condor_autostart }}
 autorestart     = true
 priority        = 100
 {% endif %}

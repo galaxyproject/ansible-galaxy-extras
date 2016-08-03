@@ -169,6 +169,7 @@ supervisor_manage_proftp: true
 supervisor_manage_nginx: true
 supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
+supervisor_manage_condor: true
 supervisor_manage_docker: true
 supervisor_manage_nodeproxy: true
 supervisor_manage_toolshed: false
@@ -180,6 +181,7 @@ supervisor_galaxy_startretries: 15
 
 supervisor_ie_proxy_autostart: false
 supervisor_reports_autostart: false
+supervisor_condor_autostart: false
 supervisor_proftpd_autostart: false
 supervisor_docker_autostart: false
 supervisor_docker_autorestart: true
