@@ -23,8 +23,6 @@ SFTPEngine                      on
 # Configure both the RSA and DSA host keys, using the same host key files that OpenSSH uses.
 SFTPHostKey                     /etc/proftpd/ssh_host_keys/rsa
 SFTPHostKey                     /etc/proftpd/ssh_host_keys/dsa
-SFTPAuthMethods                 publickey keyboard-interactive password
-SFTPAuthorizedUserKeys          file:/etc/proftpd/authorized_keys/%u
 SFTPCompression                 delayed
 {% endif %}
 
