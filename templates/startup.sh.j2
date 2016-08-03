@@ -126,7 +126,7 @@ function start_supervisor {
     fi
     {% endif %}
     {% if supervisor_manage_condor|bool %}
-            if [[ $NONUSE != *"condor"* ]]
+    if [[ $NONUSE != *"condor"* ]]
     then
         echo "Starting condor"
         supervisorctl start condor
