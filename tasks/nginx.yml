@@ -12,4 +12,4 @@
     - { src: 'nginx_galaxy_web.conf.j2',  dest: '{{ nginx_conf_directory }}/galaxy_web.conf' }
     - { src: 'nginx_uwsgi.conf.j2',       dest: '{{ nginx_conf_directory }}/uwsgi.conf' }
     - { src: 'nginx.conf.j2',             dest: '{{ nginx_conf_path }}' }
-  notify: restart nginx
+  notify: Restart Nginx
