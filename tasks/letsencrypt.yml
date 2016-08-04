@@ -4,13 +4,10 @@
     dest: /etc/httpd/ssl/sample.com.crt
   register: sample_com_challenge
 
-# perform the necessary steps to fulfill the challenge
-# for example:
-#
-# - copy:
-#     dest: /var/www/html/{{ sample_com_http_challenge['challenge_data']['sample.com']['http-01']['resource'] }}
-#     content: "{{ sample_com_http_challenge['challenge_data']['sample.com']['http-01']['resource_value'] }}"
-#     when: sample_com_challenge|changed
+- copy:
+    dest: /var/www/html/{{ sample_com_http_challenge['challenge_data']['sample.com']['http-01']['resource'] }}
+    content: "{{ sample_com_http_challenge['challenge_data']['sample.com']['http-01']['resource_value'] }}"
+    when: sample_com_challenge|changed
 
 - letsencrypt:
     account_key: /etc/pki/cert/private/account.key
