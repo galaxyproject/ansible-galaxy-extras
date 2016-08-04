@@ -24,6 +24,10 @@
     - LoadModule mod_sftp_sql.c
   when: proftpd_use_sftp
 
+- name: Install OpenSSH client package
+  apt: pkg=openssh-client
+  when: proftpd_use_sftp
+
 - name: Generate new SSH keys (rsa)
   shell: ssh-keygen -b 2048 -t rsa -f /etc/proftpd/ssh_host_keys/rsa -N ""
   args:
