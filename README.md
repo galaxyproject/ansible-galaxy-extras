@@ -1,4 +1,4 @@
-## Ansible Galaxy Extras
+# Ansible Galaxy Extras
 
 This Ansible role is for building out some production services on top
 of Galaxy - the so-called @natefoo stack - uWSGI, NGINX, Proftpd, and
