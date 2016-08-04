@@ -25,7 +25,7 @@
   when: proftpd_use_sftp
 
 - name: OpenSSH | Make sure server and client packages are installed
-  apt: pkg="openssh-client"
+  apt: pkg=openssh-client
   when: proftpd_use_sftp
 
 - name: Generate new SSH keys (rsa)
