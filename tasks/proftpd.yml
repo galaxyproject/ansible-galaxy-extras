@@ -28,6 +28,10 @@
   apt: pkg=openssh-client
   when: proftpd_use_sftp
 
+- name: Create /etc/proftpd/ssh_host_keys/ directory
+  file: path=/etc/proftpd/ssh_host_keys/ state=directory
+  when: proftpd_use_sftp
+
 - name: Generate new SSH keys (rsa)
   shell: ssh-keygen -b 2048 -t rsa -f /etc/proftpd/ssh_host_keys/rsa -N ""
   args:
