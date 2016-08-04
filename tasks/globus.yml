@@ -1,18 +1,20 @@
 
 # http://docs.ansible.com/ansible/get_url_module.html
 - name: Download Globus Connect Server
-  shell: sudo curl -LOs http://toolkit.globus.org/ftppub/globus-connect-server/globus-connect-server-repo_latest_all.deb
+  shell: curl -LOs http://toolkit.globus.org/ftppub/globus-connect-server/globus-connect-server-repo_latest_all.deb
+  become: true
 
 - name: Install Globus Repo
-  shell: sudo dpkg -i globus-connect-server-repo_latest_all.deb
+  shell: dpkg -i globus-connect-server-repo_latest_all.deb
+  become: true
 
-# http://docs.ansible.com/ansible/apt_module.html
-- name: apt-get update
-  shell: sudo apt-get update
+- name: apt update
+  apt: update_cache=yes
+  become: true
 
-# http://docs.ansible.com/ansible/apt_module.html
 - name: Install Globus Connect Server
-  shell: sudo apt-get install globus-connect-server
+  apt: pkg=globus-connect-server
+  become: true
 
  - name: test
    shell: echo {{ ansible_hostname }}  > test1.tmp
