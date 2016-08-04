@@ -1,3 +1,5 @@
+# Ansible Galaxy Extras
+
 This Ansible role is for building out some production services on top
 of Galaxy - the so-called @natefoo stack - uWSGI, NGINX, Proftpd, and
 supervisor.
@@ -34,8 +36,7 @@ an example of how to use this role.
 Code of Conduct
 --------------------
 
-Please note that this project follows the Galaxy `Contributor Code of Conduct 
-<https://github.com/galaxyproject/galaxy/blob/dev/CODE_OF_CONDUCT.md>`__. By
+Please note that this project follows the Galaxy [Contributor Code of Conduct](https://github.com/galaxyproject/galaxy/blob/dev/CODE_OF_CONDUCT.md). By
 participating in this project you agree to abide by its terms.
 
 
