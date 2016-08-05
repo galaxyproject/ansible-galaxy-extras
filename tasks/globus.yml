@@ -16,18 +16,19 @@
   apt: pkg=globus-connect-server
   become: true
 
- - name: test
-   shell: echo {{ ansible_hostname }}  > test1.tmp
+- name: test
+  shell: echo {{ ansible_hostname }}  > test1.tmp
 
- - template: src=globus-connect-server.conf dest=/etc/globus-connect-server.conf
+- template: src=globus-connect-server.conf dest=/etc/globus-connect-server.conf
 
- - expect:
-     command: globus-connect-server-setup
-     responses:
-       (?i)Globus Username: "{{ globus_username }}"
-       (?i)Globus Password: "{{ globus_passwd }}"
+- expect:
+  command: globus-connect-server-setup
+  responses:
+    (?i)Globus Username: "{{ globus_username }}"
+    (?i)Globus Password: "{{ globus_passwd }}"
 
- vars_prompt:
+
+vars_prompt:
   - name: globus_username
     prompt: "Enter your Globus Online Username:"
     private: no
@@ -35,8 +36,9 @@
     prompt: "Enter your Globus Online Password:"
     private: yes
 
- vars:
-   globus_endpoint_name: "{{ globus_username }}#{{ ansible_hostname }}"
+
+vars:
+  globus_endpoint_name: "{{ globus_username }}#{{ ansible_hostname }}"
 
 
 
