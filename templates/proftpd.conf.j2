@@ -18,14 +18,15 @@ Group                           nogroup
 PassivePorts                    {{ proftpd_passive_port_low }} {{ proftpd_passive_port_high }}
 
 {% if proftpd_use_sftp %}
-SFTPEngine                      on
-
-# Configure both the RSA and DSA host keys, using the same host key files that OpenSSH uses.
-SFTPHostKey                     /etc/proftpd/ssh_host_keys/rsa
-SFTPHostKey                     /etc/proftpd/ssh_host_keys/dsa
-SFTPCompression                 delayed
+<VirtualHost 0.0.0.0>
+    Port                        {{ proftpd_sftp_port }}
+    SFTPEngine                  on
+    SFTPLog                     none
+    SFTPHostKey                 /etc/proftpd/ssh_host_keys/rsa
+    SFTPHostKey                 /etc/proftpd/ssh_host_keys/dsa
+    SFTPCompression             delayed
+</VirtualHost>
 {% endif %}
-
 
 {% if proftpd_nat_masquerade %}
 # If your host was NATted, this option is useful in order to
