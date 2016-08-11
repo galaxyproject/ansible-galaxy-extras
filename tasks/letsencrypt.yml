@@ -1,58 +1,37 @@
 
----
-ssl_certs_country: "US"
-ssl_certs_locality: "New York"
-ssl_certs_organization: "Your company"
-ssl_certs_state: "New York"
-ssl_certs_common_name: "{{ansible_fqdn}}"
-ssl_certs_days: "365"
-ssl_certs_fields: "/C={{ssl_certs_country}}/ST={{ssl_certs_state}}/L={{ssl_certs_locality}}/O={{ssl_certs_organization}}/CN={{ssl_certs_common_name}}"
+# letsencrypt_setup must have been turned on
 
-ssl_certs_path: "/etc/ssl/{{ssl_certs_common_name}}"
-ssl_certs_path_owner: "www-data"
-ssl_certs_path_group: "www-data"
-ssl_certs_privkey_path: "{{ssl_certs_path}}/{{ssl_certs_common_name}}.key"
-ssl_certs_cert_path: "{{ssl_certs_path}}/{{ssl_certs_common_name}}.pem"
-ssl_certs_csr_path: "{{ssl_certs_path}}/{{ssl_certs_common_name}}.csr"
-ssl_certs_dhparam_path: "{{ssl_certs_path}}/dhparam.pem"
-ssl_certs_mode: "0700"
-
-ssl_certs_local_privkey_path: "{{inventory_dir|default(playbook_dir)}}/files/ssl/{{ssl_certs_common_name}}.key"
-ssl_certs_local_cert_path: "{{inventory_dir|default(playbook_dir)}}/files/ssl/{{ssl_certs_common_name}}.pem"
-
-ssl_certs_generate_self_signed: true
-ssl_certs_key_size: "2048"
-ssl_certs_generate_dh_param: false
-ssl_certs_dhparam_size: "2048"
-
-
-- name: Generate RSA key
-  command: openssl genrsa -out {{ ssl_certs_privkey_path }} {{ ssl_certs_key_size }} creates={{ ssl_certs_privkey_path }}
-
-- name: RSA key file ownership
-  file: path={{ ssl_certs_privkey_path }} owner={{ ssl_certs_path_owner }} group={{ ssl_certs_path_group }} mode={{ ssl_certs_mode }}
+csr_country: "US"
+csr_locality: "New York"
+csr_organization: "Your company"
+csr_state: "New York"
+csr_common_name: "{{ansible_fqdn}}"
+csr_days: "365"
+csr_fields: "/C={{ssl_certs_country}}/ST={{ssl_certs_state}}/L={{ssl_certs_locality}}/O={{ssl_certs_organization}}/CN={{ssl_certs_common_name}}"
 
 - name: Generate CSR
-  command: openssl req -new -sha256 -subj "{{ ssl_certs_fields }}" -key {{ ssl_certs_privkey_path }} -out {{ ssl_certs_csr_path }} creates={{ ssl_certs_csr_path }}
-
-- name: CSR file ownership
-  file: path={{ ssl_certs_csr_path }} owner={{ ssl_certs_path_owner }} group={{ ssl_certs_path_group }} mode={{ ssl_certs_mode }}
+  command: openssl req -new -sha256 -subj "{{ csr_fields }}" -key /etc/pki/cert/private/account.key -out /etc/pki/cert/csr/sample.com.csr
+    creates: /etc/pki/cert/csr/sample.com.csr
 
 
 - letsencrypt:
-  account_key: /etc/pki/cert/private/account.key
-  csr: /etc/pki/cert/csr/sample.com.csr
-  dest: /etc/httpd/ssl/sample.com.crt
+    account_key: /etc/pki/cert/private/account.key
+    csr: /etc/pki/cert/csr/sample.com.csr
+    dest: /etc/httpd/ssl/sample.com.crt
   register: sample_com_challenge
 
+- debug: msg="csr submitted, sample challenge registered"
+  when: sample_com_challenge|changed
+
 - copy:
-  dest: /var/www/html/{{ sample_com_http_challenge['challenge_data']['sample.com']['http-01']['resource'] }}
-  content: "{{ sample_com_http_challenge['challenge_data']['sample.com']['http-01']['resource_value'] }}"
+    dest: /var/www/html/{{ sample_com_challenge['challenge_data']['sample.com']['http-01']['resource'] }}
+    content: "{{ sample_com_challenge['challenge_data']['sample.com']['http-01']['resource_value'] }}"
   when: sample_com_challenge|changed
 
 - letsencrypt:
-  account_key: /etc/pki/cert/private/account.key
-  csr: /etc/pki/cert/csr/sample.com.csr
-  dest: /etc/httpd/ssl/sample.com.crt
-  data: "{{ sample_com_challenge }}"
+    account_key: /etc/pki/cert/private/account.key
+    csr: /etc/pki/cert/csr/sample.com.csr
+    dest: /etc/httpd/ssl/sample.com.crt
+    data: "{{ sample_com_challenge }}"
+  when: sample_com_challenge|changed
 

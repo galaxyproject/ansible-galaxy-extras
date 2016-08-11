@@ -17,5 +17,5 @@
     tags: proftpd
   - include: tasks/supervisor.yml
     tags: supervisor
-  - include: tasks/letsencrypt.yml
-    tags: letsencrypt
+  - include: tasks/letsencrypt_setup.yml
+    tags: letsencrypt_setup

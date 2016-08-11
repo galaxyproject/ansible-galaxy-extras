@@ -21,6 +21,9 @@
 - include: pbs.yml
   when: galaxy_extras_config_pbs
 
+- include: letsencrypt_setup.yml
+  when: galaxy_extras_config_letsencrypt_setup
+
 - include: supervisor.yml
   when: galaxy_extras_config_supervisor
 
@@ -32,3 +35,5 @@
 
 - include: startup.yml
   when: galaxy_extras_config_startup
+
+
