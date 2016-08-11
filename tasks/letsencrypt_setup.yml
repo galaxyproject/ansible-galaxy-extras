@@ -1,8 +1,0 @@
-
-- apt: name=openssl update_cache=yes
-
-- name: Generate RSA key
-  command: openssl genrsa -out /etc/pki/cert/private/account.key 2048
-    creates: /etc/pki/cert/private/account.key
-
-

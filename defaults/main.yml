@@ -8,7 +8,7 @@ galaxy_extras_config_slurm: true
 galaxy_extras_config_pbs: false
 galaxy_extras_config_condor: false
 galaxy_extras_config_condor_docker: false
-galaxy_extras_config_letsencrypt_setup: true
+galaxy_extras_config_letsencrypt: true
 galaxy_extras_config_supervisor: true
 galaxy_extras_config_galaxy_root: true
 galaxy_extras_config_galaxy_job_metrics: true
@@ -191,3 +191,10 @@ supervisor_webserver_username: null
 supervisor_webserver_password: changeme
 
 use_pbkdf2: false
+
+letsencrypt_csr_country: "US"
+letsencrypt_csr_locality: "New York"
+letsencrypt_csr_organization: "your organization"
+letsencrypt_csr_state: "New York"
+letsencrypt_csr_common_name: "e.g. galaxy.nyu.edu"
+letsencrypt_csr_fields: "/C={{letsencrypt_csr_country}}/ST={{letsencrypt_csr_state}}/L={{letsencrypt_csr_locality}}/O={{letsencrypt_csr_organization}}/CN={{letsencrypt_csr_common_name}}"

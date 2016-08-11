@@ -1,0 +1,7 @@
+csr_country: "US"
+csr_locality: "New York"
+csr_organization: "Your company"
+csr_state: "New York"
+csr_common_name: "{{ansible_fqdn}}"
+csr_fields: "/C={{csr_country}}/ST={{csr_state}}/L={{csr_locality}}/O={{csr_organization}}/CN={{csr_common_name}}"
+
