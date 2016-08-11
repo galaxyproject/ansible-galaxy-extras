@@ -192,9 +192,3 @@ supervisor_webserver_password: changeme
 
 use_pbkdf2: false
 
-letsencrypt_csr_country: "US"
-letsencrypt_csr_locality: "New York"
-letsencrypt_csr_organization: "your organization"
-letsencrypt_csr_state: "New York"
-letsencrypt_csr_common_name: "e.g. galaxy.nyu.edu"
-letsencrypt_csr_fields: "/C={{letsencrypt_csr_country}}/ST={{letsencrypt_csr_state}}/L={{letsencrypt_csr_locality}}/O={{letsencrypt_csr_organization}}/CN={{letsencrypt_csr_common_name}}"
