@@ -150,6 +150,7 @@ proftpd_passive_port_low: 30000
 proftpd_passive_port_high: 40000
 # Set proftpd_use_sftp to true to use sftp instead of ftp
 proftpd_use_sftp: false
+proftpd_sftp_port: 8022
 # Set masquearade to true if host is NAT'ed.
 proftpd_nat_masquerade: false
 # proftpd_masquerade_address refefers to the ip that clients use to establish an ftp connection.
