@@ -23,6 +23,7 @@ PassivePorts                    {{ proftpd_passive_port_low }} {{ proftpd_passiv
     SFTPEngine                              on
     SFTPLog                                 none
     SFTPHostKey                     /etc/proftpd/ssh_host_keys/rsa
+    SFTPHostKey                     /etc/proftpd/ssh_host_keys/dsa		
     SFTPCompression                 delayed
 </VirtualHost>
 {% endif %}
