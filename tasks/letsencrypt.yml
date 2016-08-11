@@ -6,8 +6,7 @@ csr_locality: "New York"
 csr_organization: "Your company"
 csr_state: "New York"
 csr_common_name: "{{ansible_fqdn}}"
-csr_days: "365"
-csr_fields: "/C={{ssl_certs_country}}/ST={{ssl_certs_state}}/L={{ssl_certs_locality}}/O={{ssl_certs_organization}}/CN={{ssl_certs_common_name}}"
+csr_fields: "/C={{csr_country}}/ST={{csr_state}}/L={{csr_locality}}/O={{csr_organization}}/CN={{csr_common_name}}"
 
 - name: Generate CSR
   command: openssl req -new -sha256 -subj "{{ csr_fields }}" -key /etc/pki/cert/private/account.key -out /etc/pki/cert/csr/sample.com.csr
