@@ -23,10 +23,7 @@ PassivePorts                    {{ proftpd_passive_port_low }} {{ proftpd_passiv
     SFTPEngine                              on
     SFTPLog                                 none
     SFTPHostKey                     /etc/proftpd/ssh_host_keys/rsa
-    SFTPHostKey                     /etc/proftpd/ssh_host_keys/dsa
-    SFTPAuthorizedUserKeys  file:../etc/ssh/authorized_keys
     SFTPCompression                 delayed
-    MaxLoginAttempts                6
 </VirtualHost>
 {% endif %}
 
