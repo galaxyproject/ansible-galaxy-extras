@@ -82,7 +82,7 @@ SQLPasswordUserSalt             sql:/GetUserSalt
 {% endif %}
 {%- endmacro %}
 
-{{ SQL_Auth }}
+{{ SQL_Auth() }}
 
 <IfModule mod_sftp.c>
     <VirtualHost 0.0.0.0>
@@ -93,7 +93,7 @@ SQLPasswordUserSalt             sql:/GetUserSalt
         SFTPHostKey                 /etc/proftpd/ssh_host_keys/dsa
         SFTPCompression             delayed
 
-        {{ SQL_Auth }}
+        {{ SQL_Auth() }}
 
     </VirtualHost>
 </IfModule>
