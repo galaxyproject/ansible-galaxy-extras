@@ -17,16 +17,22 @@ Group                           nogroup
 # Passive port range for the firewall
 PassivePorts                    {{ proftpd_passive_port_low }} {{ proftpd_passive_port_high }}
 
-{% if proftpd_use_sftp %}
-<VirtualHost 0.0.0.0>
-    Port                        {{ proftpd_sftp_port }}
-    SFTPEngine                  on
-    SFTPLog                     none
-    SFTPHostKey                 /etc/proftpd/ssh_host_keys/rsa
-    SFTPHostKey                 /etc/proftpd/ssh_host_keys/dsa
-    SFTPCompression             delayed
-</VirtualHost>
-{% endif %}
+<IfModule mod_sftp.c>
+    <VirtualHost 0.0.0.0>
+        Port                        {{ proftpd_sftp_port }}
+        SFTPEngine                  on
+        SFTPLog                     none
+        SFTPHostKey                 /etc/proftpd/ssh_host_keys/rsa
+        SFTPHostKey                 /etc/proftpd/ssh_host_keys/dsa
+        SFTPCompression             delayed
+        SQLPasswordEngine           on
+        SQLConnectInfo              galaxy@galaxy galaxy galaxy
+        SQLAuthenticate             users
+        SQLDefaultHomedir           /var/opt/local/proftpd
+        SQLUserInfo                 custom:/LookupGalaxyUser
+        SQLNamedQuery               LookupGalaxyUser SELECT "email,password,'%{env:GALAXY_UID}','%{env:GALAXY_GID}','/export/ftp/%U','/bin/bash' FROM galaxy_user WHERE email='%U'
+    </VirtualHost>
+</IfModule>
 
 {% if proftpd_nat_masquerade %}
 # If your host was NATted, this option is useful in order to
