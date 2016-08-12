@@ -21,10 +21,10 @@ PassivePorts                    {{ proftpd_passive_port_low }} {{ proftpd_passiv
     <VirtualHost 0.0.0.0>
         Port                        {{ proftpd_sftp_port }}
         SFTPEngine                  on
-        SFTPLog                     none
         SFTPHostKey                 /etc/proftpd/ssh_host_keys/rsa
         SFTPHostKey                 /etc/proftpd/ssh_host_keys/dsa
         SFTPCompression             delayed
+        
         SQLPasswordEngine           on
         SQLConnectInfo              galaxy@galaxy galaxy galaxy
         SQLAuthenticate             users
