@@ -19,7 +19,7 @@ PassivePorts                    {{ proftpd_passive_port_low }} {{ proftpd_passiv
 
 <IfModule mod_sftp.c>
     <VirtualHost 0.0.0.0>
-        Port                        2222
+        Port                        {{ proftpd_sftp_port }}
         SFTPEngine                  on
         SFTPHostKey                 /etc/proftpd/ssh_host_keys/rsa
         SFTPHostKey                 /etc/proftpd/ssh_host_keys/dsa
