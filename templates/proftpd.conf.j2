@@ -1,7 +1,6 @@
 # Includes DSO modules
 Include /etc/proftpd/modules.conf
 
-
 # Basics, some site-specific
 ServerName                      "{{ proftpd_welcome }}"
 ServerType                      standalone
@@ -17,16 +16,6 @@ Group                           nogroup
 # Passive port range for the firewall
 PassivePorts                    {{ proftpd_passive_port_low }} {{ proftpd_passive_port_high }}
 
-{% if proftpd_use_sftp %}
-<VirtualHost 0.0.0.0>
-    Port                        {{ proftpd_sftp_port }}
-    SFTPEngine                  on
-    SFTPLog                     none
-    SFTPHostKey                 /etc/proftpd/ssh_host_keys/rsa
-    SFTPHostKey                 /etc/proftpd/ssh_host_keys/dsa
-    SFTPCompression             delayed
-</VirtualHost>
-{% endif %}
 
 {% if proftpd_nat_masquerade %}
 # If your host was NATted, this option is useful in order to
@@ -60,6 +49,8 @@ AllowStoreRestart               on
 # Do not authenticate against real (system) users
 AuthPAM                         off
 
+{% macro SQL_Auth() -%}
+
 # Set up mod_sql_password - Galaxy passwords are stored as hex-encoded SHA1
 SQLPasswordEngine               on
 {% if proftpd_sql_auth_type == "SHA1" %}
@@ -81,12 +72,37 @@ SQLDefaultHomedir               /var/opt/local/proftpd
 # Define a custom query for lookup that returns a passwd-like entry.  UID and GID should match your Galaxy user.
 SQLUserInfo                     custom:/LookupGalaxyUser
 {% if proftpd_sql_auth_type == "SHA1" %}
+
 SQLNamedQuery                   LookupGalaxyUser SELECT "email,password,'%{env:GALAXY_UID}','%{env:GALAXY_GID}','{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
+
 {% elif proftpd_sql_auth_type == "PBKDF2" %}
+
 SQLNamedQuery                   LookupGalaxyUser SELECT "email, (CASE WHEN substring(password from 1 for 6) = 'PBKDF2' THEN substring(password from 38 for 69) ELSE password END) AS password2,512,512,'{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
 SQLNamedQuery                   GetUserSalt SELECT "(CASE WHEN SUBSTRING (password from 1 for 6) = 'PBKDF2' THEN SUBSTRING (password from 21 for 16) END) AS salt FROM galaxy_user WHERE email='%U'"
 SQLDefaultGID                   %{env:GALAXY_GID}
 SQLDefaultUID                   %{env:GALAXY_UID}
 SQLPasswordPBKDF2               SHA256 10000 24
 SQLPasswordUserSalt             sql:/GetUserSalt
+
+{% endif %}
+
+{%- endmacro %}
+
+{{ SQL_Auth() }}
+
+{% if proftpd_use_sftp %}
+<IfModule mod_sftp.c>
+    <VirtualHost 0.0.0.0>
+        Port                        {{ proftpd_sftp_port }}
+        SFTPEngine                  on
+        SFTPPAMEngine               off
+        CreateHome                  on dirmode 700
+        SFTPHostKey                 /etc/proftpd/ssh_host_keys/rsa
+        SFTPHostKey                 /etc/proftpd/ssh_host_keys/dsa
+        SFTPCompression             delayed
+
+        {{ SQL_Auth() }}
+
+    </VirtualHost>
+</IfModule>
 {% endif %}
