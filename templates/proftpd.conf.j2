@@ -90,6 +90,7 @@ SQLPasswordUserSalt             sql:/GetUserSalt
 
 {{ SQL_Auth() }}
 
+{% if proftpd_use_sftp %}
 <IfModule mod_sftp.c>
     <VirtualHost 0.0.0.0>
         Port                        {{ proftpd_sftp_port }}
@@ -104,3 +105,4 @@ SQLPasswordUserSalt             sql:/GetUserSalt
 
     </VirtualHost>
 </IfModule>
+{% endif %}
