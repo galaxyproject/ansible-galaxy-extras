@@ -15,6 +15,7 @@ galaxy_extras_config_uwsgi: true
 galaxy_extras_config_ie_proxy: true
 galaxy_extras_config_neo4j_ie: false  # Configure routes for the Neo4j Interactive Environment
 galaxy_extras_config_scripts: true
+galaxy_extras_config_letsencrypt: false
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
 galaxy_extras_galaxy_destination_default: slurm_cluster
@@ -196,3 +197,7 @@ supervisor_webserver_username: null
 supervisor_webserver_password: changeme
 
 use_pbkdf2: false
+
+nginx_ssl_certificate_key: /etc/ssl/private/nginx.key
+nginx_ssl_certificate: /etc/ssl/private/nginx.crt
+

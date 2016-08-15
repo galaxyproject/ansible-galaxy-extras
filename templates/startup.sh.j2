@@ -41,7 +41,7 @@ if [ "x$BARE" != "x" ]
 fi
 
 # Backward compatibility for exported postgresql directories before version 15.08.
-# In previous versions postgres has the UID/GID of 102/106. We changed this in 
+# In previous versions postgres has the UID/GID of 102/106. We changed this in
 # https://github.com/bgruening/docker-galaxy-stable/pull/71 to GALAXY_POSTGRES_UID=1550 and
 # GALAXY_POSTGRES_GID=1550
 if [ -e /export/postgresql/ ];
@@ -191,7 +191,7 @@ if mount | grep "/proc/kcore"; then
 else
     echo "Enable Galaxy Interactive Environments."
     export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY="config/plugins/interactive_environments"
-    if [ x$DOCKER_PARENT == "x" ]; then 
+    if [ x$DOCKER_PARENT == "x" ]; then
         #build the docker in docker environment
         bash /root/cgroupfs_mount.sh
         start_supervisor
@@ -202,6 +202,13 @@ else
         echo "{{ galaxy_user_name }} ALL = NOPASSWD : ALL" >> /etc/sudoers
         start_supervisor
     fi
+fi
+
+if [ -n $GALAXY_CONFIG_DOMAIN ]
+then
+    echo -E "${GALAXY_CONFIG_DOMAIN}" >  /etc/letsencrypt/domain.txt
+    /usr/local/bin/letsencrypt_refresh
+    ln -s /usr/local/bin/letsencrypt_refresh /etc/cron.daily/
 fi
 
 # Enable verbose output
@@ -219,3 +226,4 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         echo "Disable Galaxy reports authentification "
         rm /etc/nginx/htpasswd
 fi
+

@@ -34,7 +34,6 @@ http {
 
     server {
         listen 80 default_server;
-        server_name  localhost;
 
 {% if nginx_use_passwords %}
         auth_basic      "devbox";
@@ -82,6 +81,8 @@ http {
 {% else %}
         include {{ nginx_conf_directory }}/galaxy_web.conf;
 {% endif %}
+
+        include {{ nginx_conf_directory }}/letsencrypt.conf;
 
 {% if nginx_proxy_ide %}
         include {{ nginx_conf_directory }}/ide.conf;
@@ -175,7 +176,7 @@ http {
           auth_basic off;
           proxy_pass http://galaxy_web_app/api;
           proxy_set_header X-Forwarded-Host $host;
-          proxy_set_header X-Forwarded-For  $proxy_add_x_forwarded_for;     
+          proxy_set_header X-Forwarded-For  $proxy_add_x_forwarded_for;
       {% if galaxy_admin_user is defined and galaxy_admin_user %}
           # hard-code a fixed user to pass to Galaxy to auto-login
           proxy_set_header REMOTE_USER '{{ galaxy_admin_user }}';
