@@ -26,11 +26,13 @@ def change_path( src ):
             subprocess.call( 'chown -R %s:%s %s' % ( os.environ['GALAXY_UID'], os.environ['GALAXY_GID'], dest ), shell=True )
         # if destination exists (e.g. continuing a previous session), remove source and symlink
         else:
-            if os.path.isdir( src ):
-                shutil.rmtree( src )
-            else:
-                os.unlink( src )
-            os.symlink( dest, src.rstrip('/') )
+            stripped_src = src.rstrip('/')
+            if not os.path.islink( stripped_src ):
+                if os.path.isdir( stripped_src ):
+                    shutil.rmtree( stripped_src )
+                else:
+                    os.unlink( stripped_src )
+                os.symlink( dest, src.rstrip('/') )
 
 
 if __name__ == "__main__":
@@ -41,9 +43,18 @@ if __name__ == "__main__":
         If the user re-starts (with docker start) the container the file /.galaxy_save is found and the linking
         is aborted.
     """
-    if os.path.exists( '/export/.distribution_config/' ):
-        shutil.rmtree( '/export/.distribution_config/' )
-    shutil.copytree( '/galaxy-central/config/', '/export/.distribution_config/' )
+
+    galaxy_root_dir = os.environ.get('GALAXY_ROOT', '/galaxy-central/')
+
+    galaxy_distrib_paths = {'/galaxy-central/config/': '/export/.distribution_config',
+                            '/galaxy-central/lib': '/export/galaxy-central/lib',
+                            '/galaxy-central/tools': '/export/galaxy-central/tools'}
+    for image_path, export_path in galaxy_distrib_paths.items():
+        if os.path.exists(export_path):
+            shutil.rmtree(export_path)
+        shutil.copytree( image_path, export_path )
+
+    shutil.copy('/galaxy-central/requirements.txt','/export/galaxy-central/requirements.txt')
 
 
     # Copy all files starting with "welcome"
@@ -56,9 +67,9 @@ if __name__ == "__main__":
 
     if not os.path.exists( '/export/galaxy-central/' ):
         os.makedirs("/export/galaxy-central/")
-        os.chown( "/export/galaxy-central/", int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
+    os.chown( "/export/galaxy-central/", int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
 
-    change_path('/galaxy-central/config/')
+    change_path( os.path.join(galaxy_root_dir, 'config') )
 
     # copy image defaults to config/<file>.docker_sample to base derivatives on,
     # and if there is a realized version of these files in the export directory
@@ -72,11 +83,13 @@ if __name__ == "__main__":
         if os.path.exists(export_config):
             subprocess.call('ln -s -f %s %s' % (export_config, image_config), shell=True)
 
-    change_path('/galaxy-central/integrated_tool_panel.xml')
-    change_path('/galaxy-central/display_applications/')
-    change_path('/tool_deps/')
-    change_path('/galaxy-central/tool-data/')
-    change_path('/shed_tools/')
+    change_path( os.path.join(galaxy_root_dir, 'tools.yaml') )
+    change_path( os.path.join(galaxy_root_dir, 'integrated_tool_panel.xml') )
+    change_path( os.path.join(galaxy_root_dir, 'display_applications') )
+    change_path( os.path.join('/tool_deps') )
+    change_path( os.path.join(galaxy_root_dir, 'tool-data') )
+    change_path( os.path.join(galaxy_root_dir, 'database') )
+    change_path( '/shed_tools/' )
     
     if os.path.exists('/export/reports_htpasswd'):
         shutil.copy('/export/reports_htpasswd', '/etc/nginx/htpasswd')
@@ -94,8 +107,10 @@ if __name__ == "__main__":
         # User given dbpath, usually a directory from the host machine
         # copy the postgresql data folder to the new location
         subprocess.call('cp -R %s/* %s' % (PG_DATA_DIR_DEFAULT, PG_DATA_DIR_HOST), shell=True)
+        os.symlink( os.path.join(os.environ.get('PG_CONF_DIR_DEFAULT'), 'conf.d'), os.path.join(PG_DATA_DIR_HOST, 'conf.d') )
         # copytree needs an non-existing dst dir, how annoying :(
         # shutil.copytree(PG_DATA_DIR_DEFAULT, PG_DATA_DIR_HOST)
         subprocess.call('chown -R postgres:postgres /export/postgresql/', shell=True)
         subprocess.call('chmod -R 0755 /export/', shell=True)
         subprocess.call('chmod -R 0700 %s' % PG_DATA_DIR_HOST, shell=True)
+
