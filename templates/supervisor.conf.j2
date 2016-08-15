@@ -37,7 +37,7 @@ priority        = 300
 {% if galaxy_extras_config_condor|bool %}
 [program:condor]
 user=root
-command=condor_master
+command=condor_master -f -t
 redirect_stderr = true
 autostart       = {{ supervisor_condor_autostart }}
 autorestart     = true
