@@ -34,6 +34,10 @@ def change_path( src ):
                     os.unlink( stripped_src )
                 os.symlink( dest, src.rstrip('/') )
 
+def _makedir(path):
+    if not os.path.exists( path ):
+        os.makedirs( path )
+    os.chown( path, int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
 
 if __name__ == "__main__":
     """
@@ -65,9 +69,8 @@ if __name__ == "__main__":
             image_file = os.path.join('/etc/galaxy/web/', filename)
             shutil.copy(export_file, image_file)
 
-    if not os.path.exists( '/export/galaxy-central/' ):
-        os.makedirs("/export/galaxy-central/")
-    os.chown( "/export/galaxy-central/", int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
+    _makedir('/export/galaxy-central/')
+    _makedir('/export/ftp/')
 
     change_path( os.path.join(galaxy_root_dir, 'config') )
 
