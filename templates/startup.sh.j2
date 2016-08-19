@@ -173,6 +173,8 @@ function start_supervisor {
     {% endif %}
 }
 
+# Change the data_directory of postgresql in the main config file
+ansible localhost -m lineinfile -a "line='data_directory = \"$PG_DATA_DIR_HOST\"' dest=$PG_CONF_DIR_DEFAULT/postgresql.conf backup=yes state=present regexp='data_directory'"
 
 # Try to guess if we are running under --privileged mode
 if mount | grep "/proc/kcore"; then
@@ -210,5 +212,3 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         echo "Disable Galaxy reports authentification "
         rm /etc/nginx/htpasswd
 fi
-
-
