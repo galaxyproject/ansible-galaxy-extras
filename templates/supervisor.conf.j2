@@ -188,6 +188,17 @@ startsecs       = 5
 redirect_stderr = true
 {% endif %}
 
+{% if galaxy_extras_config_rabbitmq|bool %}
+[program:rabbitmq]
+command=/bin/sh /usr/local/sbin/rabbitmq.sh
+user=root
+autostart=true
+autorestart=true
+environment=
+  HOME="/var/lib/rabbitmq/",
+  RABBITMQ_PID_FILE="/var/run/rabbitmq/pid"
+{% endif %}
+
 [group:galaxy]
 {% if supervisor_manage_ie_proxy|bool %}
 programs = handler, galaxy_web, galaxy_nodejs_proxy
