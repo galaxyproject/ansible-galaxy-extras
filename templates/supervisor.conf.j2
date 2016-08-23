@@ -190,13 +190,10 @@ redirect_stderr = true
 
 {% if galaxy_extras_config_rabbitmq|bool %}
 [program:rabbitmq]
-command=/bin/sh /usr/local/sbin/rabbitmq.sh
-user=root
-autostart=true
-autorestart=true
-environment=
-  HOME="/var/lib/rabbitmq/",
-  RABBITMQ_PID_FILE="/var/run/rabbitmq/pid"
+command         = /bin/sh /usr/local/bin/rabbitmq.sh
+user            = root
+autostart       = true
+autorestart     = true
 {% endif %}
 
 [group:galaxy]
