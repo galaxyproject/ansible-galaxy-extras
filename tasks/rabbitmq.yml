@@ -1,0 +1,2 @@
+- name: Copy startup script for rabbitmq
+  template: src=rabbitmq.sh.j2 dest=/usr/local/bin/rabbitmq.sh
