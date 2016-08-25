@@ -16,13 +16,13 @@
 - name: Install SLURM system packages
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
-    - slurm-llnl-torque 
+    - slurm-llnl-torque
   when: galaxy_extras_install_packages|bool and ansible_distribution_version <= "15.04"
 
 - name: Install SLURM system packages
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
-    - slurm-wlm-torque 
+    - slurm-wlm-torque
   when: galaxy_extras_install_packages|bool and ansible_distribution_version >= "15.04"
 
 - name: Create Munge Key
@@ -64,5 +64,5 @@
   when: requirements_txt.stat.exists
 
 - name: "Install Galaxy job conf"
-  template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}}
+  template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
   tags: galaxy_extras_job_conf
