@@ -4,6 +4,7 @@
 galaxy_extras_config_nginx: true
 galaxy_extras_config_nginx_upload: true
 galaxy_extras_config_proftpd: true
+galaxy_extras_config_globus: false
 galaxy_extras_config_slurm: true
 galaxy_extras_config_pbs: false
 galaxy_extras_config_condor: false
@@ -196,3 +197,7 @@ supervisor_webserver_username: null
 supervisor_webserver_password: changeme
 
 use_pbkdf2: false
+
+# globus_username: call this playbook with --extra-vars globus_username=<your globus username>
+# globus_passwd: call this playbook with --extra-vars globus_passwd=<your globus password>
+globus_endpoint_name: "{{ globus_username }}#{{ ansible_hostname }}"
