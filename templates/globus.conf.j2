@@ -8,12 +8,12 @@
 ; Globus user name. If not set, or left at its default, then the
 ; value of GLOBUS_USER environment variable is used, falling back to
 ; prompting if it is not present.
-User = {{ globus_username }}
+User = {{ GLOBUS_USERNAME }}
 
 ; Globus login password. If not set, or left at its default, then the
 ; value of the GLOBUS_PASSWORD environment variable is used, falling back
 ; to prompting if it is not present.
-Password = %(GLOBUS_PASSWORD)s
+Password = {{ GLOBUS_PASSWORD }}
 
 ;----------------------------------------------------------------------------;
 ;                        Globus Endpoint Configuration                       ;

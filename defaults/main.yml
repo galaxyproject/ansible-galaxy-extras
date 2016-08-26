@@ -198,6 +198,4 @@ supervisor_webserver_password: changeme
 
 use_pbkdf2: false
 
-# globus_username: call this playbook with --extra-vars globus_username=<your globus username>
-# globus_passwd: call this playbook with --extra-vars globus_passwd=<your globus password>
-globus_endpoint_name: "{{ globus_username }}#{{ ansible_hostname }}"
+globus_endpoint_name: "{{ ansible_hostname }}#dockerized_galaxy"

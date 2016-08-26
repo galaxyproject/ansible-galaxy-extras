@@ -1,33 +1,21 @@
 
-- assert:
-    that:
-      - globus_username is defined
-      - globus_passwd is defined
 
-# http://docs.ansible.com/ansible/get_url_module.html
+# switch to get_url? http://docs.ansible.com/ansible/get_url_module.html
 - name: Download Globus Connect Server
   shell: curl -LOs http://toolkit.globus.org/ftppub/globus-connect-server/globus-connect-server-repo_latest_all.deb
   become: true
+  when: galaxy_extras_config_globus
 
 - name: Install Globus Repo
   shell: dpkg -i globus-connect-server-repo_latest_all.deb
   become: true
-
-- name: apt update
-  apt: update_cache=yes
-  become: true
+  when: galaxy_extras_config_globus
 
 - name: Install Globus Connect Server
-  apt: pkg=globus-connect-server
+  apt: pkg=globus-connect-server update_cache=yes
   become: true
+  when: galaxy_extras_config_globus
 
-- name: test
-  shell: echo {{ ansible_hostname }}  > test1.tmp
+# this actually can't go here -- because we need variables only available at docker run time...
+- template: src=templatesglobus.conf dest=/etc/globus-connect-server.conf
 
-- template: src=templatesglobus.conf dest=/etc/globus.conf
-
-- expect:
-  command: globus-connect-server-setup
-  responses:
-    (?i)Globus Username: "{{ globus_username }}"
-    (?i)Globus Password: "{{ globus_passwd }}"
