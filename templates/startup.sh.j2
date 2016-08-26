@@ -13,7 +13,7 @@ fi
 echo "127.0.0.1      galaxy" >> /etc/hosts
 
 # Set number of Galaxy handlers via GALAXY_HANDLER_NUMPROCS or default to 2
-ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}"
+ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}" &> /dev/null
 
 cd {{ galaxy_server_dir }}
 . {{ galaxy_venv_dir }}/bin/activate
@@ -173,6 +173,8 @@ function start_supervisor {
     {% endif %}
 }
 
+# Change the data_directory of postgresql in the main config file
+ansible localhost -m lineinfile -a "line='data_directory = \'$PG_DATA_DIR_HOST\'' dest=$PG_CONF_DIR_DEFAULT/postgresql.conf backup=yes state=present regexp='data_directory'" &> /dev/null
 
 # Try to guess if we are running under --privileged mode
 if mount | grep "/proc/kcore"; then
@@ -210,5 +212,3 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         echo "Disable Galaxy reports authentification "
         rm /etc/nginx/htpasswd
 fi
-
-
