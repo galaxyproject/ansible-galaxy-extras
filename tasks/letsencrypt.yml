@@ -1,0 +1,23 @@
+# Letsencrypt-specific configuration:
+
+- name: Create letsencrypt configuration directory
+  file: path=/etc/letsencrypt state=directory mode=0755
+
+- name: Create letsencrypt wellknown directory
+  file: path=/etc/letsencrypt/wellknown state=directory mode=0755
+
+- name: Get letsencrypt script from github repository
+  get_url:
+    url: https://raw.githubusercontent.com/lukas2511/letsencrypt.sh/d81eb58536e3ae1170de3eda305688ae28d0575b/letsencrypt.sh
+    dest: /usr/bin/letsencrypt.sh
+    mode: "u=rwx,g=rx,o=r"
+
+- name: Setup letsencrypt-specific configuration files
+  template: >
+    src={{ item.src }}
+    dest={{ item.dest }}
+    owner=root group=root mode={{ item.mode }}
+  with_items:
+    - { src: 'nginx_letsencrypt.conf.j2', dest: '{{ nginx_conf_directory }}/letsencrypt-enabled.conf', mode: "u=rw,g=r,o=r" }
+    - { src: 'letsencrypt.conf.j2',       dest: '/etc/letsencrypt/letsencrypt.conf', mode: "u=rw,g=r,o=r" }
+    - { src: 'letsencrypt_refresh.sh.j2', dest: '/usr/local/bin/letsencrypt_refresh', mode: "u=rwx,g=rx,o=r" }
