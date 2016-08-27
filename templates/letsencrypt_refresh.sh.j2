@@ -1,16 +1,14 @@
 #!/bin/bash
 
-domain="$(cat /etc/letsencrypt/domain.txt)"
+DOMAIN="$1"
 
-letsencrypt.sh --cron -d ${GALAXY_CONFIG_DOMAIN} --config /etc/letsencrypt/letsencrypt.conf
+letsencrypt.sh --cron -d "$DOMAIN" --config /etc/letsencrypt/letsencrypt.conf
 
-if [ -e "/etc/ssl/private/${GALAXY_CONFIG_DOMAIN}/privkey.pem" -a -e "/etc/ssl/private/${GALAXY_CONFIG_DOMAIN}/fullchain.pem" ]
+if [ -e "/etc/ssl/private/"$DOMAIN"/privkey.pem" -a -e "/etc/ssl/private/"$DOMAIN"/fullchain.pem" ]
 then
-	ln -sf /etc/ssl/private/${GALAXY_CONFIG_DOMAIN}/privkey.pem {{ nginx_ssl_certificate_key }}
-	ln -sf /etc/ssl/private/${GALAXY_CONFIG_DOMAIN}/fullchain.pem {{ nginx_ssl_certificate }}
-
-	ln -sf letsencrypt-enabled.conf /etc/nginx/conf.d/letsencrypt.conf
-	supervisorctl restart nginx:
+	ln -sf /etc/ssl/private/"$DOMAIN"/privkey.pem {{ nginx_ssl_certificate_key }}
+	ln -sf /etc/ssl/private/"$DOMAIN"/fullchain.pem {{ nginx_ssl_certificate }}
+	nginx -s reload
 fi
 
 
