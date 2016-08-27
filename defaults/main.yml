@@ -204,7 +204,8 @@ nginx_ssl_certificate_key: /etc/ssl/private/nginx.key
 nginx_ssl_certificate: /etc/ssl/private/nginx.crt
 
 # Here you can set a path to a pair of ssl keys
+# These will be copied if galaxy_extras_config_ssl_method is set to 'own'
 # This defaults to a set of self-generated keys
-src_nginx_ssl_certificate_key:
-dest_nginx_ssl_certificate:
+src_nginx_ssl_certificate_key: nginx_sample.key
+src_nginx_ssl_certificate: nginx_sample.crt
 

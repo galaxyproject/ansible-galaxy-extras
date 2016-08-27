@@ -18,7 +18,14 @@
   include: letsencrypt.yml
   when: galaxy_extras_config_ssl_method == 'letsencrypt'
 
-- name: create self-signed SSL cert
+- name: Create self-signed SSL cert
   command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}" -extensions v3_ca creates="{{ nginx_ssl_certificate }}"
   when: galaxy_extras_config_ssl_method == 'self-signed'
   notify: Restart Nginx
+
+- name: Copy own certificate
+  copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0644 owner=root group=root backup=yes
+  when: galaxy_extras_config_ssl_method == 'own'
+  with_items:
+   - { src: '{{ src_nginx_ssl_certificate_key }}',  dest: '{{ nginx_ssl_certificate_key }}'}
+   - { src: '{{ src_nginx_ssl_certificate }}',  dest: '{{ nginx_ssl_certificate }}'}
