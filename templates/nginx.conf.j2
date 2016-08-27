@@ -31,9 +31,17 @@ http {
        server localhost:8080;
     }
 {% endif %}
+    server {
+        listen 80;
+{% if galaxy_extras_config_ssl %}
+        rewrite ^ https://$host$request_uri permanent;
+    }
 
     server {
-        listen 80 default_server;
+        listen 443 default ssl;
+        ssl_certificate {{ nginx_ssl_certificate }};
+        ssl_certificate_key {{ nginx_ssl_certificate_key }};
+{% endif %}
 
 {% if nginx_use_passwords %}
         auth_basic      "devbox";
