@@ -81,13 +81,12 @@ http {
 {% else %}
         include {{ nginx_conf_directory }}/galaxy_web.conf;
 {% endif %}
-
+{% if galaxy_extras_config_letsencrypt %}
         include {{ nginx_conf_directory }}/letsencrypt.conf;
-
+{% endif %}
 {% if nginx_proxy_ide %}
         include {{ nginx_conf_directory }}/ide.conf;
 {% endif %}
-
 {% for a in nginx_additional_config %}
         include {{ nginx_conf_directory }}/{{ a }}.conf;
 {% endfor %}

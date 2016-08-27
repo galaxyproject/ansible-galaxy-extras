@@ -14,9 +14,6 @@
     - { src: 'nginx.conf.j2',             dest: '{{ nginx_conf_path }}' }
   notify: Restart Nginx
 
-- name: disable https via letsencrypt by default
-  file: src=/dev/null dest={{ nginx_conf_directory }}/letsencrypt.conf owner=root group=root state=link
-
 # Letsencrypt-specific configuration:
 
 - name: Create letsencrypt configuration directory
