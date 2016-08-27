@@ -10,7 +10,7 @@ password={{ supervisor_webserver_password }}
 {% endif %}
 {% endif %}
 
-{% if galaxy_extras_config_letsencrypt|bool %}
+{% if galaxy_extras_config_letsencrypt|bool or galaxy_extras_config_cron|bool %}
 [program:crond]
 user            = root
 command         = /usr/sbin/cron -f

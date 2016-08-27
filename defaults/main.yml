@@ -18,6 +18,7 @@ galaxy_extras_config_scripts: true
 galaxy_extras_config_letsencrypt: false
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
+galaxy_extras_config_cron: false
 galaxy_extras_galaxy_destination_default: slurm_cluster
 
 # set the FQDN for the pbs server, only used when galaxy_extras_config_pbs: true
