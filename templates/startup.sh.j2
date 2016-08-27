@@ -204,11 +204,36 @@ else
     fi
 fi
 
-if [ -n $GALAXY_CONFIG_DOMAIN ]
+if [ -n $USE_HTTPS_LETSENCRYPT ]
 then
-    echo -E "${GALAXY_CONFIG_DOMAIN}" >  /etc/letsencrypt/domain.txt
-    /usr/local/bin/letsencrypt_refresh
-    ln -s /usr/local/bin/letsencrypt_refresh /etc/cron.daily/
+    echo "Settting up letsencrypt"
+    ansible-playbook -c local --no /tmp/provision.yml \
+    --extra-vars gather_facts=False \
+    --extra-vars galaxy_extras_config_ssl=True \
+    --extra-vars galaxy_extras_config_ssl_method=letsencrypt \
+    --extra-vars ansible_galaxy_extras_galaxy_domain="$GALAXY_DOMAIN" \
+    --tags https
+fi
+if [ -n $USE_HTTPS ]
+then
+    if [ -f /export/server.key && -f /export/server.crt ]
+    then
+        echo "Copying SSL keys"
+        ansible-playbook -c local /tmp/provision.yml \
+        --extra-vars gather_facts=False \
+        --extra-vars galaxy_extras_config_ssl=True \
+        --extra-vars galaxy_extras_config_ssl_method=own \
+        --extra-vars src_nginx_ssl_certificate_key=/export/server.key \
+        --extra-vars src_nginx_ssl_certificate=/export/server.crt \
+        --tags https
+    else
+        echo "Setting up self-signed SSL keys"
+        ansible-playbook -c local /tmp/provision.yml \
+        --extra-vars gather_facts=False \
+        --extra-vars galaxy_extras_config_ssl=True \
+        --extra-vars galaxy_extras_config_ssl_method=self-signed \
+        --tags https
+    fi
 fi
 
 # Enable verbose output

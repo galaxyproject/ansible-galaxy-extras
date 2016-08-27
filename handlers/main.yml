@@ -1,6 +1,2 @@
-- name: Restart Nginx
+- name: Restart nginx
   include: restart_nginx.yml
-
-- name: Start cron
-  supervisorctl: name=crond state=started
-  when: galaxy_extras_config_cron  # Otherwise system cron is very likely to be running

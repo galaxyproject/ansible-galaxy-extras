@@ -33,3 +33,6 @@
 - meta: flush_handlers
 
 - shell: /usr/local/bin/letsencrypt_refresh.sh "{{ ansible_galaxy_extras_galaxy_domain }}"
+
+- name: Add letsencrypt renewal script to crontab
+  cron: name="letsencrypt cert renewal" special_time=daily job="/usr/local/bin/letsencrypt_refresh.sh {{ ansible_galaxy_extras_galaxy_domain }}"

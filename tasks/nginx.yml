@@ -12,16 +12,22 @@
     - { src: 'nginx_galaxy_web.conf.j2',  dest: '{{ nginx_conf_directory }}/galaxy_web.conf' }
     - { src: 'nginx_uwsgi.conf.j2',       dest: '{{ nginx_conf_directory }}/uwsgi.conf' }
     - { src: 'nginx.conf.j2',             dest: '{{ nginx_conf_path }}' }
-  notify: Restart Nginx
+  notify: Restart nginx
+  tags:
+    - https
 
 - name: Letsencrypts-specific tasks
   include: letsencrypt.yml
   when: galaxy_extras_config_ssl_method == 'letsencrypt'
+  tags:
+    - https
 
 - name: Create self-signed SSL cert
   command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}" -extensions v3_ca creates="{{ nginx_ssl_certificate }}"
   when: galaxy_extras_config_ssl_method == 'self-signed'
-  notify: Restart Nginx
+  notify: Restart nginx
+  tags:
+    - https
 
 - name: Copy own certificate
   copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0644 owner=root group=root backup=yes
@@ -29,3 +35,6 @@
   with_items:
    - { src: '{{ src_nginx_ssl_certificate_key }}',  dest: '{{ nginx_ssl_certificate_key }}'}
    - { src: '{{ src_nginx_ssl_certificate }}',  dest: '{{ nginx_ssl_certificate }}'}
+  notify: Restart nginx
+  tags:
+    - https
