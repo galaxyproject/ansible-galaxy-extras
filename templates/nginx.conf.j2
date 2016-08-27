@@ -89,7 +89,7 @@ http {
 {% else %}
         include {{ nginx_conf_directory }}/galaxy_web.conf;
 {% endif %}
-{% if galaxy_extras_config_letsencrypt %}
+{% if galaxy_extras_config_ssl_method == 'letsencrypt' %}
         include {{ nginx_conf_directory }}/letsencrypt.conf;
 {% endif %}
 {% if nginx_proxy_ide %}

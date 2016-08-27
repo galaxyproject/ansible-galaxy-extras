@@ -16,7 +16,7 @@ galaxy_extras_config_ie_proxy: true
 galaxy_extras_config_neo4j_ie: false  # Configure routes for the Neo4j Interactive Environment
 galaxy_extras_config_scripts: true
 galaxy_extras_config_ssl: false
-galaxy_extras_config_letsencrypt: false
+galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed' or 'letsencrypt'
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
 galaxy_extras_config_cron: false
@@ -202,4 +202,9 @@ use_pbkdf2: false
 
 nginx_ssl_certificate_key: /etc/ssl/private/nginx.key
 nginx_ssl_certificate: /etc/ssl/private/nginx.crt
+
+# Here you can set a path to a pair of ssl keys
+# This defaults to a set of self-generated keys
+src_nginx_ssl_certificate_key:
+dest_nginx_ssl_certificate:
 
