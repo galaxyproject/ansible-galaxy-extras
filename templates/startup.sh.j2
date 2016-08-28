@@ -211,22 +211,22 @@ else
     fi
 fi
 
-if [ -n $USE_HTTPS_LETSENCRYPT ]
+if [ "$USE_HTTPS_LETSENCRYPT" != "False" ]
 then
     echo "Settting up letsencrypt"
-    ansible-playbook -c local /tmp/provision.yml \
+    ansible-playbook -c local /ansible/provision.yml \
     --extra-vars gather_facts=False \
     --extra-vars galaxy_extras_config_ssl=True \
     --extra-vars galaxy_extras_config_ssl_method=letsencrypt \
     --extra-vars ansible_galaxy_extras_galaxy_domain="$GALAXY_DOMAIN" \
     --tags https
 fi
-if [ -n $USE_HTTPS ]
+if [ "$USE_HTTPS" != "False" ]
 then
-    if [ -f /export/server.key && -f /export/server.crt ]
+    if [ -f /export/server.key -a -f /export/server.crt ]
     then
         echo "Copying SSL keys"
-        ansible-playbook -c local /tmp/provision.yml \
+        ansible-playbook -c local /ansible/provision.yml \
         --extra-vars gather_facts=False \
         --extra-vars galaxy_extras_config_ssl=True \
         --extra-vars galaxy_extras_config_ssl_method=own \
@@ -235,7 +235,7 @@ then
         --tags https
     else
         echo "Setting up self-signed SSL keys"
-        ansible-playbook -c local /tmp/provision.yml \
+        ansible-playbook -c local /ansible/provision.yml \
         --extra-vars gather_facts=False \
         --extra-vars galaxy_extras_config_ssl=True \
         --extra-vars galaxy_extras_config_ssl_method=self-signed \
