@@ -114,11 +114,18 @@ then
     ln -s /export/act_qmaster /var/lib/gridengine/default/common/act_qmaster
 fi
 
-# $NONUSE can be set to include proftp, reports or nodejs
+# $NONUSE can be set to include cron, proftp, reports or nodejs
 # if included we will _not_ start these services.
 function start_supervisor {
     supervisord -c /etc/supervisor/supervisord.conf
     sleep 5
+    {% if supervisor_manage_cron|bool %}
+    if [[ $NONUSE != *"cron"* ]]
+    then
+        echo "Starting cron"
+        supervisorctl start cron
+    fi
+    {% endif %}
     {% if supervisor_manage_proftp|bool %}
     if [[ $NONUSE != *"proftp"* ]]
     then
@@ -207,7 +214,7 @@ fi
 if [ -n $USE_HTTPS_LETSENCRYPT ]
 then
     echo "Settting up letsencrypt"
-    ansible-playbook -c local --no /tmp/provision.yml \
+    ansible-playbook -c local /tmp/provision.yml \
     --extra-vars gather_facts=False \
     --extra-vars galaxy_extras_config_ssl=True \
     --extra-vars galaxy_extras_config_ssl_method=letsencrypt \

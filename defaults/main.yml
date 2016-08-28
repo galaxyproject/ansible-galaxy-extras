@@ -20,7 +20,6 @@ galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed'
 ansible_galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
-galaxy_extras_config_cron: false
 galaxy_extras_galaxy_destination_default: slurm_cluster
 
 # set the FQDN for the pbs server, only used when galaxy_extras_config_pbs: true
@@ -178,6 +177,7 @@ supervisor_manage_nginx: true
 supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_condor: true
+supervisor_manage_cron: true
 supervisor_manage_docker: true
 supervisor_manage_nodeproxy: true
 supervisor_manage_toolshed: false
@@ -191,6 +191,7 @@ supervisor_ie_proxy_autostart: false
 supervisor_reports_autostart: false
 supervisor_condor_autostart: false
 supervisor_proftpd_autostart: false
+supervisor_cron_autostart: false
 supervisor_docker_autostart: false
 supervisor_docker_autorestart: true
 

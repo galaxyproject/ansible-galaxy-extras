@@ -10,11 +10,11 @@ password={{ supervisor_webserver_password }}
 {% endif %}
 {% endif %}
 
-{% if galaxy_extras_config_cron|bool %}
-[program:crond]
+{% if supervisor_manage_cron|bool %}
+[program:cron]
 user            = root
 command         = /usr/sbin/cron -f
-autostart       = true
+autostart       = {{ supervisor_cron_autostart }}
 autorestart     = true
 {% endif %}
 

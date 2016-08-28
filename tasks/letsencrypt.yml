@@ -28,7 +28,6 @@
     - { src: 'letsencrypt_refresh.sh.j2', dest: '/usr/local/bin/letsencrypt_refresh.sh', mode: "u=rwx,g=rx,o=r" }
   notify:
     - Restart Nginx
-    - Start cron
 
 - meta: flush_handlers
 
