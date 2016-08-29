@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: The Galaxy Project
+  description: Configure assorted compontents for the Galaxy application.
+  company: The Galaxy Project
+  license: AFL v3.0
+  min_ansible_version: 2.0.0.1
+  platforms:
+  - name: Ubuntu
+    versions:
+    - trusty
+  categories:
+  - system
+dependencies: []
+allow_duplicates: yes
