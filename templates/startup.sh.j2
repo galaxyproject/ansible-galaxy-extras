@@ -41,7 +41,7 @@ if [ "x$BARE" != "x" ]
 fi
 
 # Backward compatibility for exported postgresql directories before version 15.08.
-# In previous versions postgres has the UID/GID of 102/106. We changed this in 
+# In previous versions postgres has the UID/GID of 102/106. We changed this in
 # https://github.com/bgruening/docker-galaxy-stable/pull/71 to GALAXY_POSTGRES_UID=1550 and
 # GALAXY_POSTGRES_GID=1550
 if [ -e /export/postgresql/ ];
@@ -106,6 +106,14 @@ then
     ln -s /export/munge.key /etc/munge/munge.key
     chmod 400 /export/munge.key
 fi
+
+if [ -n GLOBUS_USERNAME -a -n GLOBUS_PASSWORD ]
+then
+    {# do the templating here.  #}
+    globus-connect-server-setup
+
+fi
+
 
 # $NONUSE can be set to include proftp, reports or nodejs
 # if included we will _not_ start these services.
@@ -184,7 +192,7 @@ if mount | grep "/proc/kcore"; then
 else
     echo "Enable Galaxy Interactive Environments."
     export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY="config/plugins/interactive_environments"
-    if [ x$DOCKER_PARENT == "x" ]; then 
+    if [ x$DOCKER_PARENT == "x" ]; then
         #build the docker in docker environment
         bash /root/cgroupfs_mount.sh
         start_supervisor

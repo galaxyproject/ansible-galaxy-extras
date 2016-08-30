@@ -1,0 +1,21 @@
+
+
+# switch to get_url? http://docs.ansible.com/ansible/get_url_module.html
+- name: Download Globus Connect Server
+  shell: curl -LOs http://toolkit.globus.org/ftppub/globus-connect-server/globus-connect-server-repo_latest_all.deb
+  become: true
+  when: galaxy_extras_config_globus
+
+- name: Install Globus Repo
+  shell: dpkg -i globus-connect-server-repo_latest_all.deb
+  become: true
+  when: galaxy_extras_config_globus
+
+- name: Install Globus Connect Server
+  apt: pkg=globus-connect-server update_cache=yes
+  become: true
+  when: galaxy_extras_config_globus
+
+# this actually can't go here -- because we need variables only available at docker run time...
+- template: src=templatesglobus.conf dest=/etc/globus-connect-server.conf
+
