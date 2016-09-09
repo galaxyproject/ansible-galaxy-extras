@@ -218,7 +218,7 @@ then
     --extra-vars gather_facts=False \
     --extra-vars galaxy_extras_config_ssl=True \
     --extra-vars galaxy_extras_config_ssl_method=letsencrypt \
-    --extra-vars ansible_galaxy_extras_galaxy_domain="$GALAXY_DOMAIN" \
+    --extra-vars galaxy_extras_galaxy_domain="$GALAXY_DOMAIN" \
     --tags https
 fi
 if [ "$USE_HTTPS" != "False" ]
@@ -258,4 +258,3 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         echo "Disable Galaxy reports authentification "
         rm /etc/nginx/htpasswd
 fi
-

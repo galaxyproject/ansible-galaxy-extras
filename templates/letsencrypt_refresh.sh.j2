@@ -10,5 +10,3 @@ then
 	ln -sf /etc/ssl/private/"$DOMAIN"/fullchain.pem {{ nginx_ssl_certificate }}
 	nginx -s reload
 fi
-
-

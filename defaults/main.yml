@@ -17,7 +17,7 @@ galaxy_extras_config_neo4j_ie: false  # Configure routes for the Neo4j Interacti
 galaxy_extras_config_scripts: true
 galaxy_extras_config_ssl: false
 galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed' or 'letsencrypt'
-ansible_galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
+galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
 galaxy_extras_galaxy_destination_default: slurm_cluster
@@ -210,4 +210,3 @@ nginx_ssl_certificate: /etc/ssl/private/nginx.crt
 # This defaults to a set of self-generated keys
 src_nginx_ssl_certificate_key: nginx_sample.key
 src_nginx_ssl_certificate: nginx_sample.crt
-
