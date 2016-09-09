@@ -1,4 +1,4 @@
-- name: Restart nginx
+- name: restart nginx
 #  include: restart_nginx.yml
 # Move this back to restart_nginx.yml once ansible 2.1.2.0 is released
   command: /usr/sbin/nginx -s reload

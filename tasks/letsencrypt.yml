@@ -27,7 +27,7 @@
     - { src: 'letsencrypt.conf.j2',       dest: '/etc/letsencrypt/letsencrypt.conf', mode: "u=rw,g=r,o=r" }
     - { src: 'letsencrypt_refresh.sh.j2', dest: '/usr/local/bin/letsencrypt_refresh.sh', mode: "u=rwx,g=rx,o=r" }
   notify:
-    - Restart Nginx
+    - restart nginx
 
 - meta: flush_handlers
 
