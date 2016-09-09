@@ -1,7 +1,7 @@
 # Letsencrypt-specific configuration:
 
 - name: Create self-signed SSL cert  # For initial challenge need either http-only or self-signed
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}" -extensions v3_ca creates="{{ nginx_ssl_certificate }}"
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=selfsigned" -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}" -extensions v3_ca creates="{{ nginx_ssl_certificate }}"
   when: galaxy_extras_config_ssl_method == 'self-signed'
 
 - name: Create letsencrypt configuration directory
