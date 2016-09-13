@@ -107,6 +107,13 @@ then
     chmod 400 /export/munge.key
 fi
 
+# link the gridengine config file
+if [ -e /export/act_qmaster ]
+then
+    rm -f /var/lib/gridengine/default/common/act_qmaster
+    ln -s /export/act_qmaster /var/lib/gridengine/default/common/act_qmaster
+fi
+
 # $NONUSE can be set to include proftp, reports or nodejs
 # if included we will _not_ start these services.
 function start_supervisor {
