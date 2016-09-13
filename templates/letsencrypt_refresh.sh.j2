@@ -1,0 +1,12 @@
+#!/bin/bash
+
+DOMAIN="$1"
+
+letsencrypt.sh --cron -d "$DOMAIN" --config /etc/letsencrypt/letsencrypt.conf
+
+if [ -e "/etc/ssl/private/"$DOMAIN"/privkey.pem" -a -e "/etc/ssl/private/"$DOMAIN"/fullchain.pem" ]
+then
+	ln -sf /etc/ssl/private/"$DOMAIN"/privkey.pem {{ nginx_ssl_certificate_key }}
+	ln -sf /etc/ssl/private/"$DOMAIN"/fullchain.pem {{ nginx_ssl_certificate }}
+	nginx -s reload
+fi

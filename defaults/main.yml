@@ -15,6 +15,9 @@ galaxy_extras_config_uwsgi: true
 galaxy_extras_config_ie_proxy: true
 galaxy_extras_config_neo4j_ie: false  # Configure routes for the Neo4j Interactive Environment
 galaxy_extras_config_scripts: true
+galaxy_extras_config_ssl: false
+galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed' or 'letsencrypt'
+galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
 galaxy_extras_galaxy_destination_default: slurm_cluster
@@ -174,6 +177,7 @@ supervisor_manage_nginx: true
 supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_condor: true
+supervisor_manage_cron: true
 supervisor_manage_docker: true
 supervisor_manage_nodeproxy: true
 supervisor_manage_toolshed: false
@@ -187,6 +191,7 @@ supervisor_ie_proxy_autostart: false
 supervisor_reports_autostart: false
 supervisor_condor_autostart: false
 supervisor_proftpd_autostart: false
+supervisor_cron_autostart: false
 supervisor_docker_autostart: false
 supervisor_docker_autorestart: true
 
@@ -196,3 +201,12 @@ supervisor_webserver_username: null
 supervisor_webserver_password: changeme
 
 use_pbkdf2: false
+
+nginx_ssl_certificate_key: /etc/ssl/private/nginx.key
+nginx_ssl_certificate: /etc/ssl/private/nginx.crt
+
+# Here you can set a path to a pair of ssl keys
+# These will be copied if galaxy_extras_config_ssl_method is set to 'own'
+# This defaults to a set of self-generated keys
+src_nginx_ssl_certificate_key: nginx_sample.key
+src_nginx_ssl_certificate: nginx_sample.crt

@@ -1,0 +1,37 @@
+# Letsencrypt-specific configuration:
+
+- name: Create self-signed SSL cert  # For initial challenge need either http-only or self-signed
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=selfsigned" -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}" -extensions v3_ca creates="{{ nginx_ssl_certificate }}"
+  when: galaxy_extras_config_ssl_method == 'self-signed'
+
+- name: Create letsencrypt configuration directory
+  file: path=/etc/letsencrypt state=directory mode=0755
+
+- name: Create letsencrypt wellknown directory
+  file: path=/etc/letsencrypt/wellknown state=directory mode=0755
+
+- name: Get letsencrypt script from github repository
+  get_url:
+    url: https://raw.githubusercontent.com/lukas2511/letsencrypt.sh/d81eb58536e3ae1170de3eda305688ae28d0575b/letsencrypt.sh
+    dest: /usr/bin/letsencrypt.sh
+    mode: "u=rwx,g=rx,o=r"
+    force: no
+
+- name: Setup letsencrypt-specific configuration files
+  template: >
+    src={{ item.src }}
+    dest={{ item.dest }}
+    owner=root group=root mode={{ item.mode }}
+  with_items:
+    - { src: 'nginx_letsencrypt.conf.j2', dest: '{{ nginx_conf_directory }}/letsencrypt.conf', mode: "u=rw,g=r,o=r" }
+    - { src: 'letsencrypt.conf.j2',       dest: '/etc/letsencrypt/letsencrypt.conf', mode: "u=rw,g=r,o=r" }
+    - { src: 'letsencrypt_refresh.sh.j2', dest: '/usr/local/bin/letsencrypt_refresh.sh', mode: "u=rwx,g=rx,o=r" }
+  notify:
+    - restart nginx
+
+- meta: flush_handlers
+
+- shell: /usr/local/bin/letsencrypt_refresh.sh "{{ galaxy_extras_galaxy_domain }}"
+
+- name: Add letsencrypt renewal script to crontab
+  cron: name="letsencrypt cert renewal" special_time=daily job="/usr/local/bin/letsencrypt_refresh.sh {{ galaxy_extras_galaxy_domain }}"

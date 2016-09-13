@@ -10,6 +10,14 @@ password={{ supervisor_webserver_password }}
 {% endif %}
 {% endif %}
 
+{% if supervisor_manage_cron|bool %}
+[program:cron]
+user            = root
+command         = /usr/sbin/cron -f
+autostart       = {{ supervisor_cron_autostart }}
+autorestart     = true
+{% endif %}
+
 {% if supervisor_manage_slurm|bool %}
 [program:munge]
 user=root

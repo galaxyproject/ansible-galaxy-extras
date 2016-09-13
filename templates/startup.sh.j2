@@ -41,7 +41,7 @@ if [ "x$BARE" != "x" ]
 fi
 
 # Backward compatibility for exported postgresql directories before version 15.08.
-# In previous versions postgres has the UID/GID of 102/106. We changed this in 
+# In previous versions postgres has the UID/GID of 102/106. We changed this in
 # https://github.com/bgruening/docker-galaxy-stable/pull/71 to GALAXY_POSTGRES_UID=1550 and
 # GALAXY_POSTGRES_GID=1550
 if [ -e /export/postgresql/ ];
@@ -114,11 +114,18 @@ then
     ln -s /export/act_qmaster /var/lib/gridengine/default/common/act_qmaster
 fi
 
-# $NONUSE can be set to include proftp, reports or nodejs
+# $NONUSE can be set to include cron, proftp, reports or nodejs
 # if included we will _not_ start these services.
 function start_supervisor {
     supervisord -c /etc/supervisor/supervisord.conf
     sleep 5
+    {% if supervisor_manage_cron|bool %}
+    if [[ $NONUSE != *"cron"* ]]
+    then
+        echo "Starting cron"
+        supervisorctl start cron
+    fi
+    {% endif %}
     {% if supervisor_manage_proftp|bool %}
     if [[ $NONUSE != *"proftp"* ]]
     then
@@ -191,7 +198,7 @@ if mount | grep "/proc/kcore"; then
 else
     echo "Enable Galaxy Interactive Environments."
     export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY="config/plugins/interactive_environments"
-    if [ x$DOCKER_PARENT == "x" ]; then 
+    if [ x$DOCKER_PARENT == "x" ]; then
         #build the docker in docker environment
         bash /root/cgroupfs_mount.sh
         start_supervisor
@@ -201,6 +208,38 @@ else
         #run docker with sudo to validate
         echo "{{ galaxy_user_name }} ALL = NOPASSWD : ALL" >> /etc/sudoers
         start_supervisor
+    fi
+fi
+
+if [ "$USE_HTTPS_LETSENCRYPT" != "False" ]
+then
+    echo "Settting up letsencrypt"
+    ansible-playbook -c local /ansible/provision.yml \
+    --extra-vars gather_facts=False \
+    --extra-vars galaxy_extras_config_ssl=True \
+    --extra-vars galaxy_extras_config_ssl_method=letsencrypt \
+    --extra-vars galaxy_extras_galaxy_domain="GALAXY_CONFIG_GALAXY_INFRASTRUCTURE_URL" \
+    --tags https
+fi
+if [ "$USE_HTTPS" != "False" ]
+then
+    if [ -f /export/server.key -a -f /export/server.crt ]
+    then
+        echo "Copying SSL keys"
+        ansible-playbook -c local /ansible/provision.yml \
+        --extra-vars gather_facts=False \
+        --extra-vars galaxy_extras_config_ssl=True \
+        --extra-vars galaxy_extras_config_ssl_method=own \
+        --extra-vars src_nginx_ssl_certificate_key=/export/server.key \
+        --extra-vars src_nginx_ssl_certificate=/export/server.crt \
+        --tags https
+    else
+        echo "Setting up self-signed SSL keys"
+        ansible-playbook -c local /ansible/provision.yml \
+        --extra-vars gather_facts=False \
+        --extra-vars galaxy_extras_config_ssl=True \
+        --extra-vars galaxy_extras_config_ssl_method=self-signed \
+        --tags https
     fi
 fi
 
