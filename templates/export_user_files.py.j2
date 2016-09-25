@@ -68,6 +68,7 @@ if __name__ == "__main__":
             export_file = os.path.join( '/export/', filename)
             image_file = os.path.join('/etc/galaxy/web/', filename)
             shutil.copy(export_file, image_file)
+            os.chown( image_file, int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
 
     _makedir('/export/galaxy-central/')
     _makedir('/export/ftp/')
