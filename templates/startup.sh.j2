@@ -40,16 +40,19 @@ if [ "x$BARE" != "x" ]
         export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_ROOT/test/functional/tools/upload_tool_conf.xml
 fi
 
-# Backward compatibility for exported postgresql directories before version 15.08.
-# In previous versions postgres has the UID/GID of 102/106. We changed this in
-# https://github.com/bgruening/docker-galaxy-stable/pull/71 to GALAXY_POSTGRES_UID=1550 and
-# GALAXY_POSTGRES_GID=1550
-if [ -e /export/postgresql/ ];
-    then
-        if [ `stat -c %g /export/postgresql/` == "106" ];
-            then
-                chown -R postgres:postgres /export/postgresql/
-        fi
+if [[ $NONUSE != *"postgres"* ]]
+then
+    # Backward compatibility for exported postgresql directories before version 15.08.
+    # In previous versions postgres has the UID/GID of 102/106. We changed this in
+    # https://github.com/bgruening/docker-galaxy-stable/pull/71 to GALAXY_POSTGRES_UID=1550 and
+    # GALAXY_POSTGRES_GID=1550
+    if [ -e /export/postgresql/ ];
+        then
+            if [ `stat -c %g /export/postgresql/` == "106" ];
+                then
+                    chown -R postgres:postgres /export/postgresql/
+            fi
+    fi
 fi
 
 
@@ -119,6 +122,13 @@ fi
 function start_supervisor {
     supervisord -c /etc/supervisor/supervisord.conf
     sleep 5
+    {% if supervisor_manage_postgres|bool and not supervisor_postgres_autostart|bool %}
+    if [[ $NONUSE != *"postgres"* ]]
+    then
+        echo "Starting postgres"
+        supervisorctl start postgres
+    fi
+    {% endif %}
     {% if supervisor_manage_cron|bool %}
     if [[ $NONUSE != *"cron"* ]]
     then
@@ -187,8 +197,11 @@ function start_supervisor {
     {% endif %}
 }
 
-# Change the data_directory of postgresql in the main config file
-ansible localhost -m lineinfile -a "line='data_directory = \'$PG_DATA_DIR_HOST\'' dest=$PG_CONF_DIR_DEFAULT/postgresql.conf backup=yes state=present regexp='data_directory'" &> /dev/null
+if [[ $NONUSE != *"postgres"* ]]
+then
+    # Change the data_directory of postgresql in the main config file
+    ansible localhost -m lineinfile -a "line='data_directory = \'$PG_DATA_DIR_HOST\'' dest=$PG_CONF_DIR_DEFAULT/postgresql.conf backup=yes state=present regexp='data_directory'" &> /dev/null
+fi
 
 # Try to guess if we are running under --privileged mode
 if mount | grep "/proc/kcore"; then
