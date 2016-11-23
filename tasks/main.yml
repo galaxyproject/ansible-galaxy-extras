@@ -10,13 +10,19 @@
 
 - include: nginx.yml
   when: galaxy_extras_config_nginx
-  tags: nginx_config
+  tags:
+   - nginx_config
+   - nginx
 
 - include: proftpd.yml
   when: galaxy_extras_config_proftpd
+  tags:
+   - proftpd
 
 - include: slurm.yml
   when: galaxy_extras_config_slurm
+  tags:
+   - slurm
 
 - include: pbs.yml
   when: galaxy_extras_config_pbs

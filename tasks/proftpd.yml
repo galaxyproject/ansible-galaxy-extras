@@ -5,6 +5,8 @@
     - proftpd
     - proftpd-mod-pgsql
   when: galaxy_extras_install_packages
+  tags:
+    - proftpd_apt
 
 - name: Create Galaxy configuration file
   template: src=proftpd.conf.j2 dest={{ proftpd_conf_path }}
@@ -27,6 +29,8 @@
 - name: Install OpenSSH client package
   apt: pkg=openssh-client
   when: proftpd_use_sftp
+  tags:
+   - proftpd_apt
 
 - name: Create /etc/proftpd/ssh_host_keys/ directory
   file: path=/etc/proftpd/ssh_host_keys/ state=directory
