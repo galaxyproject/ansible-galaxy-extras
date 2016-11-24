@@ -117,6 +117,13 @@ then
     ln -s /export/act_qmaster /var/lib/gridengine/default/common/act_qmaster
 fi
 
+# Waits until postgres is ready
+function wait_for_postgres {
+    echo "Checking if database is up and running"
+    until /usr/local/bin/check_database.py >/dev/null; do sleep 1; echo "Waiting for database"; done
+    echo "Database connected"
+}
+
 # $NONUSE can be set to include cron, proftp, reports or nodejs
 # if included we will _not_ start these services.
 function start_supervisor {
@@ -129,6 +136,7 @@ function start_supervisor {
         supervisorctl start postgres
     fi
     {% endif %}
+    wait_for_postgres 
     {% if supervisor_manage_cron|bool %}
     if [[ $NONUSE != *"cron"* ]]
     then
