@@ -275,5 +275,6 @@ fi
 # In case the user wants the default admin to be created, do so.
 if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
     then
+        echo "Creating admin user $GALAXY_DEFAULT_ADMIN_USER with key $GALAXY_DEFAULT_ADMIN_KEY and password $GALAXY_DEFAULT_ADMIN_PASSWORD if not existing"
         python /usr/local/bin/create_galaxy_user.py --user "$GALAXY_DEFAULT_ADMIN_USER" --password "$GALAXY_DEFAULT_ADMIN_PASSWORD" -c "$GALAXY_CONFIG_FILE" --key "$GALAXY_DEFAULT_ADMIN_KEY"
 fi
