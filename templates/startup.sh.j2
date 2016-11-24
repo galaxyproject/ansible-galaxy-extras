@@ -256,14 +256,6 @@ then
     fi
 fi
 
-# Enable verbose output
-if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
-    then
-        tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_log_dir }}/*.log
-    else
-        tail -f {{ galaxy_log_dir }}/*.log
-fi
-
 # Disable authentication of Galaxy reports
 if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
     then
@@ -278,3 +270,12 @@ if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
         echo "Creating admin user $GALAXY_DEFAULT_ADMIN_USER with key $GALAXY_DEFAULT_ADMIN_KEY and password $GALAXY_DEFAULT_ADMIN_PASSWORD if not existing"
         python /usr/local/bin/create_galaxy_user.py --user "$GALAXY_DEFAULT_ADMIN_USER" --password "$GALAXY_DEFAULT_ADMIN_PASSWORD" -c "$GALAXY_CONFIG_FILE" --key "$GALAXY_DEFAULT_ADMIN_KEY"
 fi
+
+# Enable verbose output
+if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
+    then
+        tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_log_dir }}/*.log
+    else
+        tail -f {{ galaxy_log_dir }}/*.log
+fi
+
