@@ -3,7 +3,7 @@ import sys
 sys.path.insert(1,'{{ galaxy_server_dir }}')
 sys.path.insert(1,'{{ galaxy_server_dir }}/lib')
 
-from galaxy.model import *
+from galaxy.model import User, APIKeys
 from galaxy.model.mapping import init
 from galaxy.model.orm.scripts import get_config
 import argparse
