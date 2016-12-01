@@ -117,6 +117,13 @@ then
     ln -s /export/act_qmaster /var/lib/gridengine/default/common/act_qmaster
 fi
 
+# Waits until postgres is ready
+function wait_for_postgres {
+    echo "Checking if database is up and running"
+    until /usr/local/bin/check_database.py >/dev/null; do sleep 1; echo "Waiting for database"; done
+    echo "Database connected"
+}
+
 # $NONUSE can be set to include cron, proftp, reports or nodejs
 # if included we will _not_ start these services.
 function start_supervisor {
@@ -129,6 +136,7 @@ function start_supervisor {
         supervisorctl start postgres
     fi
     {% endif %}
+    wait_for_postgres 
     {% if supervisor_manage_cron|bool %}
     if [[ $NONUSE != *"cron"* ]]
     then
@@ -256,14 +264,6 @@ then
     fi
 fi
 
-# Enable verbose output
-if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
-    then
-        tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_log_dir }}/*.log
-    else
-        tail -f {{ galaxy_log_dir }}/*.log
-fi
-
 # Disable authentication of Galaxy reports
 if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
     then
@@ -275,5 +275,15 @@ fi
 # In case the user wants the default admin to be created, do so.
 if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
     then
-    python /usr/local/bin/create_galaxy_user.py --user $GALAXY_DEFAULT_ADMIN_USER --password $GALAXY_DEFAULT_ADMIN_PASSWORD -c $GALAXY_CONFIG_FILE --key $GALAXY_DEFAULT_ADMIN_KEY
+        echo "Creating admin user $GALAXY_DEFAULT_ADMIN_USER with key $GALAXY_DEFAULT_ADMIN_KEY and password $GALAXY_DEFAULT_ADMIN_PASSWORD if not existing"
+        python /usr/local/bin/create_galaxy_user.py --user "$GALAXY_DEFAULT_ADMIN_USER" --password "$GALAXY_DEFAULT_ADMIN_PASSWORD" -c "$GALAXY_CONFIG_FILE" --key "$GALAXY_DEFAULT_ADMIN_KEY"
 fi
+
+# Enable verbose output
+if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
+    then
+        tail -f /var/log/supervisor/* /var/log/nginx/* {{ galaxy_log_dir }}/*.log
+    else
+        tail -f {{ galaxy_log_dir }}/*.log
+fi
+

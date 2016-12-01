@@ -1,24 +1,14 @@
+#!/usr/bin/env python
 import sys
 sys.path.insert(1,'{{ galaxy_server_dir }}')
-sys.path.insert(1,'{{ galaxy_server_dir }}')
+sys.path.insert(1,'{{ galaxy_server_dir }}/lib')
 
-from scripts.db_shell import *
-from galaxy.util.bunch import Bunch
-from galaxy.security import GalaxyRBACAgent
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import *
+from galaxy.model import User, APIKeys
+from galaxy.model.mapping import init
+from galaxy.model.orm.scripts import get_config
 import argparse
-bunch = Bunch( **globals() )
-engine = create_engine('{{ galaxy_database_connection }}')
-bunch.session = sessionmaker(bind=engine)
-# For backward compatibility with "model.context.current"
-bunch.context = sessionmaker(bind=engine)
 
-security_agent = GalaxyRBACAgent( bunch )
-security_agent.sa_session = sa_session
-
-
-def add_user(email, password, key=None, username="admin"):
+def add_user(sa_session, security_agent, email, password, key=None, username="admin"):
     """
         Add Galaxy User.
         From John https://gist.github.com/jmchilton/4475646
@@ -48,6 +38,7 @@ def add_user(email, password, key=None, username="admin"):
 
 
 if __name__ == "__main__":
+    db_url = get_config(sys.argv)['db_url']
 
     parser = argparse.ArgumentParser(description='Create Galaxy Admin User.')
 
@@ -58,7 +49,12 @@ if __name__ == "__main__":
     parser.add_argument("--key", help="API-Key.")
     parser.add_argument("--username", default="admin",
                     help="The public username. Public names must be at least three characters in length and contain only lower-case letters, numbers, and the '-' character.")
+    parser.add_argument('args', nargs=argparse.REMAINDER)
 
     options = parser.parse_args()
 
-    add_user(options.user, options.password, key=options.key, username=options.username)
+    mapping = init('/tmp/', db_url)
+    sa_session = mapping.context
+    security_agent = mapping.security_agent
+
+    add_user(sa_session, security_agent, options.user, options.password, key=options.key, username=options.username)
