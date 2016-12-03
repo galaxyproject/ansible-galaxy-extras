@@ -133,7 +133,7 @@ function start_supervisor {
     if [[ $NONUSE != *"postgres"* ]]
     then
         echo "Starting postgres"
-        supervisorctl start postgres
+        supervisorctl start postgresql
     fi
     {% endif %}
     wait_for_postgres 
