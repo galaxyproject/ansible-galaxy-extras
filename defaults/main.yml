@@ -51,7 +51,7 @@ galaxy_extras_docker_storage_backend: aufs
 
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
-galaxy_docker_volumes_from: galaxy
+galaxy_docker_volumes_from: ""
 galaxy_docker_volumes : "$defaults"
 
 # Point at the existing Galaxy configuration.
