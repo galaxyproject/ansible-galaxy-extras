@@ -6,7 +6,8 @@ location {{ nginx_galaxy_location }}/ {
 {% if galaxy_admin_user is defined and galaxy_admin_user %}
     # hard-code a fixed user to pass to Galaxy to auto-login
 	proxy_set_header REMOTE_USER '{{ galaxy_admin_user }}';
-{% else %}
+{% endif %}
+{% if nginx_use_remote_header %}
     # forward the remote_user header in case it is set by a previous proxy
     if ($remote_user) {
         proxy_set_header REMOTE_USER $remote_user;
