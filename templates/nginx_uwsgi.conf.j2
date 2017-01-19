@@ -5,5 +5,10 @@ location {{ nginx_galaxy_location }}/ {
 {% if galaxy_admin_user is defined and galaxy_admin_user %}
     # hard-code a fixed user to pass to Galaxy to auto-login
     uwsgi_param HTTP_REMOTE_USER '{{ galaxy_admin_user }}';
+{% else %}
+    # forward the remote_user header in case it is set by a previous proxy
+    if ($remote_user) {
+        uwsgi_param HTTP_REMOTE_USER $remote_user;
+    }
 {% endif %}
 }
