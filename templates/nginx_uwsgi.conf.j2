@@ -8,8 +8,6 @@ location {{ nginx_galaxy_location }}/ {
 {% endif %}
 {% if nginx_use_remote_header %}
     # forward the remote_user header in case it is set by a previous proxy
-    if ($remote_user) {
-        uwsgi_param HTTP_REMOTE_USER $remote_user;
-    }
+    uwsgi_param HTTP_REMOTE_USER $remote_user if_not_empty;
 {% endif %}
 }
