@@ -45,7 +45,8 @@
   {% if galaxy_extras_config_condor %}
         <destination id="condor_cluster" runner="condor">
         {% if galaxy_extras_config_condor_docker %}
-            <param id="universe" from_environ="GALAXY_CONDA_UNIVERSE">vanilla</param>
+            {{ macros.docker_enabled() }}
+            <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
         {% endif %}
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
         </destination>
