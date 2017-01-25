@@ -40,6 +40,7 @@ if [ "x$BARE" != "x" ]
         export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_ROOT/test/functional/tools/upload_tool_conf.xml
 fi
 
+{% if galaxy_extras_config_postgres|bool %}
 if [[ $NONUSE != *"postgres"* ]]
 then
     # Backward compatibility for exported postgresql directories before version 15.08.
@@ -54,6 +55,7 @@ then
             fi
     fi
 fi
+{% endif %}
 
 
 {% if galaxy_extras_config_condor|bool %}
@@ -205,11 +207,13 @@ function start_supervisor {
     {% endif %}
 }
 
+{% if galaxy_extras_config_postgres|bool %}
 if [[ $NONUSE != *"postgres"* ]]
 then
     # Change the data_directory of postgresql in the main config file
     ansible localhost -m lineinfile -a "line='data_directory = \'$PG_DATA_DIR_HOST\'' dest=$PG_CONF_DIR_DEFAULT/postgresql.conf backup=yes state=present regexp='data_directory'" &> /dev/null
 fi
+{% endif %}
 
 # Try to guess if we are running under --privileged mode
 if mount | grep "/proc/kcore"; then
