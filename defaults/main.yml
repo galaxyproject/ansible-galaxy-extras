@@ -95,6 +95,7 @@ galaxy_handler_processes: 2
 
 startup_export_user_files: true
 startup_chown_on_directory: ""
+startup_sleeplock: false
 
 slurm_log_dir: "{{ galaxy_log_dir }}"
 
