@@ -116,6 +116,7 @@ nginx_ide_location: "{{ nginx_prefix_location }}/ide"
 nginx_use_passwords: False
 nginx_htpasswds:
   - "admin:WiBKbsJTSQ8dc"
+nginx_use_remote_header: False
 
 ## Development Box Configuration
 # Configure nginx to setup a proxy to an IDE.
