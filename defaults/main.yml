@@ -113,6 +113,8 @@ nginx_interactive_environment_location: "{{ nginx_galaxy_location }}/gie_proxy"
 nginx_reports_location: "{{ nginx_prefix_location }}/reports"
 nginx_planemo_web_location: "{{ nginx_prefix_location }}/planemo"
 nginx_ide_location: "{{ nginx_prefix_location }}/ide"
+nginx_welcome_location: "{{ nginx_prefix_location }}/etc/galaxy/web"
+nginx_welcome_path: "/etc/galaxy/web"
 
 #web security
 nginx_use_passwords: False

@@ -4,28 +4,33 @@
 echo "Waiting for init"
 # Try to acquire the lock on $SLEEPLOCK_FILE.
 # When the init process finishes, it will lock the file.
-SLEEPLOCK_FILE=/export/.initdone
-(
-while true
-do
-    if flock -xn 200
-    then
-        # In case the file is not locked by the init process
-        # clear it to ensure no other waiting process assumes
-        # we are the init process because the file is locked.
-        >$SLEEPLOCK_FILE
-        flock -u 200
-    elif [ "$(cat $SLEEPLOCK_FILE)" == "done" ]
-    then
-        # In this case the init file was locked and its contents
-        # equal "done" as written by the init process when it acquired
-        # the lock.
-        break
-    fi
-    sleep 1
-done
-) 200>$SLEEPLOCK_FILE
-echo "Init done"
+# Can be disabled by NONUSE=sleeplock
+if [[ $NONUSE != *"sleeplock"* ]]
+then
+    SLEEPLOCK_FILE=${SLEEPLOCK_FILE:-/export/.initdone}
+    touch $SLEEPLOCK_FILE
+    (
+    while true
+    do
+        if flock -xn 200
+        then
+            # In case the file is not locked by the init process
+            # clear it to ensure no other waiting process assumes
+            # we are the init process because the file is locked.
+            >$SLEEPLOCK_FILE
+            flock -u 200
+        elif [ "$(cat $SLEEPLOCK_FILE)" == "done" ]
+        then
+            # In this case the init file was locked and its contents
+            # equal "done" as written by the init process when it acquired
+            # the lock.
+            break
+        fi
+        sleep 1
+    done
+    ) 200<$SLEEPLOCK_FILE
+    echo "Init done"
+fi
 {% endif %}
 
 # Migration path for old images that had the tool_deps under /export/galaxy-central/tool_deps/
