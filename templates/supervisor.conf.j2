@@ -188,7 +188,7 @@ redirect_stderr = true
 {% if supervisor_manage_docker|bool %}
 [program:docker]
 directory       = /
-{% if supervisor_docker_legacy|bool %}
+{% if galaxy_extras_docker_legacy|bool %}
 command         = /usr/bin/docker daemon --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 -s {{ galaxy_extras_docker_storage_backend }}
 {% else %}
 command         = /usr/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 -s {{ galaxy_extras_docker_storage_backend }}

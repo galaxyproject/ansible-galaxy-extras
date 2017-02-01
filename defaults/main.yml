@@ -49,6 +49,7 @@ galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:15.10
 # The storage backend to use for docker-in-docker.
 # aufs on parent docker cannot be combined with aufs in child docker
 galaxy_extras_docker_storage_backend: aufs
+galaxy_extras_docker_legacy: true
 
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
@@ -183,7 +184,6 @@ supervisor_manage_ie_proxy: true
 supervisor_manage_condor: true
 supervisor_manage_cron: true
 supervisor_manage_docker: true
-supervisor_docker_legacy: true
 supervisor_manage_nodeproxy: true
 supervisor_manage_toolshed: false
 
@@ -207,6 +207,9 @@ supervisor_webserver_username: null
 supervisor_webserver_password: changeme
 
 use_pbkdf2: false
+
+# Used to check if container is privileged
+host_docker_legacy: true
 
 nginx_ssl_certificate_key: /etc/ssl/private/nginx.key
 nginx_ssl_certificate: /etc/ssl/private/nginx.crt
