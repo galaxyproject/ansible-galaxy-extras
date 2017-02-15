@@ -121,6 +121,7 @@ nginx_welcome_path: "/etc/galaxy/web"
 nginx_use_passwords: False
 nginx_htpasswds:
   - "admin:WiBKbsJTSQ8dc"
+nginx_use_remote_header: False
 
 ## Development Box Configuration
 # Configure nginx to setup a proxy to an IDE.
