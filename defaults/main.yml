@@ -3,6 +3,7 @@
 
 galaxy_extras_config_nginx: true
 galaxy_extras_config_nginx_upload: true
+galaxy_extras_config_postgres: true
 galaxy_extras_config_proftpd: true
 galaxy_extras_config_slurm: true
 galaxy_extras_config_pbs: false
@@ -48,6 +49,7 @@ galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:15.10
 # The storage backend to use for docker-in-docker.
 # aufs on parent docker cannot be combined with aufs in child docker
 galaxy_extras_docker_storage_backend: aufs
+galaxy_extras_docker_legacy: true
 
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
@@ -94,6 +96,7 @@ galaxy_handler_processes: 2
 
 startup_export_user_files: true
 startup_chown_on_directory: ""
+startup_sleeplock: false
 
 slurm_log_dir: "{{ galaxy_log_dir }}"
 
@@ -111,6 +114,8 @@ nginx_interactive_environment_location: "{{ nginx_galaxy_location }}/gie_proxy"
 nginx_reports_location: "{{ nginx_prefix_location }}/reports"
 nginx_planemo_web_location: "{{ nginx_prefix_location }}/planemo"
 nginx_ide_location: "{{ nginx_prefix_location }}/ide"
+nginx_welcome_location: "{{ nginx_prefix_location }}/etc/galaxy/web"
+nginx_welcome_path: "/etc/galaxy/web"
 
 #web security
 nginx_use_passwords: False
@@ -203,6 +208,9 @@ supervisor_webserver_username: null
 supervisor_webserver_password: changeme
 
 use_pbkdf2: false
+
+# Used to check if container is privileged
+host_docker_legacy: true
 
 nginx_ssl_certificate_key: /etc/ssl/private/nginx.key
 nginx_ssl_certificate: /etc/ssl/private/nginx.crt

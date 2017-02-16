@@ -1,5 +1,38 @@
 #!/bin/bash
 
+{% if startup_sleeplock|bool %}
+echo "Waiting for init"
+# Try to acquire the lock on $SLEEPLOCK_FILE.
+# When the init process finishes, it will lock the file.
+# Can be disabled by NONUSE=sleeplock
+if [[ $NONUSE != *"sleeplock"* ]]
+then
+    SLEEPLOCK_FILE=${SLEEPLOCK_FILE:-/export/.initdone}
+    touch $SLEEPLOCK_FILE
+    (
+    while true
+    do
+        if flock -xn 200
+        then
+            # In case the file is not locked by the init process
+            # clear it to ensure no other waiting process assumes
+            # we are the init process because the file is locked.
+            >$SLEEPLOCK_FILE
+            flock -u 200
+        elif [ "$(cat $SLEEPLOCK_FILE)" == "done" ]
+        then
+            # In this case the init file was locked and its contents
+            # equal "done" as written by the init process when it acquired
+            # the lock.
+            break
+        fi
+        sleep 1
+    done
+    ) 200<$SLEEPLOCK_FILE
+    echo "Init done"
+fi
+{% endif %}
+
 # Migration path for old images that had the tool_deps under /export/galaxy-central/tool_deps/
 
 if [ -d "/export/galaxy-central/tool_deps/" ] && [ ! -L "/export/galaxy-central/tool_deps/" ]; then
@@ -40,6 +73,7 @@ if [ "x$BARE" != "x" ]
         export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_ROOT/test/functional/tools/upload_tool_conf.xml
 fi
 
+{% if galaxy_extras_config_postgres|bool %}
 if [[ $NONUSE != *"postgres"* ]]
 then
     # Backward compatibility for exported postgresql directories before version 15.08.
@@ -54,6 +88,7 @@ then
             fi
     fi
 fi
+{% endif %}
 
 
 {% if galaxy_extras_config_condor|bool %}
@@ -205,18 +240,34 @@ function start_supervisor {
     {% endif %}
 }
 
+{% if galaxy_extras_config_postgres|bool %}
 if [[ $NONUSE != *"postgres"* ]]
 then
     # Change the data_directory of postgresql in the main config file
     ansible localhost -m lineinfile -a "line='data_directory = \'$PG_DATA_DIR_HOST\'' dest=$PG_CONF_DIR_DEFAULT/postgresql.conf backup=yes state=present regexp='data_directory'" &> /dev/null
 fi
+{% endif %}
 
 # Try to guess if we are running under --privileged mode
+{% if host_docker_legacy|bool %}
 if mount | grep "/proc/kcore"; then
-    echo "Disable Galaxy Interactive Environments. Start with --privileged to enable IE's."
-    export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY=""
-    start_supervisor
+    PRIVILEGED=false
 else
+    PRIVILEGED=true
+fi
+{% else %}
+# Taken from http://stackoverflow.com/questions/32144575/how-to-know-if-a-docker-container-is-running-in-privileged-mode
+ip link add dummy0 type dummy >/dev/null
+if [[ $? -eq 0 ]]; then
+    PRIVILEGED=true
+    # clean the dummy0 link
+    ip link delete dummy0 >/dev/null
+else
+    PRIVILEGED=false
+fi
+{% endif %}
+# Try to guess if we are running under --privileged mode
+if $PRIVILEGED; then
     echo "Enable Galaxy Interactive Environments."
     export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY="config/plugins/interactive_environments"
     if [ x$DOCKER_PARENT == "x" ]; then
@@ -230,6 +281,10 @@ else
         echo "{{ galaxy_user_name }} ALL = NOPASSWD : ALL" >> /etc/sudoers
         start_supervisor
     fi
+else
+    echo "Disable Galaxy Interactive Environments. Start with --privileged to enable IE's."
+    export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY=""
+    start_supervisor
 fi
 
 if [ "$USE_HTTPS_LETSENCRYPT" != "False" ]
