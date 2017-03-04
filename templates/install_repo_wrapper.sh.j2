@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 # Usage: install_repository [nostartup] <repository1> [repository2] ...
+cd {{ galaxy_server_dir }}
 if [ "$1" == "nostartup" ]
 then
     shift
