@@ -7,7 +7,7 @@ then
     NOSTARTUP=true
 else
     # start Galaxy
-    {% if galaxy_extras_config_postgres and supervisor_manage_postgres %}
+    {% if galaxy_extras_config_postgres|bool and supervisor_manage_postgres|bool %}
     service postgresql start
     {% endif %}
     install_log='galaxy_install.log'
@@ -51,7 +51,7 @@ then
     # stop everything
     sudo -E -u {{ galaxy_user_name }} ./run.sh --stop-daemon --log-file=$install_log --pid-file=galaxy_install.pid
     rm $install_log
-    {% if galaxy_extras_config_postgres and supervisor_manage_postgres %}
+    {% if galaxy_extras_config_postgres|bool and supervisor_manage_postgres|bool %}
     service postgresql stop
     {% endif %}
 fi
