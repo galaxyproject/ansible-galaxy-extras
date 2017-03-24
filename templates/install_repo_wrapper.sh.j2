@@ -1,10 +1,12 @@
 #!/bin/bash
-# Usage: install_repository [nostartup] <repository1> [repository2] ...
+# Usage: install_repository [--galaxy-url <url>] <repository1> [repository2] ...
 cd {{ galaxy_server_dir }}
-if [ "$1" == "nostartup" ]
+if [ "$1" == "--galaxy-url" ]
 then
     shift
+    GALAXY_URL=$1
     NOSTARTUP=true
+    shift
 else
     # start Galaxy
     {% if galaxy_extras_config_postgres|bool and supervisor_manage_postgres|bool %}
@@ -33,11 +35,12 @@ else
         fi
     done
 
+    GALAXY_URL=http://localhost:8080
 fi
 
 for repository in "$@"; do
     echo "Processing:\t $repository"
-    python ./scripts/api/install_tool_shed_repositories.py --api admin -l http://localhost:8080 --tool-deps --repository-deps $repository
+    python ./scripts/api/install_tool_shed_repositories.py --api admin -l $GALAXY_URL --tool-deps --repository-deps $repository
 done
 
 exit_code=$?
@@ -51,7 +54,7 @@ then
     # stop everything
     sudo -E -u {{ galaxy_user_name }} ./run.sh --stop-daemon --log-file=$install_log --pid-file=galaxy_install.pid
     rm $install_log
-    {% if galaxy_extras_config_postgres|bool and supervisor_manage_postgres|bool %}
+{% if galaxy_extras_config_postgres|bool and supervisor_manage_postgres|bool %}
     service postgresql stop
-    {% endif %}
+{% endif %}
 fi

@@ -40,13 +40,17 @@
   shell: ssh-keygen -b 2048 -t rsa -f /etc/proftpd/ssh_host_keys/rsa -N ""
   args:
     creates: /etc/proftpd/ssh_host_keys/rsa
-  when: proftpd_use_sftp
+  when:
+    - proftpd_use_sftp
+    - proftpd_generate_ssh_key
 
 - name: Generate new SSH keys (dsa)
   shell: ssh-keygen -b 1024 -t dsa -f /etc/proftpd/ssh_host_keys/dsa -N ""
   args:
     creates: /etc/proftpd/ssh_host_keys/dsa
-  when: proftpd_use_sftp
+  when:
+    - proftpd_use_sftp
+    - proftpd_generate_ssh_key
 
 # Proftpd ships with default keys, and it makes sense to change them.
 # But we've decided not to do this, because this task takes nearly a day.
