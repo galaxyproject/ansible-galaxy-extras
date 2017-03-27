@@ -50,6 +50,7 @@ if __name__ == "__main__":
         is aborted.
     """
     if os.path.exists( '/.galaxy_save' )
+        print "It is already setup. So we do nothing."
         sys.exit(0)
     galaxy_root_dir = os.environ.get('GALAXY_ROOT', '/galaxy-central/')
 
@@ -121,6 +122,5 @@ if __name__ == "__main__":
         subprocess.call('chmod -R 0755 /export/', shell=True)
         subprocess.call('chmod -R 0700 %s' % PG_DATA_DIR_HOST, shell=True)
 
-    file = open('/.galaxy_save', 'w') 
-    file.close()
+    open('/.galaxy_save', 'w').close()
     os.chown( "/.galaxy_save", int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
