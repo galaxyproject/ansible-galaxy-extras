@@ -50,8 +50,7 @@ if __name__ == "__main__":
         is aborted.
     """
     if os.path.exists( '/.galaxy_save' )
-        print("It is already setup. So we do nothing.")
-        sys.exit(0)
+        sys.exit("It is already setup. So we do nothing.")
     galaxy_root_dir = os.environ.get('GALAXY_ROOT', '/galaxy-central/')
 
     galaxy_distrib_paths = {'/galaxy-central/config/': '/export/.distribution_config',
