@@ -48,6 +48,35 @@ echo "127.0.0.1      galaxy" >> /etc/hosts
 # Set number of Galaxy handlers via GALAXY_HANDLER_NUMPROCS or default to 2
 ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}" &> /dev/null
 
+# Configure proxy prefix filtering
+if [ "$GALAXY_CONFIG_PROXY_PREFIX" != "/" ]
+    then
+    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=filter:proxy-prefix option=prefix value=${GALAXY_CONFIG_PROXY_PREFIX}" &> /dev/null
+    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=app:main option=filter-with value=proxy-prefix" &> /dev/null
+
+    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_DIR}/reports_wsgi.ini section=filter:proxy-prefix option=prefix value=${GALAXY_CONFIG_PROXY_PREFIX}/reports" &> /dev/null
+    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_DIR}/reports_wsgi.ini section=app:main option=filter-with value=proxy-prefix" &> /dev/null
+
+    # Fix path to html assets
+    ansible localhost -m replace -a "dest=$GALAXY_CONFIG_DIR/web/welcome.html regexp='(href=\"|\')[/\\w]*(/static)' replace='\\1${GALAXY_CONFIG_PROXY_PREFIX}\\2'" &> /dev/null
+
+    # Set some other vars based on that prefix
+    if [ "x$GALAXY_CONFIG_COOKIE_PATH" == "x" ]
+        then
+        export GALAXY_CONFIG_COOKIE_PATH="$GALAXY_CONFIG_PROXY_PREFIX"
+    fi
+    if [ "x$GALAXY_CONFIG_DYNAMIC_PROXY_PREFIX" == "x" ]
+        then
+        export GALAXY_CONFIG_DYNAMIC_PROXY_PREFIX="$GALAXY_CONFIG_PROXY_PREFIX/gie_proxy"
+    fi
+
+    # Changed the nginx upload path (if set to default value)
+    if [ "$GALAXY_CONFIG_NGINX_UPLOAD_PATH" == "/_upload" ]
+        then
+            export GALAXY_CONFIG_NGINX_UPLOAD_PATH="${GALAXY_CONFIG_PROXY_PREFIX}${GALAXY_CONFIG_NGINX_UPLOAD_PATH}"
+    fi
+fi
+
 cd {{ galaxy_server_dir }}
 . {{ galaxy_venv_dir }}/bin/activate
 umount /var/lib/docker
