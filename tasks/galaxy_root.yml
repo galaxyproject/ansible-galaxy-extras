@@ -1,6 +1,6 @@
 # TODO: following task is kind of a crutch - shouldn't be needed.
 - name: "Run common_startup.sh to create welcome.html from sample"
-  shell: "cd {{ galaxy_server_dir }} && scripts/common_startup.sh"
+  shell: "export GALAXY_VIRTUAL_ENV={{ galaxy_venv_dir }} && cd {{ galaxy_server_dir }} && scripts/common_startup.sh"
   become: True
   become_user: "{{ galaxy_user_name }}"
 
