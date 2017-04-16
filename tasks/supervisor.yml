@@ -14,6 +14,12 @@
   service: name=supervisor state=stopped
   tags: stop_supervisor
 
+- name: Stop and remove uwsgi.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - uwsgi
+  when: galaxy_extras_config_uwsgi|bool and supervisor_manage_uwsgi|bool and galaxy_extras_install_packages
+
 - name: Stop and remove munge.
   service: name={{ item }} state=stopped enabled=no
   with_items:
