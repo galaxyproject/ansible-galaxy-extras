@@ -49,32 +49,45 @@ echo "127.0.0.1      galaxy" >> /etc/hosts
 ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}" &> /dev/null
 
 # Configure proxy prefix filtering
-if [ "$GALAXY_CONFIG_PROXY_PREFIX" != "/" ]
+if [ "$PROXY_PREFIX" != "/" ]
     then
-    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=filter:proxy-prefix option=prefix value=${GALAXY_CONFIG_PROXY_PREFIX}" &> /dev/null
+    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=filter:proxy-prefix option=prefix value=${PROXY_PREFIX}" &> /dev/null
     ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=app:main option=filter-with value=proxy-prefix" &> /dev/null
 
-    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_DIR}/reports_wsgi.ini section=filter:proxy-prefix option=prefix value=${GALAXY_CONFIG_PROXY_PREFIX}/reports" &> /dev/null
+    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_DIR}/reports_wsgi.ini section=filter:proxy-prefix option=prefix value=${PROXY_PREFIX}/reports" &> /dev/null
     ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_DIR}/reports_wsgi.ini section=app:main option=filter-with value=proxy-prefix" &> /dev/null
 
     # Fix path to html assets
-    ansible localhost -m replace -a "dest=$GALAXY_CONFIG_DIR/web/welcome.html regexp='(href=\"|\')[/\\w]*(/static)' replace='\\1${GALAXY_CONFIG_PROXY_PREFIX}\\2'" &> /dev/null
+    ansible localhost -m replace -a "dest=$GALAXY_CONFIG_DIR/web/welcome.html regexp='(href=\"|\')[/\\w]*(/static)' replace='\\1${PROXY_PREFIX}\\2'" &> /dev/null
 
     # Set some other vars based on that prefix
     if [ "x$GALAXY_CONFIG_COOKIE_PATH" == "x" ]
         then
-        export GALAXY_CONFIG_COOKIE_PATH="$GALAXY_CONFIG_PROXY_PREFIX"
+        export GALAXY_CONFIG_COOKIE_PATH="$PROXY_PREFIX"
     fi
     if [ "x$GALAXY_CONFIG_DYNAMIC_PROXY_PREFIX" == "x" ]
         then
-        export GALAXY_CONFIG_DYNAMIC_PROXY_PREFIX="$GALAXY_CONFIG_PROXY_PREFIX/gie_proxy"
+        export GALAXY_CONFIG_DYNAMIC_PROXY_PREFIX="$PROXY_PREFIX/gie_proxy"
     fi
 
     # Changed the nginx upload path (if set to default value)
     if [ "$GALAXY_CONFIG_NGINX_UPLOAD_PATH" == "/_upload" ]
         then
-            export GALAXY_CONFIG_NGINX_UPLOAD_PATH="${GALAXY_CONFIG_PROXY_PREFIX}${GALAXY_CONFIG_NGINX_UPLOAD_PATH}"
+            export GALAXY_CONFIG_NGINX_UPLOAD_PATH="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_UPLOAD_PATH}"
     fi
+fi
+
+# Disable authentication of Galaxy reports
+if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
+    then
+        # disable authentification by deleting the htpasswd file
+        echo "Disable Galaxy reports authentification "
+        rm /etc/nginx/htpasswd
+        echo "" > /etc/nginx/conf.d/reports_auth.conf
+    else
+        # enable authentification by deleting the htpasswd file
+        echo "Enable Galaxy reports authentification "
+        cp /etc/nginx/conf.d/reports_auth.conf.source /etc/nginx/conf.d/reports_auth.conf
 fi
 
 cd {{ galaxy_server_dir }}
@@ -200,7 +213,7 @@ function start_supervisor {
         supervisorctl start postgresql
     fi
     {% endif %}
-    wait_for_postgres 
+    wait_for_postgres
     {% if supervisor_manage_cron|bool %}
     if [[ $NONUSE != *"cron"* ]]
     then
@@ -348,14 +361,6 @@ then
     fi
 fi
 
-# Disable authentication of Galaxy reports
-if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
-    then
-        # disable authentification by deleting the htpasswd file
-        echo "Disable Galaxy reports authentification "
-        rm /etc/nginx/htpasswd
-fi
-
 # In case the user wants the default admin to be created, do so.
 if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
     then
@@ -370,4 +375,3 @@ if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
     else
         tail -f {{ galaxy_log_dir }}/*.log
 fi
-

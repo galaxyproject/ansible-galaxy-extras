@@ -50,17 +50,10 @@ http {
 
 {% if nginx_proxy_reports %}
         # enable reports under :80/reports/
-        # if the file /etc/nginx/htpasswd exists authentification is enabled
-        location {{ nginx_reports_location }} {
-            set $auth "Galaxy reports are restricted. Please contact your administrator.";
-
-            if (!-f /etc/nginx/htpasswd) {
-                set $auth off;
-            }
-
-            auth_basic $auth;
-            auth_basic_user_file htpasswd;
-            proxy_pass http://127.0.0.1:{{ galaxy_reports_port }};
+        location {{ nginx_reports_location }}/ {
+            # include authentification settings if enabled
+            include {{ nginx_conf_directory }}/reports_auth.conf;
+            proxy_pass http://127.0.0.1:{{ galaxy_reports_port }}/;
         }
         # serve static content for report app
         location  {{ nginx_reports_location }}/static {
