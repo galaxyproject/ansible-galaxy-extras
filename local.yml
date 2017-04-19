@@ -1,7 +1,7 @@
 ---
 # file: local.yml
 #   Short-cut to run local install tasks without setting up an inventory.
-# 
+#
 # Run roles locally via following command:
 #   ansible-playbook -i localhost, local.yml [-e var=val]* --tags=<tag[,tag]> --skip-tags=<tag[,tag]>
 - hosts: localhost
@@ -15,5 +15,7 @@
     tags: nginx
   - include: tasks/proftpd.yml
     tags: proftpd
+  - include: tasks/globus.yml
+    tags: globus
   - include: tasks/supervisor.yml
     tags: supervisor
