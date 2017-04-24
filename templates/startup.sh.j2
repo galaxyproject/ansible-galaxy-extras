@@ -49,7 +49,7 @@ echo "127.0.0.1      galaxy" >> /etc/hosts
 ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}" &> /dev/null
 
 # Configure proxy prefix filtering
-if [ "$PROXY_PREFIX" != "/" ]
+if [ "x$PROXY_PREFIX" != "x" ]
     then
     ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=filter:proxy-prefix option=prefix value=${PROXY_PREFIX}" &> /dev/null
     ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=app:main option=filter-with value=proxy-prefix" &> /dev/null
