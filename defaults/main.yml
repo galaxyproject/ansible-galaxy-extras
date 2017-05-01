@@ -9,6 +9,7 @@ galaxy_extras_config_slurm: true
 galaxy_extras_config_pbs: false
 galaxy_extras_config_condor: false
 galaxy_extras_config_condor_docker: false
+galaxy_extras_config_k8_jobs: false
 galaxy_extras_config_supervisor: true
 galaxy_extras_config_galaxy_root: true
 galaxy_extras_config_galaxy_job_metrics: true
@@ -93,6 +94,11 @@ uwsgi_threads: 2
 galaxy_paste_handlers: false
 galaxy_web_processes: 2
 galaxy_handler_processes: 2
+
+# Follow job_conf attributes set if galaxy_extras_config_k8_jobs is true.
+galaxy_k8_jobs_use_service_account: true
+galaxy_k8_jobs_persistent_volume_claim_name: galaxy-web-claim0
+galaxy_k8_jobs_persistent_volume_claim_mount_path: /export
 
 startup_export_user_files: true
 startup_chown_on_directory: ""

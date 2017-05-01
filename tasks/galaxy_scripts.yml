@@ -9,3 +9,12 @@
 
 - name: "Install export user files script."
   template: src=export_user_files.py.j2 dest=/usr/local/bin/export_user_files.py mode=a+x
+
+- name: "Install add_tool_shed script."
+  template: src=add_tool_shed.py.j2 dest=/usr/local/bin/add-tool-shed mode=a+x
+
+- name: "Install install_biojs_vis script."
+  template: src=install_biojs_vis.sh.j2 dest=/usr/local/bin/install-biojs mode=a+x
+
+- name: "Install startup lite script."
+  template: src=startup_lite.sh.j2 dest=/usr/bin/startup_lite mode=a+x
