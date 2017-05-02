@@ -1,0 +1,21 @@
+
+- name: Add Condor apt key
+  shell: "wget -qO - http://research.cs.wisc.edu/htcondor/ubuntu/HTCondor-Release.gpg.key | apt-key add -"
+  when: galaxy_extras_install_packages
+
+- name: Add Condor repository
+  apt_repository: repo='deb http://research.cs.wisc.edu/htcondor/ubuntu/stable/ {{ ansible_distribution_release }} contrib' update_cache=yes
+  when: galaxy_extras_install_packages
+
+- name: Install Condor system packages
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - condor
+    - pbs-drmaa-dev
+  when: galaxy_extras_install_packages
+
+- name: "Set DISCARD_SESSION_KEYRING_ON_STARTUP to False in Condor configs"
+  lineinfile: dest=/etc/condor/condor_config.local line='DISCARD_SESSION_KEYRING_ON_STARTUP=False' state=present create=yes
+
+- name: "Set TRUST_UID_DOMAIN to True in Condor configs"
+  lineinfile: dest=/etc/condor/condor_config.local line='TRUST_UID_DOMAIN=true' state=present create=yes

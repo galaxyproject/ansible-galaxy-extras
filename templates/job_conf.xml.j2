@@ -15,6 +15,14 @@
             <param id="drmaa_library_path">/usr/lib/pbs-drmaa/lib/libdrmaa.so.1</param>
         </plugin>
 {% endif %}
+{% if galaxy_extras_config_k8_jobs %}
+        <plugin id="k8" type="runner" load="galaxy.jobs.runners.kubernetes:KubernetesJobRunner">
+            <!-- We are inside of Kubernetes so use this. -->
+            <param id="k8s_use_service_account">true</param>
+            <param id="k8s_persistent_volume_claim_name">galaxy-web-claim0</param>
+            <param id="k8s_persistent_volume_claim_mount_path">/export</param>
+        </plugin>
+{% endif %}
     </plugins>
     <!-- The default handler can be changed by specifying the GALAXY_HANDLERS_DEFAULT environment variable. -->
     <handlers default_from_environ="GALAXY_HANDLERS_DEFAULT" default="handlers">
@@ -48,6 +56,13 @@
             {{ macros.docker_enabled() }}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
         {% endif %}
+            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
+        </destination>
+  {% endif %}
+  {% if galaxy_extras_config_k8_jobs %}
+        <destination id="k8_default" runner="k8">
+            <!-- Following parameter must be set to True for this runner. -->
+            <param id="docker_enabled">true</param>
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
         </destination>
   {% endif %}

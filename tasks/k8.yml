@@ -1,0 +1,5 @@
+
+- name: "Install pykube for galaxy"
+  pip: name=pykube virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+  become: True
+  become_user: "{{ galaxy_user_name }}"
