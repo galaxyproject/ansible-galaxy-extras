@@ -21,7 +21,8 @@ autorestart     = true
 {% if supervisor_manage_slurm|bool %}
 [program:munge]
 user=root
-command=/bin/bash -c "mkdir -p /var/run/munge && /usr/sbin/munged -F"
+# In VMs the chown seems to be needed, in containers the mkdir.
+command=/bin/bash -c "mkdir -p /var/run/munge && chown -R root:root /var/run/munge && /usr/sbin/munged -F"
 redirect_stderr = true
 priority        = 100
 stopasgroup     = true
