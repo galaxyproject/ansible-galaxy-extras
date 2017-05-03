@@ -22,7 +22,10 @@ galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed'
 galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
+
+# Default destination for Galaxy jobs.
 galaxy_extras_galaxy_destination_default: slurm_cluster
+galaxy_extras_galaxy_destination_docker_default: "{{ galaxy_extras_galaxy_destination_default }}"
 
 # set the FQDN for the pbs server, only used when galaxy_extras_config_pbs: true
 pbs_server_name: pbsqueue
