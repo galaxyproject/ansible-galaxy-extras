@@ -22,7 +22,18 @@ galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed'
 galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
+
+# Default destination for Galaxy jobs in generated job_conf.xml - can
+# tweak this to allow for a different default for Docker-enabled tools.
 galaxy_extras_galaxy_destination_default: slurm_cluster
+galaxy_extras_galaxy_destination_docker_default: "{{ galaxy_extras_galaxy_destination_default }}"
+
+galaxy_extras_config_container_resolution: false
+container_resolution_explicit: true
+container_resolution_mulled: true
+container_resolution_cached_mulled: "{{ container_resolution_mulled }}"
+container_resolution_build_mulled: "{{ container_resolution_mulled }}"
+container_resolution_mulled_namespace: biocontainers
 
 # set the FQDN for the pbs server, only used when galaxy_extras_config_pbs: true
 pbs_server_name: pbsqueue
@@ -60,6 +71,7 @@ galaxy_docker_volumes : "$defaults"
 # Point at the existing Galaxy configuration.
 galaxy_server_dir: "/galaxy-central"
 galaxy_job_conf_path: "{{ galaxy_server_dir }}/config/job_conf.xml"
+galaxy_container_resolvers_conf_path: "{{ galaxy_server_dir }}/config/container_resolvers_conf.xml"
 galaxy_job_metrics_conf_path: "{{ galaxy_server_dir }}/config/job_metrics_conf.xml"
 galaxy_user_name: "galaxy"
 galaxy_home_dir: "/home/{{ galaxy_user_name }}"

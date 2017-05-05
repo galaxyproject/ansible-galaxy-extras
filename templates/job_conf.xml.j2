@@ -23,6 +23,7 @@
             <param id="k8s_persistent_volume_claim_mount_path">/export</param>
         </plugin>
 {% endif %}
+        <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
     </plugins>
     <!-- The default handler can be changed by specifying the GALAXY_HANDLERS_DEFAULT environment variable. -->
     <handlers default_from_environ="GALAXY_HANDLERS_DEFAULT" default="handlers">
@@ -36,6 +37,16 @@
     </handlers>
     <!-- The default destination can be changed by specifying the GALAXY_DESTINATIONS_DEFAULT environment variable. -->
     <destinations default_from_environ="GALAXY_DESTINATIONS_DEFAULT" default="{{ galaxy_extras_galaxy_destination_default }}">
+        <destination id="docker_dispatch" runner="dynamic">
+            <!-- Allow different default destinations based on whether the tool
+                 supports Docker or not. -->
+            <param id="type">docker_dispatch</param>
+            <param id="docker_destination_id" from_environ="GALAXY_DESTINATIONS_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_docker_default }}</param>
+            <param id="default_destination_id" from_environ="GALAXY_DESTINATIONS_NO_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_default }}</param>
+        </destination>
+        <destination id="local_no_container" runner="local">
+            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
+        </destination>
 {% if galaxy_extras_config_slurm or galaxy_extras_config_pbs or galaxy_extras_config_condor %}
   {% if galaxy_extras_config_pbs %}
         <destination id="pbs_cluster" runner="pbs">

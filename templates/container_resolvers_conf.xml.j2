@@ -1,0 +1,14 @@
+<container_resolvers>
+  {% if container_resolution_explicit %}
+  <explicit />
+  {% endif %}
+  {% if container_resolution_cached_mulled %}
+  <cached_mulled />
+  {% endif %}
+  {% if container_resolution_mulled %}
+  <mulled namespace="{{ container_resolution_mulled_namespace }}" />
+  {% endif %}
+  {% if container_resolution_build_mulled %}
+  <build_mulled namespace="local" />
+  {% endif %}
+</container_resolvers>
