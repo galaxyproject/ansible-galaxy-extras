@@ -4,10 +4,21 @@
     - python-pip
   when: galaxy_extras_install_packages
 
+- name: Create munge.service configuration file
+  template: src=munge.service.j2 dest=/etc/systemd/system/munge.service
+  when: galaxy_extras_install_packages
+
+- name: Install munge system package
+  apt: pkg=munge state={{ galaxy_extras_apt_package_state }}
+  when: galaxy_extras_install_packages
+
+- name: Restart munge service
+  systemd: name=munge daemon_reload=yes enabled=True state=started
+  when: galaxy_extras_install_packages
+
 - name: Install SLURM system packages
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
-    - munge
     - slurm-llnl
     - slurm-drmaa-dev
     - python-psutil
