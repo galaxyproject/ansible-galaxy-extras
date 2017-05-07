@@ -1,4 +1,8 @@
 - name: "Install uwsgi for galaxy"
-  pip: name=uwsgi virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+  pip: 
+    name: uwsgi
+    virtualenv: "{{ galaxy_venv_dir }}"
+    virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+    extra_args: "--extra-index-url http://wheels.galaxyproject.org/"
   become: True
   become_user: "{{ galaxy_user_name }}"
