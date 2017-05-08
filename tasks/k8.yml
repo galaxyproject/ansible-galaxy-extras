@@ -1,3 +1,14 @@
+- name: "Install secure urllib3 for galaxy - better SSL verification with pykube"
+  # See also https://github.com/kelproject/pykube/issues/29
+  pip: name=urllib[secure] virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+  become: True
+  become_user: "{{ galaxy_user_name }}"
+
+- name: "Install ipaddress for galaxy - better SSL verification with pykube"
+  # See also https://github.com/kelproject/pykube/issues/29
+  pip: name=ipaddress virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+  become: True
+  become_user: "{{ galaxy_user_name }}"
 
 - name: "Install pykube for galaxy"
   pip: name=pykube virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
