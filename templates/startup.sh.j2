@@ -70,10 +70,20 @@ if [ "x$PROXY_PREFIX" != "x" ]
         export GALAXY_CONFIG_DYNAMIC_PROXY_PREFIX="$PROXY_PREFIX/gie_proxy"
     fi
 
-    # Changed the nginx upload path (if set to default value)
+    # Change the defaults nginx upload/x-accel paths
     if [ "$GALAXY_CONFIG_NGINX_UPLOAD_PATH" == "/_upload" ]
         then
             export GALAXY_CONFIG_NGINX_UPLOAD_PATH="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_UPLOAD_PATH}"
+    fi
+
+    if [ "$GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE" == "/_x_accel_redirect" ]
+        then
+            export GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE}"
+    fi
+
+    if [ "$GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE" == "/_x_accel_redirect" ]
+        then
+            export GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE}"
     fi
 fi
 
