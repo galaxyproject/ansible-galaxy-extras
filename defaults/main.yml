@@ -118,6 +118,11 @@ startup_sleeplock: false
 
 slurm_log_dir: "{{ galaxy_log_dir }}"
 
+# envsubst can replace placeholders by defined environment variables.
+# This can be useful for runtime modifications. By default we remove all placeholders at build-time.
+# If you want to keep them to use this feature, set it to false.
+envsubst_remove_runtime_envs: true
+
 # Nginx configuration.
 nginx_conf_path: /etc/nginx/nginx.conf
 nginx_conf_directory: /etc/nginx/conf.d
@@ -126,7 +131,12 @@ nginx_upload_store_path: "/tmp/nginx_upload_store"
 # Use nginx_*_location variables to control serving apps at subdirectories.
 # If galaxy should be served at subdirectory (e.g. example.com/galaxy) set nginx_galaxy_location: /galaxy
 # If all apps should be served on a common subdirectory, use nginx_prefix_location: /your_common_dir
-nginx_prefix_location: ""
+
+# The ${RUNTIME_ENVS_NGINX_PREFIX_LOCATION} is a placeholder that will be replaced by default if you not set
+# envsubst_remove_runtime_envs to false. If set to false this placeholder will end up in your config and you
+# need to replace it before you start nginx. Useful for the Docker setup in combination with envsubst.
+
+nginx_prefix_location: "${RUNTIME_ENVS_NGINX_PREFIX_LOCATION}"
 nginx_galaxy_location: "{{ nginx_prefix_location }}"
 nginx_interactive_environment_location: "{{ nginx_galaxy_location }}/gie_proxy"
 nginx_reports_location: "{{ nginx_prefix_location }}/reports"
