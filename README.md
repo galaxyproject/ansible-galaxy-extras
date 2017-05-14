@@ -12,8 +12,7 @@ Dependencies
 ------------
 
 This role assumes Galaxy has already been installed and configured
-(for instance with the [Galaxy
-role](https://github.com/galaxyproject/ansible-galaxy)).
+(for instance with the [Galaxy role](https://github.com/galaxyproject/ansible-galaxy)).
 
 Role variables
 --------------
@@ -25,6 +24,23 @@ can be set by creating `group_vars` directory in the root directory of
 the playbook used to execute this role and placing a file with the
 variables there. Note that the name of this file must match the value
 of `hosts` setting in the corresponding playbook.
+
+Using envsubst to change variables during runtime of your deployment
+--------------------------------------------------------------------
+
+[envsubst](https://www.gnu.org/software/gettext/manual/html_node/envsubst-Invocation.html) is a small utility that can replace placeholders (`${FOO}`) in files with environment varaibles. This is a really light-weight and old-school standard unix approach and this ansible role can make use of it.
+
+For example we introduced the placeholder `${RUNTIME_ENVS_NGINX_PREFIX_LOCATION}` in
+
+```sh
+nginx_prefix_location: "${RUNTIME_ENVS_NGINX_PREFIX_LOCATION}"
+```
+
+and by default we are removing it again with `envsubst_remove_runtime_envs: true` and corresponding [task](./tasks/envsubst.yml). This is to keep the role functional by defaul if you need this feature set `envsubst_remove_runtime_envs` to false and run a `envsubst` during startup, like:
+
+```sh
+envsubst '$RUNTIME_ENVS_NGINX_PREFIX_LOCATION' < /etc/nginx/nginx.conf > /tmp/env_replace && mv /tmp/env_replace /etc/nginx/nginx.conf
+```
 
 Additional Documentation
 ------------------------
