@@ -63,6 +63,8 @@ galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:15.10
 galaxy_extras_docker_storage_backend: aufs
 galaxy_extras_docker_legacy: true
 
+galaxy_extras_gcc_available: false
+
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
 galaxy_docker_volumes_from: ""

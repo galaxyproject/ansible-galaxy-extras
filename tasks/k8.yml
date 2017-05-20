@@ -1,6 +1,7 @@
 - name: "Install secure urllib3 for galaxy - better SSL verification with pykube"
   # See also https://github.com/kelproject/pykube/issues/29
   pip: name=urllib3[secure] virtualenv={{ galaxy_venv_dir }} virtualenv_command="{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+  when: galaxy_extras_gcc_available
   become: True
   become_user: "{{ galaxy_user_name }}"
 
