@@ -34,6 +34,9 @@ def add_user(sa_session, security_agent, email, password, key=None, username="ad
             security_agent.user_set_default_permissions( user, history=True, dataset=True )
 
     if key is not None:
+        query = sa_session.query( APIKeys ).filter_by( user_id=user.id ).delete()
+        sa_session.flush()
+        
         api_key = APIKeys()
         api_key.user_id = user.id
         api_key.key = key
