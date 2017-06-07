@@ -67,6 +67,7 @@ galaxy_extras_gcc_available: false
 
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
+galaxy_docker_default_image: 'busybox:ubuntu-14.04'
 galaxy_docker_volumes_from: ""
 galaxy_docker_volumes : "$defaults"
 
