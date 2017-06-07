@@ -93,6 +93,9 @@ galaxy_reports_log: "{{ galaxy_log_dir }}/reports.log"
 galaxy_db_port: "5432"
 galaxy_database_connection: "postgres://{{ galaxy_user_name }}@localhost:{{ galaxy_db_port }}/galaxy"
 
+# Minimum version to target with configuration.
+galaxy_minimum_version: "17.01"
+
 # Port to serve uwsgi on.
 galaxy_uwsgi: true
 uwsgi_log: "{{ galaxy_log_dir }}/uwsgi.log"
