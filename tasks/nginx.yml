@@ -8,7 +8,6 @@
     owner=root group=root mode=0600
   with_items:
     - { src: 'htpasswd.j2',                     dest: '/etc/nginx/htpasswd' }
-    - { src: 'nginx_ide.conf.j2',               dest: '{{ nginx_conf_directory }}/ide.conf' }
     - { src: 'nginx_galaxy_web.conf.j2',        dest: '{{ nginx_conf_directory }}/galaxy_web.conf' }
     - { src: 'nginx_uwsgi.conf.j2',             dest: '{{ nginx_conf_directory }}/uwsgi.conf' }
     - { src: 'nginx_reports_noauth.conf.j2',    dest: '{{ nginx_conf_directory }}/reports_auth.conf' }

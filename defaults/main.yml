@@ -143,11 +143,6 @@ nginx_htpasswds:
   - "admin:WiBKbsJTSQ8dc"
 nginx_use_remote_header: False
 
-## Development Box Configuration
-# Configure nginx to setup a proxy to an IDE.
-nginx_proxy_ide: false
-codebox_port: 8991
-
 # Additional configurations to be appended to nginx config
 nginx_additional_config : []
 
