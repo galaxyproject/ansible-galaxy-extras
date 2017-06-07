@@ -5,14 +5,24 @@
 {% if galaxy_extras_config_slurm %}
         <plugin id="slurm" type="runner" load="galaxy.jobs.runners.slurm:SlurmJobRunner">
             <param id="drmaa_library_path">/usr/lib/slurm-drmaa/lib/libdrmaa.so</param>
+{% if galaxy_minimum_version >= "17.09" %}
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
+{% endif %}
         </plugin>
 {% endif %}
 {% if galaxy_extras_config_condor %}
-        <plugin id="condor" type="runner" load="galaxy.jobs.runners.condor:CondorJobRunner" />
+        <plugin id="condor" type="runner" load="galaxy.jobs.runners.condor:CondorJobRunner">
+{% if galaxy_minimum_version >= "17.09" %}
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
+{% endif %}
+        </plugin>
 {% endif %}
 {% if galaxy_extras_config_pbs %}
         <plugin id="pbs" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner">
             <param id="drmaa_library_path">/usr/lib/pbs-drmaa/lib/libdrmaa.so.1</param>
+{% if galaxy_minimum_version >= "17.09" %}
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_PBS">true</param>
+{% endif %}
         </plugin>
 {% endif %}
 {% if galaxy_extras_config_k8_jobs %}
@@ -21,6 +31,9 @@
             <param id="k8s_use_service_account">true</param>
             <param id="k8s_persistent_volume_claim_name">galaxy-web-claim0</param>
             <param id="k8s_persistent_volume_claim_mount_path">/export</param>
+{% if galaxy_minimum_version >= "17.09" %}
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_K8">true</param>
+{% endif %}
         </plugin>
 {% endif %}
         <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
@@ -50,12 +63,14 @@
 {% if galaxy_extras_config_slurm or galaxy_extras_config_pbs or galaxy_extras_config_condor %}
   {% if galaxy_extras_config_pbs %}
         <destination id="pbs_cluster" runner="pbs">
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_PBS">true</param>
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
             {{ macros.docker_enabled() }}
         </destination>
  {% endif %}
   {% if galaxy_extras_config_slurm %}
         <destination id="slurm_cluster" runner="slurm">
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
             <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
             {{ macros.docker_enabled() }}
@@ -63,6 +78,7 @@
   {% endif %}
   {% if galaxy_extras_config_condor %}
         <destination id="condor_cluster" runner="condor">
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
         {% if galaxy_extras_config_condor_docker %}
             {{ macros.docker_enabled() }}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
@@ -72,6 +88,7 @@
   {% endif %}
   {% if galaxy_extras_config_k8_jobs %}
         <destination id="k8_default" runner="k8">
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_K8">true</param>
             <!-- Following parameter must be set to True for this runner. -->
             <param id="docker_enabled">true</param>
             <env file="{{ galaxy_venv_dir }}/bin/activate"/>
