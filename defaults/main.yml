@@ -140,6 +140,9 @@ nginx_ide_location: "{{ nginx_prefix_location }}/ide"
 nginx_welcome_location: "{{ nginx_prefix_location }}/etc/galaxy/web"
 nginx_welcome_path: "/etc/galaxy/web"
 
+# Synchronize error handling with ansible-galaxy role.
+galaxy_errordocs_dest: "/root/"
+
 #web security
 nginx_use_passwords: False
 nginx_htpasswds:
