@@ -192,10 +192,12 @@ http {
         }
 {% endif %}
 
-        error_page 502  {{ nginx_prefix_location }}/502.html;
-        location = {{ nginx_prefix_location }}/502.html {
-            root  /root/;
-            proxy_intercept_errors on;
+        # error docs
+        error_page  502 503 504 {{ nginx_prefix_location }}/error/502/index.shtml;
+        error_page  413         {{ nginx_prefix_location }}/error/413/index.html;
+        location {{ nginx_prefix_location }}/error {
+            ssi on;
+            alias {{ galaxy_errordocs_dest }};
         }
 
 
