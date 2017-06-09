@@ -57,13 +57,13 @@
             <param id="docker_destination_id" from_environ="GALAXY_DESTINATIONS_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_docker_default }}</param>
             <param id="default_destination_id" from_environ="GALAXY_DESTINATIONS_NO_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_default }}</param>
         </destination>
-        {{ macros.destination("local_no_container", "local") }}
-        {{ macros.destination("local_docker", "local", docker=True) }}
-        {{ macros.destination("local_force_docker", "local", docker=True, force_docker=True) }}
+        {% call macros.destination("local_no_container", "local") %}{% endcall %}
+        {% call macros.destination("local_docker", "local", docker=True) %}{% endcall %}
+        {% call macros.destination("local_force_docker", "local", docker=True, force_docker=True) %}{% endcall %}
 {% if galaxy_extras_config_pbs %}
-        {{ macros.destination("pbs_cluster", "pbs") }}
-        {{ macros.destination("pbs_cluster_docker", "pbs", docker=True) }}
-        {{ macros.destination("pbs_cluster_force_docker", "pbs", docker=True, force_docker=True) }}
+        {% call macros.destination("pbs_cluster", "pbs") %}{% endcall %}
+        {% call macros.destination("pbs_cluster_docker", "pbs", docker=True) %}{% endcall %}
+        {% call macros.destination("pbs_cluster_force_docker", "pbs", docker=True, force_docker=True) %}{% endcall %}
 {% endif %}
 {% if galaxy_extras_config_slurm %}
         {% call macros.destination("slurm_cluster", "slurm") %}
@@ -98,7 +98,7 @@
         {{ macros.docker_dispatch_destination("condor_docker_universe_dispatch", "condor_docker_universe", "condor_cluster")}}
 {% endif %}
 {% if galaxy_extras_config_k8_jobs %}
-        {{ macros.destination("k8_default", "k8", docker=True, force_docker=True) }}
+        {% call macros.destination("k8_default", "k8", docker=True, force_docker=True) %}{% endcall %}
         {{ macros.docker_dispatch_destination("k8_or_local_dispatch", "k8_default", "local_no_container")}}
         {{ macros.docker_dispatch_destination("k8_or_slurm_dispatch", "k8_default", "slurm_cluster")}}
         {{ macros.docker_dispatch_destination("k8_or_condor_dispatch", "k8_default", "condor_cluster")}}
