@@ -57,137 +57,51 @@
             <param id="docker_destination_id" from_environ="GALAXY_DESTINATIONS_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_docker_default }}</param>
             <param id="default_destination_id" from_environ="GALAXY_DESTINATIONS_NO_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_default }}</param>
         </destination>
-        <destination id="local_no_container" runner="local">
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-        </destination>
-        <destination id="local_docker" runner="local">
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-            {{ macros.docker_enabled() }}
-        </destination>
-        <destination id="local_force_docker" runner="local">
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-            {{ macros.docker_enabled(True) }}
-        </destination>
-        <destination id="local_docker_dispatch" runner="dynamic">
-            <param id="type">docker_dispatch</param>
-            <param id="docker_destination_id">local_docker</param>
-            <param id="default_destination_id">local_no_docker</param>
-        </destination>
-{% if galaxy_extras_config_slurm or galaxy_extras_config_pbs or galaxy_extras_config_condor %}
-  {% if galaxy_extras_config_pbs %}
-        <destination id="pbs_cluster" runner="pbs">
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_PBS">true</param>
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-        </destination>
-        <destination id="pbs_cluster_docker" runner="pbs">
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_PBS">true</param>
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-            {{ macros.docker_enabled() }}
-        </destination>
-        <destination id="pbs_cluster_force_docker" runner="pbs">
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_PBS">true</param>
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-            {{ macros.docker_enabled(True) }}
-        </destination>
-        <!--
-        <destination id="pbs_docker_dispatch" runner="dynamic">
-            <param id="type">docker_dispatch</param>
-            <param id="docker_destination_id">pbs_cluster_docker</param>
-            <param id="default_destination_id">pbs_cluster</param>
-        </destination>
-    -->
- {% endif %}
-  {% if galaxy_extras_config_slurm %}
-        <destination id="slurm_cluster" runner="slurm">
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
+        {{ macros.destination("local_no_container", "local") }}
+        {{ macros.destination("local_docker", "local", docker=True) }}
+        {{ macros.destination("local_force_docker", "local", docker=True, force_docker=True) }}
+{% if galaxy_extras_config_pbs %}
+        {{ macros.destination("pbs_cluster", "pbs") }}
+        {{ macros.destination("pbs_cluster_docker", "pbs", docker=True) }}
+        {{ macros.destination("pbs_cluster_force_docker", "pbs", docker=True, force_docker=True) }}
+{% endif %}
+{% if galaxy_extras_config_slurm %}
+        {% call macros.destination("slurm_cluster", "slurm") %}
             <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-        </destination>
-        <destination id="slurm_cluster_docker" runner="slurm">
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
+        {% endcall %}
+        {% call macros.destination("slurm_cluster_docker", "slurm", docker=True) %}
             <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-            {{ macros.docker_enabled() }}
-        </destination>
-        <destination id="slurm_cluster_force_docker" runner="slurm">
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
+        {% endcall %}
+        {% call macros.destination("slurm_cluster_force_docker", "slurm", docker=True, force_docker=True) %}
             <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-            {{ macros.docker_enabled(True) }}
-        </destination>
-        <!--
-        <destination id="slurm_docker_dispatch" runner="dynamic">
-            <param id="type">docker_dispatch</param>
-            <param id="docker_destination_id">slurm_cluster_docker</param>
-            <param id="default_destination_id">slurm_cluster</param>
-        </destination>
-        -->
-  {% endif %}
-  {% if galaxy_extras_config_condor %}
-        <destination id="condor_cluster" runner="condor">
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
+        {% endcall %}
+{% endif %}
+{% if galaxy_extras_config_condor %}
+        {% call macros.destination("condor_cluster", "condor") %}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
-        </destination>
-        <destination id="condor_cluster_docker" runner="condor">
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
+        {% endcall %}
+        {% call macros.destination("condor_cluster_docker", "condor", docker=True) %}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
-            {{ macros.docker_enabled() }}
-        </destination>
-        <destination id="condor_cluster_force_docker" runner="condor">
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
+        {% endcall %}
+        {% call macros.destination("condor_cluster_force_docker", "condor", docker=True, force_docker=True) %}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
-            {{ macros.docker_enabled(True) }}
-        </destination>
-        <destination id="condor_docker_universe" runner="condor">
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
+        {% endcall %}
+        {% call macros.destination("condor_docker_universe", "condor", docker=True, force_docker=True) %}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">docker</param>
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
-            {{ macros.docker_enabled(True) }}
-        </destination>
+        {% endcall %}
         <!-- Following destinations send to basic Condor runner if no Docker image is available
              otherwise they both use the Docker image - the first submits a normal Condor job
              that will run Docker on the resulting worker node and the second uses Condor's
              native Docker universe support.
         -->
-        <destination id="condor_docker_cluster_dispatch" runner="dynamic">
-            <param id="type">docker_dispatch</param>
-            <param id="docker_destination_id">condor_cluster_docker</param>
-            <param id="default_destination_id">condor_cluster</param>
-        </destination>
-        <destination id="condor_docker_universe_dispatch" runner="dynamic">
-            <param id="type">docker_dispatch</param>
-            <param id="docker_destination_id">condor_docker_universe</param>
-            <param id="default_destination_id">condor_cluster</param>
-        </destination>
-  {% endif %}
-  {% if galaxy_extras_config_k8_jobs %}
-        <destination id="k8_default" runner="k8">
-            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_K8">true</param>
-            <!-- Following parameter must be set to True for this runner. -->
-            <param id="docker_enabled">true</param>
-            <env file="{{ galaxy_venv_dir }}/bin/activate"/>
-            <param id="docker_default_container_id" from_environ="GALAXY_DOCKER_DEFAULT_CONTAINER">{{ galaxy_docker_default_image }}</param>
-        </destination>
-        <destination id="k8_or_local_dispatch" runner="dynamic">
-            <param id="type">docker_dispatch</param>
-            <param id="docker_destination_id">k8_default</param>
-            <param id="default_destination_id">local_no_docker</param>
-        </destination>
-        <destination id="k8_or_slurm_dispatch" runner="dynamic">
-            <param id="type">docker_dispatch</param>
-            <param id="docker_destination_id">k8_default</param>
-            <param id="default_destination_id">slurm_cluster</param>
-        </destination>
-        <destination id="k8_or_condor_dispatch" runner="dynamic">
-            <param id="type">docker_dispatch</param>
-            <param id="docker_destination_id">k8_default</param>
-            <param id="default_destination_id">condor_cluster</param>
-        </destination>
-  {% endif %}
-
+        {{ macros.docker_dispatch_destination("condor_docker_cluster_dispatch", "condor_cluster_docker", "condor_cluster")}}
+        {{ macros.docker_dispatch_destination("condor_docker_universe_dispatch", "condor_docker_universe", "condor_cluster")}}
+{% endif %}
+{% if galaxy_extras_config_k8_jobs %}
+        {{ macros.destination("k8_default", "k8", docker=True, force_docker=True) }}
+        {{ macros.docker_dispatch_destination("k8_or_local_dispatch", "k8_default", "local_no_container")}}
+        {{ macros.docker_dispatch_destination("k8_or_slurm_dispatch", "k8_default", "slurm_cluster")}}
+        {{ macros.docker_dispatch_destination("k8_or_condor_dispatch", "k8_default", "condor_cluster")}}
 {% endif %}
     </destinations>
     <limits>

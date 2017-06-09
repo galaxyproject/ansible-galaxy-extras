@@ -1,7 +1,10 @@
-{% macro docker_enabled(force_docker=False) -%}
+{% macro destination(id, runner, docker=False, force_docker=False) -%}
+    <destination id="{{ id }}" runner="{{ runner }}">
+        <env file="{{ galaxy_venv_dir }}/bin/activate"/>
     {% if galaxy_source_shellrc %}
         <env file="{{ galaxy_user_shellrc }}" />
     {% endif %}
+        <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_{{ runner|upper }}">true</param>
         <param id="docker_enabled">true</param>
         <param id="docker_sudo" from_environ="GALAXY_DOCKER_SUDO">{{ galaxy_docker_sudo }}</param>
         <!-- The empty volumes from shouldn't affect Galaxy, set GALAXY_DOCKER_VOLUMES_FROM to use. -->
@@ -11,4 +14,14 @@
     {% if force_docker %}
         <param id="docker_default_container_id" from_environ="GALAXY_DOCKER_DEFAULT_CONTAINER">{{ galaxy_docker_default_image }}</param>
     {% endif %}
+        {{ caller() }}
+    </destination>
+{%- endmacro %}
+
+{% macro docker_dispatch_destination(id, default_destination, docker_destination) -%}
+    <destination id="{{ id }}" runner="dynamic">
+        <param id="type">docker_dispatch</param>
+        <param id="docker_destination_id">{{ docker_destination }}</param>
+        <param id="default_destination_id">{{ default_destination }}</param>
+    </destination>
 {%- endmacro %}
