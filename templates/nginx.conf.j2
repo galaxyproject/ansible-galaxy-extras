@@ -9,6 +9,10 @@ events {
 http {
     include       mime.types;
     default_type  application/octet-stream;
+    
+    uwsgi_buffers 8 16384;
+    uwsgi_buffer_size 16384;
+
 
     sendfile        on;
 
