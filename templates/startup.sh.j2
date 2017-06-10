@@ -92,7 +92,7 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
     then
         # disable authentification
         echo "Disable Galaxy reports authentification "
-        rm /etc/nginx/htpasswd
+        rm -f /etc/nginx/htpasswd
         echo "" > /etc/nginx/conf.d/reports_auth.conf
     else
         # enable authentification
