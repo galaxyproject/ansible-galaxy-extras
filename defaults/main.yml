@@ -80,7 +80,7 @@ galaxy_singularity_sudo: false
 galaxy_singularity_default_image: ''
 galaxy_singularity_volumes_from: ""
 # rw directories are not considered if the parent is ro
-galaxy_singularity_volumes : "$tool_directory:ro,$working_directory:rw,$default_file_path:rw"
+galaxy_singularity_volumes : "$defauls"
 
 # Point at the existing Galaxy configuration.
 galaxy_server_dir: "/galaxy-central"
