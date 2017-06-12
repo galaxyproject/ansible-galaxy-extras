@@ -57,36 +57,47 @@
             <param id="docker_destination_id" from_environ="GALAXY_DESTINATIONS_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_docker_default }}</param>
             <param id="default_destination_id" from_environ="GALAXY_DESTINATIONS_NO_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_default }}</param>
         </destination>
+        <!--destination id="singularity_dispatch" runner="dynamic">
+            <param id="type">singularity_dispatch</param>
+            <param id="singularity_destination_id" from_environ="GALAXY_DESTINATIONS_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_singularity_default }}</param>
+            <param id="default_destination_id" from_environ="GALAXY_DESTINATIONS_NO_DOCKER_DEFAULT">{{ galaxy_extras_galaxy_destination_default }}</param>
+        </destination-->
         {% call macros.destination("local_no_container", "local") %}{% endcall %}
-        {% call macros.destination("local_docker", "local", docker=True) %}{% endcall %}
-        {% call macros.destination("local_force_docker", "local", docker=True, force_docker=True) %}{% endcall %}
+        {% call macros.destination("local_docker", "local", container_type="docker") %}{% endcall %}
+        {% call macros.destination("local_force_docker", "local", container_type="docker", force_container=True) %}{% endcall %}
 {% if galaxy_extras_config_pbs %}
         {% call macros.destination("pbs_cluster", "pbs") %}{% endcall %}
-        {% call macros.destination("pbs_cluster_docker", "pbs", docker=True) %}{% endcall %}
-        {% call macros.destination("pbs_cluster_force_docker", "pbs", docker=True, force_docker=True) %}{% endcall %}
+        {% call macros.destination("pbs_cluster_docker", "pbs", container_type="docker") %}{% endcall %}
+        {% call macros.destination("pbs_cluster_force_docker", "pbs", container_type="docker", force_container=True) %}{% endcall %}
 {% endif %}
 {% if galaxy_extras_config_slurm %}
         {% call macros.destination("slurm_cluster", "slurm") %}
             <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
         {% endcall %}
-        {% call macros.destination("slurm_cluster_docker", "slurm", docker=True) %}
+        <!-- Docker -->
+        {% call macros.destination("slurm_cluster_docker", "slurm", container_type="docker") %}
             <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
         {% endcall %}
-        {% call macros.destination("slurm_cluster_force_docker", "slurm", docker=True, force_docker=True) %}
+        {% call macros.destination("slurm_cluster_force_docker", "slurm", container_type="docker", force_container=True) %}
             <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
         {% endcall %}
+        <!-- Singularity -->
+        {% call macros.destination("slurm_cluster_singularity", "slurm", container_type="singularity") %}
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
+        {% endcall %}
+
 {% endif %}
 {% if galaxy_extras_config_condor %}
         {% call macros.destination("condor_cluster", "condor") %}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
         {% endcall %}
-        {% call macros.destination("condor_cluster_docker", "condor", docker=True) %}
+        {% call macros.destination("condor_cluster_docker", "condor", container_type="docker") %}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
         {% endcall %}
-        {% call macros.destination("condor_cluster_force_docker", "condor", docker=True, force_docker=True) %}
+        {% call macros.destination("condor_cluster_force_docker", "condor", container_type="docker", force_container=True) %}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
         {% endcall %}
-        {% call macros.destination("condor_docker_universe", "condor", docker=True, force_docker=True) %}
+        {% call macros.destination("condor_docker_universe", "condor", container_type="docker", force_container=True) %}
             <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">docker</param>
         {% endcall %}
         <!-- Following destinations send to basic Condor runner if no Docker image is available
@@ -98,7 +109,7 @@
         {{ macros.docker_dispatch_destination("condor_docker_universe_dispatch", "condor_docker_universe", "condor_cluster")}}
 {% endif %}
 {% if galaxy_extras_config_k8_jobs %}
-        {% call macros.destination("k8_default", "k8", docker=True, force_docker=True) %}{% endcall %}
+        {% call macros.destination("k8_default", "k8", container_type="docker", force_container=True) %}{% endcall %}
         {{ macros.docker_dispatch_destination("k8_or_local_dispatch", "k8_default", "local_no_container")}}
         {{ macros.docker_dispatch_destination("k8_or_slurm_dispatch", "k8_default", "slurm_cluster")}}
         {{ macros.docker_dispatch_destination("k8_or_condor_dispatch", "k8_default", "condor_cluster")}}

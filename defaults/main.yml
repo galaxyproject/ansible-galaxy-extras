@@ -27,6 +27,7 @@ galaxy_extras_config_rabbitmq: false
 # tweak this to allow for a different default for Docker-enabled tools.
 galaxy_extras_galaxy_destination_default: slurm_cluster
 galaxy_extras_galaxy_destination_docker_default: "{{ galaxy_extras_galaxy_destination_default }}"
+galaxy_extras_galaxy_destination_singularity_default: "{{ galaxy_extras_galaxy_destination_default }}"
 
 galaxy_extras_config_container_resolution: false
 container_resolution_explicit: true
@@ -65,11 +66,21 @@ galaxy_extras_docker_legacy: true
 
 galaxy_extras_gcc_available: false
 
+# Docker defaults
 galaxy_docker_enabled: false
 galaxy_docker_sudo: false
 galaxy_docker_default_image: 'busybox:ubuntu-14.04'
 galaxy_docker_volumes_from: ""
 galaxy_docker_volumes : "$defaults"
+
+# Singularity defaults
+galaxy_singularity_enabled: false
+galaxy_singularity_sudo: false
+# ToDo create default image
+galaxy_singularity_default_image: ''
+galaxy_singularity_volumes_from: ""
+# rw directories are not considered if the parent is ro
+galaxy_singularity_volumes : "$defauls"
 
 # Point at the existing Galaxy configuration.
 galaxy_server_dir: "/galaxy-central"
