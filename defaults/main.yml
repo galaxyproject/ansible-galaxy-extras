@@ -52,8 +52,6 @@ galaxy_extras_install_packages: false
 # be 'present' or 'latest'.
 galaxy_extras_apt_package_state: present
 
-galaxy_extras_ie_fetch_ipython: false
-galaxy_extras_ie_ipython_image: bgruening/docker-ipython-notebook:dev #deprecated
 galaxy_extras_ie_fetch_jupyter: false
 galaxy_extras_ie_jupyter_image: quay.io/bgruening/docker-jupyter-notebook:17.05
 galaxy_extras_ie_fetch_rstudio: false

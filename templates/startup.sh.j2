@@ -351,7 +351,6 @@ if $PRIVILEGED; then
     fi
     if  [ "x$PULL_IE_IMAGES" != "x" ]; then
         echo "Pull images for interactive environments"
-        docker pull {{ galaxy_extras_ie_ipython_image }} &
         docker pull {{ galaxy_extras_ie_jupyter_image }} &
         docker pull {{ galaxy_extras_ie_rstudio_image }} &
     fi
