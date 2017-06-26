@@ -18,6 +18,14 @@ autostart       = {{ supervisor_cron_autostart }}
 autorestart     = true
 {% endif %}
 
+{% if supervisor_manage_autofs|bool %}
+[program:autofs]
+user            = root
+command         = /usr/sbin/automount -f
+autostart       = {{ supervisor_autofs_autostart }}
+autorestart     = true
+{% endif %}
+
 {% if supervisor_manage_slurm|bool %}
 [program:munge]
 user=root

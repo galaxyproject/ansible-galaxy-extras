@@ -22,6 +22,7 @@ galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed'
 galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
+galaxy_extras_config_cvmfs: false
 
 # Default destination for Galaxy jobs in generated job_conf.xml - can
 # tweak this to allow for a different default for Docker-enabled tools.
@@ -219,6 +220,7 @@ supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_condor: true
 supervisor_manage_cron: true
+supervisor_manage_autofs: true
 supervisor_manage_docker: true
 supervisor_manage_toolshed: false
 
@@ -233,6 +235,7 @@ supervisor_condor_autostart: false
 supervisor_proftpd_autostart: false
 supervisor_postgres_autostart: true
 supervisor_cron_autostart: false
+supervisor_autofs_autostart: true
 supervisor_docker_autostart: false
 supervisor_docker_autorestart: true
 
@@ -254,3 +257,55 @@ nginx_ssl_certificate: /etc/ssl/private/nginx.crt
 # This defaults to a set of self-generated keys
 src_nginx_ssl_certificate_key: nginx_sample.key
 src_nginx_ssl_certificate: nginx_sample.crt
+
+cvmfs_deb_url: "https://ecsft.cern.ch/dist/cvmfs/cvmfs-2.1.20/cvmfs_2.1.20_amd64.deb"
+cvmfs_deb_config_url: "https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/cvmfs-config-default_latest_all.deb"
+cvmfs_keys:
+  - path: /etc/cvmfs/keys/data.galaxyproject.org.pub
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5LHQuKWzcX5iBbCGsXGt
+      6CRi9+a9cKZG4UlX/lJukEJ+3dSxVDWJs88PSdLk+E25494oU56hB8YeVq+W8AQE
+      3LWx2K2ruRjEAI2o8sRgs/IbafjZ7cBuERzqj3Tn5qUIBFoKUMWMSIiWTQe2Sfnj
+      GzfDoswr5TTk7aH/FIXUjLnLGGCOzPtUC244IhHARzu86bWYxQJUw0/kZl5wVGcH
+      maSgr39h1xPst0Vx1keJ95AH0wqxPbCcyBGtF1L6HQlLidmoIDqcCQpLsGJJEoOs
+      NVNhhcb66OJHah5ppI1N3cZehdaKyr1XcF9eedwLFTvuiwTn6qMmttT/tHX7rcxT
+      owIDAQAB
+      -----END PUBLIC KEY-----
+  - path: /etc/cvmfs/keys/data.galaxyproject.org.crt
+    key: |
+      -----BEGIN CERTIFICATE-----
+      MIIC9DCCAdwCCQDHxOGBpJCTaTANBgkqhkiG9w0BAQsFADA8MTowOAYDVQQDDDFk
+      YXRhLmdhbGF4eXByb2plY3Qub3JnIENlcm5WTS1GUyBSZWxlYXNlIE1hbmFnZXJz
+      MB4XDTE2MDMzMTE3MTA1MloXDTE3MDMzMTE3MTA1MlowPDE6MDgGA1UEAwwxZGF0
+      YS5nYWxheHlwcm9qZWN0Lm9yZyBDZXJuVk0tRlMgUmVsZWFzZSBNYW5hZ2VyczCC
+      ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANSqVuz/IGAeN5FtRezgmMQH
+      MZR7Pu8BadU1yAPIAdkvg357xnF30UdzFFsx5UoIoaOTh07cFBpDZ/yD7evfbWFe
+      u2HrI0N6gnSGJDal6jaRzB2gslRcE4d5B2U30xg0bXqVq2ASACCA6Tr4h909w5Hs
+      qIT8mDN1kwg4yAC1CJ7lVEyd2omI/8FlJ+kONHOcKhuQzo/F4zSADYDk5bkJUFO2
+      b51YcumqefJ12dP5L7w2wqbVRzo2MxtZWDrVuxAGEr+DU8BX9MXrQwxOXHADmWFD
+      nCqlg0CoFR6CS2TzNcJdu0JmC/u+bgFeKkfekHiLg2RwhSYp0BLrxxUODXT7AHcC
+      AwEAATANBgkqhkiG9w0BAQsFAAOCAQEAW0lijt9nXWIFX+ZiS6GqowD0XNzoWwwa
+      05YHhivKlFzadBpsO9W5/Evq5Upi6plLQw0m2gYl6zaZKxXB5N90nvKqSL8tp4AZ
+      C+qJdwBSJjG+rWZLh71AgTAfbKFxQUQea4s1yq6Y/iM/KpQj3xvGWCTtPHNVFqgX
+      yc7Z5XE9YQIVsKO1Z4A1SVyp/F+xn9ikRfE1USuVXd14icPgSkLd4uCF1is9Ns2h
+      IVsc8y8pyu4e2uiuvAiDkIWDwTj5LwvQlzCeAn4Z2crBEMDXOg5Ax7DE+8K+VaS7
+      umt/c7usl22IscRFArkCPbTMJuUxyJYH8g9rl1AiziVw9zC9SCbD2w==
+      -----END CERTIFICATE-----
+
+cvmfs_server_urls:
+  - domain: galaxyproject.org
+    urls:
+      - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
+
+cvmfs_repositories:
+  - repository: data.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+
+cvmfs_http_proxies:
+  - DIRECT
+
+cvmfs_stratum1_servers:
+  - "cvmfs1-tacc0.galaxyproject.org"
+  - "cvmfs1-iu0.galaxyproject.org"
+  - "cvmfs1-psu0.galaxyproject.org"
