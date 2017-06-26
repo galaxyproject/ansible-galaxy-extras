@@ -69,3 +69,8 @@
   when: galaxy_extras_config_startup
   tags:
    - startup
+
+- include: cvmfs_client.yml
+  when: galaxy_extras_config_cvmfs
+  tags:
+   - cvmfs
