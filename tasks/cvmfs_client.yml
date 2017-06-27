@@ -2,6 +2,11 @@
 # Setup of the CernVM-File system (CVMFS) and configure so that the reference
 # data hosted by Galaxy on usegalaxy.org is available to the remote target.
 
+# Install autofs
+- name: Install autofs system package
+  apt: pkg=autofs state={{ galaxy_extras_apt_package_state }}
+  when: galaxy_extras_install_packages
+
 # Install & setup CermVM-FS
 - name: Download cvmfs
   get_url:
@@ -63,6 +68,6 @@
   file: src=/cvmfs/data.galaxyproject.org/byhand dest=/galaxy/data state=link force=yes
 
 - name: Use tool_data_table_conf.xml from usegalaxy-playbook
-  copy:
-    src: "files/tool_data_table_conf.xml"
+  get_url:
+    url: https://raw.githubusercontent.com/galaxyproject/usegalaxy-playbook/067433f547f67b848f2e4597274a379f06da04b2/files/galaxy/usegalaxy.org/config/tool_data_table_conf.xml
     dest: "{{ galaxy_server_dir }}/config/tool_data_table_conf.xml"
