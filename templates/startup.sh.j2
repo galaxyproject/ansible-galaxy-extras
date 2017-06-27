@@ -351,8 +351,8 @@ if $PRIVILEGED; then
     fi
     if  [ "x$PULL_IE_IMAGES" != "x" ]; then
         echo "Pull images for interactive environments. Caveat : Depending on the side of the images, this migth be an intensive task in terms of disc space, running time, network brandwith and CPU usage.    "
-        docker pull {{ galaxy_extras_ie_jupyter_image }} &
-        docker pull {{ galaxy_extras_ie_rstudio_image }} &
+        docker pull {{ galaxy_extras_ie_jupyter_image }}
+        docker pull {{ galaxy_extras_ie_rstudio_image }}
     fi
 else
     echo "Disable Galaxy Interactive Environments. Start with --privileged to enable IE's."
