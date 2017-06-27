@@ -32,7 +32,7 @@ install:
   - wget -q -O - https://github.com/bgruening/docker-galaxy-stable/archive/master.tar.gz | tar xzf - --strip-components=1 -C $HOME/galaxy-docker
   # remove the submodule role
   - rm $HOME/galaxy-docker/galaxy/roles/galaxyprojectdotorg.galaxyextras/* -rf
-  - wget https://raw.githubusercontent.com/galaxyproject/galaxy-flavor-testing/master/Makefile -O $HOME/galaxy-docker/Makefile
+  - wget https://raw.githubusercontent.com/galaxyproject/galaxy-flavor-testing/c0e98fd23b3f89400dbb9b41369c7a44058721ff/Makefile -O $HOME/galaxy-docker/Makefile
   # install BioBlend
   - make install -f $HOME/galaxy-docker/Makefile
 
