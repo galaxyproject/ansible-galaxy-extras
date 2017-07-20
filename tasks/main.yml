@@ -4,6 +4,9 @@
   tags:
    - galaxy
 
+- name: Create directory for "galaxy_config_dir"
+  file: path="{{ galaxy_config_dir }}" state=directory
+
 - include: galaxy_metrics.yml
   when: galaxy_extras_config_galaxy_root
   tags:
