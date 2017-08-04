@@ -22,7 +22,7 @@ galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed'
 galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
-galaxy_extras_config_cvmfs: &galaxy_extras_config_cvmfs true
+galaxy_extras_config_cvmfs: true
 
 # Default destination for Galaxy jobs in generated job_conf.xml - can
 # tweak this to allow for a different default for Docker-enabled tools.
@@ -218,7 +218,7 @@ supervisor_manage_reports: true
 supervisor_manage_ie_proxy: true
 supervisor_manage_condor: true
 supervisor_manage_cron: true
-supervisor_manage_autofs: *galaxy_extras_config_cvmfs
+supervisor_manage_autofs: "{{ galaxy_extras_config_cvmfs }}"
 supervisor_manage_docker: true
 supervisor_manage_toolshed: false
 
@@ -233,7 +233,7 @@ supervisor_condor_autostart: false
 supervisor_proftpd_autostart: false
 supervisor_postgres_autostart: true
 supervisor_cron_autostart: false
-supervisor_autofs_autostart: *galaxy_extras_config_cvmfs
+supervisor_autofs_autostart: "{{ galaxy_extras_config_cvmfs }}"
 supervisor_docker_autostart: false
 supervisor_docker_autorestart: true
 
