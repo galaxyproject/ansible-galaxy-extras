@@ -22,7 +22,7 @@ galaxy_extras_config_ssl_method: self-signed  # This may be 'own', 'self-signed'
 galaxy_extras_galaxy_domain: "localhost"  # This is used by letsencrypt, set it to the domain name under which galaxy can be reached
 galaxy_extras_config_startup: true
 galaxy_extras_config_rabbitmq: false
-galaxy_extras_config_cvmfs: true
+galaxy_extras_config_cvmfs: true 
 
 # Default destination for Galaxy jobs in generated job_conf.xml - can
 # tweak this to allow for a different default for Docker-enabled tools.
