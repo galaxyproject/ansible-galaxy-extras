@@ -113,7 +113,7 @@ python /usr/local/bin/export_user_files.py $PG_DATA_DIR_DEFAULT
 
 # Enable loading of dependencies on startup. Such as LDAP.
 # Adapted from galaxyproject/galaxy/scripts/common_startup.sh
-if [ "x$FETCH_WHEELS" != "x" ]
+if [[ $NONUSE != *"load_python_optional_dependencies"* ]]
     then
         echo "Installing optional dependencies "
         : ${GALAXY_WHEELS_INDEX_URL:="https://wheels.galaxyproject.org/simple"}
@@ -122,7 +122,7 @@ if [ "x$FETCH_WHEELS" != "x" ]
         [ -z "$GALAXY_CONDITIONAL_DEPENDENCIES" ] || echo "$GALAXY_CONDITIONAL_DEPENDENCIES" | pip install -r /dev/stdin --index-url "${GALAXY_WHEELS_INDEX_URL}"
 fi
 
-if [ "x$FETCH_WHEELS" != "x" -a "x$DEV_WHEELS" != "x" ]
+if [[ $NONUSE != *"load_python_optional_dependencies"* -a "x$LOAD_PYTHON_DEV_DEPENDENCIES" != "x"]]
     then
         echo "Installing development requirements "
         : ${GALAXY_WHEELS_INDEX_URL:="https://wheels.galaxyproject.org/simple"}
