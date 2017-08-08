@@ -6,8 +6,8 @@
 - name: Install autofs system package
   apt: pkg=pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
-	    - autofs
-	    - uuid-runtime
+    - autofs
+    - uuid-runtime
   when: galaxy_extras_install_packages
 
 
