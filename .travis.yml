@@ -51,4 +51,6 @@ script:
   - make test_bioblend
   #- make test_docker_in_docker
   # Test the conditional loading of dependencies.
-  - bash ./tests/conditional_deps/test_script.sh
+  - echo $PWD
+  - ls
+  - bash tests/conditional_deps/test_script.sh
