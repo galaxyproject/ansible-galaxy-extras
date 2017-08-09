@@ -5,7 +5,7 @@ docker run -d -p 8080:80 -p 8021:21 -p 8022:22 \
 -e GALAXY_CONFIG_AUTH_CONFIG_FILE=config/auth_conf.xml \
 -v $PWD/tests/conditional_deps/auth_conf.xml:/galaxy-central/config/auth_conf.xml \
 --name galaxy-test \
-galaxy-docker/test
+galaxy-docker/test /usr/bin/startup
 docker ps
 echo "Waiting for container to load..."
 sleep 60
