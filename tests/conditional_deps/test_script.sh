@@ -9,6 +9,10 @@ galaxy-docker/test
 docker ps
 echo "Waiting for container to load..."
 sleep 30
+echo "Check auth_conf.xml's presence"
+docker exec -u 1450 galaxy-test cat /galaxy-central/config/auth_conf.xml
+echo "Wait some more for the dependency to install"
+sleep 60
 echo "Testing presence of conditional dependency in virtual environment..."
 docker exec -u 1450 galaxy-test \
 /galaxy_venv/bin/pip list --format=columns | grep python-ldap
