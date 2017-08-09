@@ -8,7 +8,7 @@ docker run -d -p 8080:80 -p 8021:21 -p 8022:22 \
 galaxy-docker/test
 docker ps
 echo "Waiting for container to load..."
-sleep 30
+sleep 60
 echo "Check auth_conf.xml's presence"
 docker exec -u 1450 galaxy-test cat /galaxy-central/config/auth_conf.xml
 echo "Wait some more for the dependency to install"
