@@ -51,6 +51,5 @@ script:
   - make test_bioblend
   #- make test_docker_in_docker
   # Test the conditional loading of dependencies.
-  - echo $PWD
-  - ls
+  - cd $HOME/galaxy-docker/galaxy/roles/galaxyprojectdotorg.galaxyextras/
   - bash tests/conditional_deps/test_script.sh
