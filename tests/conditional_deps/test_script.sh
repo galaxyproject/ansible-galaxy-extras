@@ -3,7 +3,7 @@ echo "Starting container"
 docker run -d -p 8080:80 -p 8021:21 -p 8022:22 \
 --name galaxy_test_container \
 -e GALAXY_CONFIG_AUTH_CONFIG_FILE=config/auth_conf.xml \
--v tests/conditional_deps/auth_conf.xml:/galaxy-central/config/auth_conf.xml \
+-v $PWD/tests/conditional_deps/auth_conf.xml:/galaxy-central/config/auth_conf.xml \
 --name galaxy-test \
 galaxy-docker/test
 docker ps
