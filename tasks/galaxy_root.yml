@@ -12,7 +12,7 @@
   # https://github.com/galaxyproject/galaxy/blob/dev/lib/galaxy/dependencies/conditional-requirements.txt
   pip:
     name: "{{item}}"
-    virtualenv: {{ galaxy_venv_dir }}
+    virtualenv: "{{ galaxy_venv_dir }}"
     virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
     extra_args: --index-url https://wheels.galaxyproject.org/simple
   become: True
