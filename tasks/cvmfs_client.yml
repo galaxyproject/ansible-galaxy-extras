@@ -75,4 +75,4 @@
 - name: Use tool_data_table_conf.xml from usegalaxy-playbook
   get_url:
     url: https://raw.githubusercontent.com/galaxyproject/usegalaxy-playbook/067433f547f67b848f2e4597274a379f06da04b2/files/galaxy/usegalaxy.org/config/tool_data_table_conf.xml
-    dest: "{{ galaxy_config_dir }}/tool_data_table_conf.xml"
+    dest: "{{ galaxy_tool_data_table_config_file }}"
