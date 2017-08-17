@@ -115,7 +115,7 @@ python /usr/local/bin/export_user_files.py $PG_DATA_DIR_DEFAULT
 # Adapted from galaxyproject/galaxy/scripts/common_startup.sh
 if [[ $NONUSE != *"load_python_optional_dependencies"* ]]
     then
-        echo "Installing optional dependencies "
+        echo "Installing optional dependencies in galaxy virtual environment..."
         : ${GALAXY_WHEELS_INDEX_URL:="https://wheels.galaxyproject.org/simple"}
         pip install -r requirements.txt --index-url "${GALAXY_WHEELS_INDEX_URL}"
         GALAXY_CONDITIONAL_DEPENDENCIES=$(PYTHONPATH=lib python -c "import galaxy.dependencies; print '\n'.join(galaxy.dependencies.optional('$GALAXY_CONFIG_FILE'))")
@@ -124,7 +124,7 @@ fi
 
 if [[ $NONUSE != *"load_python_optional_dependencies"* -a "x$LOAD_PYTHON_DEV_DEPENDENCIES" != "x"]]
     then
-        echo "Installing development requirements "
+        echo "Installing development requirements in galaxy virtual environment..."
         : ${GALAXY_WHEELS_INDEX_URL:="https://wheels.galaxyproject.org/simple"}
         dev_requirements='./lib/galaxy/dependencies/dev-requirements.txt'
         [ -f $dev_requirements ] && pip install -r $dev_requirements --index-url "${GALAXY_WHEELS_INDEX_URL}"
