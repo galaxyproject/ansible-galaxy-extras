@@ -350,9 +350,22 @@ if $PRIVILEGED; then
         start_supervisor
     fi
     if  [ "x$PULL_IE_IMAGES" != "x" ]; then
-        echo "Pull images for interactive environments. Caveat : Depending on the side of the images, this migth be an intensive task in terms of disc space, running time, network brandwith and CPU usage.    "
-        docker pull {{ galaxy_extras_ie_jupyter_image }}
-        docker pull {{ galaxy_extras_ie_rstudio_image }}
+        echo "About to pull IE images. Depending on the size, this may take a while!"
+        {% if galaxy_extras_ie_fetch_jupyter|bool %}
+            docker pull {{ galaxy_extras_ie_jupyter_image }}
+        {% endif %}
+        {% if galaxy_extras_ie_fetch_rstudio|bool %}
+            docker pull {{ galaxy_extras_ie_rstudio_image }}
+        {% endif %}
+        {% if galaxy_extras_ie_fetch_ethercalc|bool %}
+            docker pull {{ galaxy_extras_ie_ethercalc_image }}
+        {% endif %}
+        {% if galaxy_extras_ie_fetch_phinch|bool %}
+            docker pull {{ galaxy_extras_ie_phinch_image }}
+        {% endif %}
+        {% if galaxy_extras_ie_fetch_neo|bool %}
+            docker pull {{ galaxy_extras_ie_neo_image }}
+        {% endif %}
     fi
 else
     echo "Disable Galaxy Interactive Environments. Start with --privileged to enable IE's."
