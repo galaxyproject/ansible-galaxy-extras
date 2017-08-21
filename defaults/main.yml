@@ -56,7 +56,7 @@ galaxy_extras_ie_fetch_jupyter: false
 galaxy_extras_ie_jupyter_image: quay.io/bgruening/docker-jupyter-notebook:17.05
 galaxy_extras_ie_fetch_rstudio: false
 galaxy_extras_ie_rstudio_image: erasche/docker-rstudio-notebook:17.01
-galaxy_extras_ie_ethercalc_phinch: false
+galaxy_extras_ie_fetch_ethercalc: false
 galaxy_extras_ie_ethercalc_image: shiltemann/ethercalc-galaxy-ie:17.05
 galaxy_extras_ie_fetch_phinch: false
 galaxy_extras_ie_phinch_image: shiltemann/docker-phinch-galaxy:16.04

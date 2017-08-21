@@ -350,7 +350,7 @@ if $PRIVILEGED; then
         start_supervisor
     fi
     if  [ "x$PULL_IE_IMAGES" != "x" ]; then
-        echo "About to pull IE images. Depending on the images size, this will take a while!"
+        echo "About to pull IE images. Depending on the size, this may take a while!"
         docker pull {{ galaxy_extras_ie_jupyter_image }}
         docker pull {{ galaxy_extras_ie_rstudio_image }}
         docker pull {{ galaxy_extras_ie_ethercalc_image }}
