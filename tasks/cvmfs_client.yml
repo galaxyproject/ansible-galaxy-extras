@@ -4,8 +4,12 @@
 
 # Install autofs
 - name: Install autofs system package
-  apt: pkg=autofs state={{ galaxy_extras_apt_package_state }}
+  apt: pkg=pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - autofs
+    - uuid-runtime
   when: galaxy_extras_install_packages
+
 
 - name: Remove autofs service file since we're using Supervisor
   file:
