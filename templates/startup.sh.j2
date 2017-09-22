@@ -117,17 +117,17 @@ if [[ $NONUSE != *"load_python_optional_dependencies"* ]]
     then
         echo "Installing optional dependencies in galaxy virtual environment..."
         : ${GALAXY_WHEELS_INDEX_URL:="https://wheels.galaxyproject.org/simple"}
-        pip install -r requirements.txt --index-url "${GALAXY_WHEELS_INDEX_URL}"
+        pip install -q -r requirements.txt --index-url "${GALAXY_WHEELS_INDEX_URL}"
         GALAXY_CONDITIONAL_DEPENDENCIES=$(PYTHONPATH=lib python -c "import galaxy.dependencies; print '\n'.join(galaxy.dependencies.optional('$GALAXY_CONFIG_FILE'))")
         [ -z "$GALAXY_CONDITIONAL_DEPENDENCIES" ] || echo "$GALAXY_CONDITIONAL_DEPENDENCIES" | pip install -r /dev/stdin --index-url "${GALAXY_WHEELS_INDEX_URL}"
 fi
 
-if [ $NONUSE != *"load_python_optional_dependencies"*] && ["x$LOAD_PYTHON_DEV_DEPENDENCIES" != "x"]
+if [[ $NONUSE != *"load_python_optional_dependencies"* ]] && [[ "x$LOAD_PYTHON_DEV_DEPENDENCIES" != "x" ]]
     then
         echo "Installing development requirements in galaxy virtual environment..."
         : ${GALAXY_WHEELS_INDEX_URL:="https://wheels.galaxyproject.org/simple"}
         dev_requirements='./lib/galaxy/dependencies/dev-requirements.txt'
-        [ -f $dev_requirements ] && pip install -r $dev_requirements --index-url "${GALAXY_WHEELS_INDEX_URL}"
+        [ -f $dev_requirements ] && pip install -q -r $dev_requirements --index-url "${GALAXY_WHEELS_INDEX_URL}"
 fi
 
 # Enable Test Tool Shed
