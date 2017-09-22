@@ -4,8 +4,12 @@
 
 # Install autofs
 - name: Install autofs system package
-  apt: pkg=autofs state={{ galaxy_extras_apt_package_state }}
+  apt: pkg=pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - autofs
+    - uuid-runtime
   when: galaxy_extras_install_packages
+
 
 - name: Remove autofs service file since we're using Supervisor
   file:
@@ -57,11 +61,11 @@
       CVMFS_REPOSITORIES="{%- for repo in cvmfs_repositories -%}{{ ',' if loop.index0 > 0 else '' }}{{ repo.repository }}{%- endfor -%}"
       CVMFS_HTTP_PROXY="{{ cvmfs_http_proxies | join(';') }}"
       CVMFS_QUOTA_LIMIT="{{ cvmfs_quota_limit | default('4000') }}"
+      CVMFS_USE_GEOAPI="{{ cvmfs_use_geoapi | default('yes') }}"
     dest: "/etc/cvmfs/default.local"
     owner: "root"
     group: "root"
     mode: "0644"
-
 
 # Create a symlink from the CVMFS to /galaxy/data because that is where the
 # .loc files from CVMFS point (and consequently tool_data_table_conf.xml)
