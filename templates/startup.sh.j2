@@ -122,7 +122,7 @@ if [[ $NONUSE != *"load_python_optional_dependencies"* ]]
         [ -z "$GALAXY_CONDITIONAL_DEPENDENCIES" ] || echo "$GALAXY_CONDITIONAL_DEPENDENCIES" | pip install -r /dev/stdin --index-url "${GALAXY_WHEELS_INDEX_URL}"
 fi
 
-if [[ $NONUSE != *"load_python_optional_dependencies"* -a "x$LOAD_PYTHON_DEV_DEPENDENCIES" != "x"]]
+if [ $NONUSE != *"load_python_optional_dependencies"*] && ["x$LOAD_PYTHON_DEV_DEPENDENCIES" != "x"]
     then
         echo "Installing development requirements in galaxy virtual environment..."
         : ${GALAXY_WHEELS_INDEX_URL:="https://wheels.galaxyproject.org/simple"}
