@@ -12,6 +12,11 @@
   tags:
    - metrics
 
+- include: galaxy_extra_dependencies.yml
+  when: galaxy_extras_config_galaxy_extra_dependencies
+  tags:
+   - extra_dependencies
+
 - include: uwsgi.yml
   when: galaxy_extras_config_uwsgi
   tags:
@@ -52,7 +57,7 @@
   when: galaxy_extras_config_cvmfs
   tags:
    - cvmfs
-   
+
 - include: supervisor.yml
   when: galaxy_extras_config_supervisor
   tags:
