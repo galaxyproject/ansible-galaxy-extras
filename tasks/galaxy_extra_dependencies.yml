@@ -20,4 +20,3 @@
     - "python-ldap==2.4.27"
     - "kamaki"
     - "azure-storage==0.32.0"
-    - "watchdog"
