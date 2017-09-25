@@ -2,6 +2,7 @@
 echo "Starting container"
 CONTAINER_ID=`docker run -d \
 -e GALAXY_CONFIG_AUTH_CONFIG_FILE=config/auth_conf.xml \
+-e LOAD_GALAXY_CONDITIONAL_DEPENDENCIES=True \
 -v $PWD/tests/conditional_deps/auth_conf.xml:/galaxy-central/config/auth_conf.xml \
 galaxy-docker/test`
 docker ps
