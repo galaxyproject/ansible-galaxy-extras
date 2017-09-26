@@ -50,3 +50,6 @@ script:
   - make test_ftp
   - make test_bioblend
   #- make test_docker_in_docker
+  # Test the conditional loading of dependencies.
+  - cd $HOME/galaxy-docker/galaxy/roles/galaxyprojectdotorg.galaxyextras/
+  - bash tests/conditional_deps/test_script.sh
