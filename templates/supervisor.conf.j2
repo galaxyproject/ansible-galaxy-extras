@@ -110,9 +110,9 @@ priority        = 200
 [program:galaxy_web]
 {% if galaxy_uwsgi|bool %}
 {% if galaxy_uwsgi_static_conf|bool %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ uwsgi_log }} --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191 -b 16384
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ uwsgi_log }} --socket 127.0.0.1:{{ uwsgi_port }} --pythonpath lib --stats 127.0.0.1:9191 -b 16384
 {% else %}
-command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto {{ uwsgi_log }} --socket 127.0.0.1:4001 --pythonpath lib --stats 127.0.0.1:9191 -b 16384
+command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --ini-paste {{ galaxy_config_file }} --logdate --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto {{ uwsgi_log }} --socket 127.0.0.1:{{ uwsgi_port }} --pythonpath lib --stats 127.0.0.1:9191 -b 16384
 {% endif %}
 directory       = {{ galaxy_server_dir }}
 umask           = 022
