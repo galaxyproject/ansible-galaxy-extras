@@ -28,14 +28,14 @@
 {% if galaxy_extras_config_k8_jobs %}
         <plugin id="k8" type="runner" load="galaxy.jobs.runners.kubernetes:KubernetesJobRunner">
             <!-- We are inside of Kubernetes so use this. -->
-            <param id="k8s_use_service_account">true</param>
-            <param id="k8s_persistent_volume_claim_name">galaxy-web-claim0</param>
-            <param id="k8s_persistent_volume_claim_mount_path">/export</param>
-            <param id="k8s_namespace">default</param>
-            <param id="k8s_supplemental_group_id">0</param>
-            <param id="k8s_fs_group_id">0</param>
-            <param id="k8s_pull_policy">IfNotPresent</param>
-            <param id="k8s_pod_retrials">1</param
+            <param id="k8s_use_service_account">{{ use_service_account }}</param>
+            <param id="k8s_persistent_volume_claim_name">{{ galaxy_k8s_jobs_persistent_volume_claim_name }}</param>
+            <param id="k8s_persistent_volume_claim_mount_path">{{ galaxy_k8s_jobs_persistent_volume_claim_mount_path }}</param>
+            <param id="k8s_namespace">{{ galaxy_k8s_jobs_namespace }}</param>
+            <param id="k8s_supplemental_group_id">{{ galaxy_k8s_jobs_supplemental_group_id }}</param>
+            <param id="k8s_fs_group_id">{{ galaxy_k8s_jobs_fs_group_id }}</param>
+            <param id="k8s_pull_policy">{{ galaxy_k8s_jobs_pull_policy }}</param>
+            <param id="k8s_pod_retrials">{{ galaxy_k8s_jobs_pods_retrials }}</param
 {% if galaxy_minimum_version >= "17.09" %}
             <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_K8">true</param>
 {% endif %}
