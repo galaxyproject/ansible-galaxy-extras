@@ -35,7 +35,7 @@
             <param id="k8s_supplemental_group_id" from_environ="GALAXY_RUNNERS_K8S_SUPPLEMENTAL_GROUP_ID">{{ galaxy_k8s_jobs_supplemental_group_id }}</param>
             <param id="k8s_fs_group_id" from_environ="GALAXY_RUNNERS_K8S_FS_GROUP_ID">{{ galaxy_k8s_jobs_fs_group_id }}</param>
             <param id="k8s_pull_policy" from_environ="GALAXY_RUNNERS_K8S_PULL_POLICY">{{ galaxy_k8s_jobs_pull_policy }}</param>
-            <param id="k8s_pod_retrials" from_environ="GALAXY_RUNNERS_K8S_POD_RETRIALS">{{ galaxy_k8s_jobs_pods_retrials }}</param
+            <param id="k8s_pod_retrials" from_environ="GALAXY_RUNNERS_K8S_POD_RETRIALS">{{ galaxy_k8s_jobs_pods_retrials }}</param>
 {% if galaxy_minimum_version >= "17.09" %}
             <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_K8">true</param>
 {% endif %}
