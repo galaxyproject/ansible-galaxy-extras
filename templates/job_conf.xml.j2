@@ -31,6 +31,11 @@
             <param id="k8s_use_service_account">true</param>
             <param id="k8s_persistent_volume_claim_name">galaxy-web-claim0</param>
             <param id="k8s_persistent_volume_claim_mount_path">/export</param>
+            <param id="k8s_namespace">default</param>
+            <param id="k8s_supplemental_group_id">0</param>
+            <param id="k8s_fs_group_id">0</param>
+            <param id="k8s_pull_policy">IfNotPresent</param>
+            <param id="k8s_pod_retrials">1</param
 {% if galaxy_minimum_version >= "17.09" %}
             <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_K8">true</param>
 {% endif %}
