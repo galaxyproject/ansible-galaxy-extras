@@ -131,9 +131,14 @@ galaxy_web_processes: 2
 galaxy_handler_processes: 2
 
 # Follow job_conf attributes set if galaxy_extras_config_k8_jobs is true.
-galaxy_k8_jobs_use_service_account: true
-galaxy_k8_jobs_persistent_volume_claim_name: galaxy-web-claim0
-galaxy_k8_jobs_persistent_volume_claim_mount_path: /export
+galaxy_k8s_jobs_use_service_account: true
+galaxy_k8s_jobs_persistent_volume_claim_name: galaxy-web-claim0
+galaxy_k8s_jobs_persistent_volume_claim_mount_path: /export
+galaxy_k8s_jobs_namespace: default
+galaxy_k8s_jobs_supplemental_group_id: 0
+galaxy_k8s_jobs_fs_group_id: 0
+galaxy_k8s_jobs_pull_policy: IfNotPresent
+galaxy_k8s_jobs_pods_retrials: 1
 
 startup_export_user_files: true
 startup_chown_on_directory: ""
