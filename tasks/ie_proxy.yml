@@ -11,7 +11,7 @@
   become_user: "{{ galaxy_user_name }}"
 
 - name: "Install Juypter container."
-  shell: "docker pull {{ galaxy_extras_ie_juypter_image }}"
+  shell: "docker pull {{ galaxy_extras_ie_jupyter_image }}"
   become: True
   when: galaxy_extras_ie_fetch_jupyter
 
