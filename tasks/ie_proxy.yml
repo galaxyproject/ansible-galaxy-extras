@@ -1,14 +1,17 @@
 - name: Install web related system packages
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
-    - nodejs-legacy
+    - nodejs
     - npm
   when: galaxy_extras_install_packages
 
+- name: Symlinks node to nodejs
+  file:
+    src: /usr/bin/nodejs
+    dest: /usr/bin/node
+
 - name: "Install proxy dependencies."
   shell: "cd {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js && npm install"
-  become: True
-  become_user: "{{ galaxy_user_name }}"
 
 - name: "Install Juypter container."
   shell: "docker pull {{ galaxy_extras_ie_jupyter_image }}"
