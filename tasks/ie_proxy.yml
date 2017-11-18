@@ -12,6 +12,8 @@
 
 - name: "Install proxy dependencies."
   shell: "cd {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js && npm install"
+  become: True
+  become_user: "{{ galaxy_user_name }}"
 
 - name: "Install Juypter container."
   shell: "docker pull {{ galaxy_extras_ie_jupyter_image }}"
