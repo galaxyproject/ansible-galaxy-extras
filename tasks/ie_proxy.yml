@@ -9,6 +9,7 @@
   file:
     src: /usr/bin/nodejs
     dest: /usr/bin/node
+    state: link
 
 - name: "Install proxy dependencies."
   shell: "cd {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js && npm install"
