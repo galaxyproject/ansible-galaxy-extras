@@ -48,7 +48,7 @@
   file: path=/tmp/slurm state=directory owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
 
 - name: Collect Memory/cpu metric for slurm.conf
-  shell: echo $(($(slurmd -C | sed 's/.*\( \+\|^\)RealMemory=\([0-9][0-9]*\)\( \|$\).*/\2/p;d') / $(slurmd -C | sed '$
+  shell: echo $(($(slurmd -C | sed 's/.*\( \+\|^\)RealMemory=\([0-9][0-9]*\)\( \|$\).*/\2/p;d') / $(slurmd -C | sed 's/.*\( \+\|^\)CPUs=\([0-9][0-9]*\)\( \|$\).*/\2/p;d')))
   register: slurm_memory_cpu_ratio
 
 - name: Register slurm_memory_per_cpu for configure_slurm.py.j2
