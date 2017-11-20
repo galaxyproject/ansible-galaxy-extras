@@ -25,8 +25,8 @@
 {% endif %}
         </plugin>
 {% endif %}
-{% if galaxy_extras_config_k8_jobs %}
-        <plugin id="k8" type="runner" load="galaxy.jobs.runners.kubernetes:KubernetesJobRunner">
+{% if galaxy_extras_config_k8s_jobs %}
+        <plugin id="k8s" type="runner" load="galaxy.jobs.runners.kubernetes:KubernetesJobRunner">
             <!-- We are inside of Kubernetes so use this. -->
             <param id="k8s_use_service_account" from_environ="GALAXY_RUNNERS_K8S_USE_SERVICE_ACCOUNT">{{ galaxy_k8s_jobs_use_service_account }}</param>
             <param id="k8s_persistent_volume_claim_name" from_environ="GALAXY_RUNNERS_K8S_PERSISTENT_VOLUME_CLAIM_NAME">{{ galaxy_k8s_jobs_persistent_volume_claim_name }}</param>
@@ -113,11 +113,11 @@
         {{ macros.docker_dispatch_destination("condor_docker_cluster_dispatch", "condor_cluster_docker", "condor_cluster")}}
         {{ macros.docker_dispatch_destination("condor_docker_universe_dispatch", "condor_docker_universe", "condor_cluster")}}
 {% endif %}
-{% if galaxy_extras_config_k8_jobs %}
-        {% call macros.destination("k8_default", "k8", container_type="docker", force_container=True) %}{% endcall %}
-        {{ macros.docker_dispatch_destination("k8_or_local_dispatch", "k8_default", "local_no_container")}}
-        {{ macros.docker_dispatch_destination("k8_or_slurm_dispatch", "k8_default", "slurm_cluster")}}
-        {{ macros.docker_dispatch_destination("k8_or_condor_dispatch", "k8_default", "condor_cluster")}}
+{% if galaxy_extras_config_k8s_jobs %}
+        {% call macros.destination("k8s_default", "k8s", container_type="docker", force_container=True) %}{% endcall %}
+        {{ macros.docker_dispatch_destination("k8s_or_local_dispatch", "k8s_default", "local_no_container")}}
+        {{ macros.docker_dispatch_destination("k8s_or_slurm_dispatch", "k8s_default", "slurm_cluster")}}
+        {{ macros.docker_dispatch_destination("k8s_or_condor_dispatch", "k8s_default", "condor_cluster")}}
 {% endif %}
     </destinations>
     <limits>
