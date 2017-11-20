@@ -38,10 +38,10 @@
   tags:
    - pbs
 
-- include: k8.yml
-  when: galaxy_extras_config_k8_jobs
+- include: k8s.yml
+  when: galaxy_extras_config_k8s_jobs
   tags:
-   - k8
+   - k8s
 
 - include: condor.yml
   when: galaxy_extras_config_condor
