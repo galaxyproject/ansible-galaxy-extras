@@ -47,9 +47,6 @@ pbs_server_name: pbsqueue
 # threads per core * processor count * cores per processor
 galaxy_extras_slurm_ntask: 1
 
-# Setting slurm_SelectTypeParameters to 'CR_CPU' may fix issue of job dispaching in Ubuntu 16.04 Xenial
-slurm_SelectTypeParameters: CR_Core_Memory
-
 # Install OS packages corresponding to each service being configured.
 galaxy_extras_install_packages: false
 # If galaxy_extras_install_packages is enabled - should be these packages
