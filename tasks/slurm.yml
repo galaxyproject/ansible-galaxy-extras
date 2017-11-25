@@ -47,23 +47,6 @@
 - name: Setup tmp area for slurm.
   file: path=/tmp/slurm state=directory owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
 
-- name: Collect slurmd -C output
-  command: slurmd -C
-  register: slurmd_c_out
-
-- name: Make slurmd -C output a single line
-  set_fact:
-    slurmd_c: "{{ slurmd_c_out.stdout | regex_replace('\\n', ' ') }}"
-
-- name: Register Slurm-reported facts for configure_slurm.py.j2
-  set_fact:
-    slurm_real_memory: "{{ slurmd_c | regex_replace('.*(?:^|\\s)RealMemory=(\\d+)(?:$|\\s).*', '\\1') }}"
-    slurm_cpus: "{{ slurmd_c | regex_replace('.*(?:^|\\s)CPUs=(\\d+)(?:$|\\s).*', '\\1') }}"
-
-- name: Calculate memory per CPU for configure_slurm.py.j2
-  set_fact:
-    slurm_memory_per_cpu: "{{ slurm_real_memory | int // slurm_cpus | int }}"
-
 - name: Create slurm configuration file
   template: src=configure_slurm.py.j2 dest=/usr/sbin/configure_slurm.py
 

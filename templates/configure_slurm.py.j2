@@ -1,7 +1,7 @@
 from socket import gethostname
 from string import Template
 from os import environ
-import psutil
+import subprocess
 
 
 SLURM_CONFIG_TEMPLATE = '''
@@ -76,10 +76,14 @@ SlurmctldDebug=3
 #SlurmctldLogFile=
 SlurmdDebug=3
 #SlurmdLogFile=
-NodeName=$hostname CPUs={{ slurm_cpus }} RealMemory={{ slurm_real_memory }} State=UNKNOWN
-PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State=UP Shared=YES {% if ansible_distribution=='Ubuntu' and ansible_distribution_version | version_compare('15.04', '>=') %}DefMemPerCPU={{ slurm_memory_per_cpu }}
+NodeName=$hostname CPUs=$cpus RealMemory=$memory State=UNKNOWN
+PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State=UP Shared=YES {% if ansible_distribution=='Ubuntu' and ansible_distribution_version | version_compare('15.04', '>=') %}DefMemPerCPU=$mem_per_cpu
 {% endif %}
 '''
+slurm_status = subprocess.check_output(['slurmd', '-C'])
+cpus = slurm_status.split("CPUs=")[1].split(" Boards")[0]
+memory = slurm_status.split("RealMemory=")[1].split(" TmpDisk")[0]
+mem_per_cpu = int(memory) / int(cpus)
 
 def main():
     hostname = gethostname()
@@ -88,7 +92,10 @@ def main():
         "control_machine": environ.get('SLURM_CONTROL_MACHINE', hostname),
         "cluster_name": environ.get('SLURM_CLUSTER_NAME', 'cluster'),
         "user": environ.get('SLURM_USER_NAME', '{{ galaxy_user_name }}'),
-        "partition_name": environ.get('SLURM_PARTITION_NAME', 'debug')
+        "partition_name": environ.get('SLURM_PARTITION_NAME', 'debug'),
+        "cpus": environ.get("SLURM_CPUS", cpus),
+        "memory": environ.get("SLURM_MEMORY", memory),
+        "mem_per_cpu": environ.get("SLURM_MEMORY_PER_CPU", int(memory)/int(cpus))
     }
     config_contents = Template(SLURM_CONFIG_TEMPLATE).substitute(template_params)
     open("/etc/slurm-llnl/slurm.conf", "w").write(config_contents)
