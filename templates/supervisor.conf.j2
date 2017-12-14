@@ -122,7 +122,7 @@ startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
 environment     = PATH={{ galaxy_venv_dir }}:{{ galaxy_venv_dir }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 numprocs        = 1
-stopsignal      = INT
+stopsignal      = QUIT
 startretries    = {{ supervisor_galaxy_startretries }}
 {% else %}
 # template cache hack https://github.com/galaxyproject/planemo-machine/issues/38
