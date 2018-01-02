@@ -4,7 +4,7 @@
 
 # Install autofs
 - name: Install autofs system package
-  apt: pkg=pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
     - autofs
     - uuid-runtime
