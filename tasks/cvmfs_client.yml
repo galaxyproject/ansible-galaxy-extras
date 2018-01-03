@@ -10,12 +10,6 @@
     - uuid-runtime
   when: galaxy_extras_install_packages
 
-
-- name: Remove autofs service file since we're using Supervisor
-  file:
-    path: /etc/init/autofs.conf
-    state: absent
-
 # Install & setup CermVM-FS
 - name: Download cvmfs
   get_url:
@@ -80,3 +74,14 @@
   get_url:
     url: https://raw.githubusercontent.com/galaxyproject/usegalaxy-playbook/067433f547f67b848f2e4597274a379f06da04b2/files/galaxy/usegalaxy.org/config/tool_data_table_conf.xml
     dest: "{{ galaxy_tool_data_table_config_file }}"
+
+# The following two tasks need to be at the bottom of this file
+- name: Stop autofs service
+  service:
+    name: autofs
+    state: stopped
+
+- name: Remove autofs service file since we're using Supervisor
+  file:
+    path: /etc/init/autofs.conf
+    state: absent
