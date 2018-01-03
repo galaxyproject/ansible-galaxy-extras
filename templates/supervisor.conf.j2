@@ -24,6 +24,8 @@ user            = root
 command         = /usr/sbin/automount -f
 autostart       = {{ supervisor_autofs_autostart }}
 autorestart     = true
+redirect_stderr = true
+stdout_logfile  = /var/log/autofs.log
 {% endif %}
 
 {% if supervisor_manage_slurm|bool %}
