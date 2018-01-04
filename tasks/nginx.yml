@@ -1,10 +1,4 @@
 ---
-
-- name: Create nginx upload_store dir
-  file:
-    state: directory
-    path: "{{ nginx_upload_store_path }}"
-    owner: "{{ galaxy_user_name }}"
     
 - name: Place configuration files
   template: >
