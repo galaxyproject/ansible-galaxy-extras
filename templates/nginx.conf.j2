@@ -119,7 +119,7 @@ http {
         }
 
         # delegated downloads
-        location {{ nginx_galaxy_location }}/_x_accel_redirect {
+        location /_x_accel_redirect/ {
             internal;
             alias /;
         }
