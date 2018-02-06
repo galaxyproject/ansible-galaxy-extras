@@ -433,11 +433,11 @@ if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
 	# then place a file with that logic named post-start-actions.sg on the Galaxy working directory, it should have access to all environment variables 
 	# visible here.
 	# The file needs to be executable (chmod a+x post-start-actions.sh)
-        if [ -x ./post-start-actions.sh ]
+        if [ -x /export/post-start-actions.sh ]
             then
 	       # uses ephemeris, present in docker-galaxy-stable, to wait for the local instance
 	       galaxy-wait -g http://127.0.0.1 -v --timeout 120 > {{ galaxy_log_dir }}/post-start-actions.log &&
-	       ./post-start-actions.sh >> {{ galaxy_log_dir }}/post-start-actions.log &    
+	       /export/post-start-actions.sh >> {{ galaxy_log_dir }}/post-start-actions.log &    
 	fi
 
 
