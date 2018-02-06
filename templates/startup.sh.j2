@@ -427,8 +427,8 @@ fi
 if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
     then
         echo "Creating admin user $GALAXY_DEFAULT_ADMIN_USER with key $GALAXY_DEFAULT_ADMIN_KEY and password $GALAXY_DEFAULT_ADMIN_PASSWORD if not existing"
-        python /usr/local/bin/create_galaxy_user.py --user "$GALAXY_DEFAULT_ADMIN_USER" --password "$GALAXY_DEFAULT_ADMIN_PASSWORD" -c "$GALAXY_CONFIG_FILE"
-
+        python /usr/local/bin/create_galaxy_user.py --user "$GALAXY_DEFAULT_ADMIN_EMAIL" --password "$GALAXY_DEFAULT_ADMIN_PASSWORD" \
+		-c "$GALAXY_CONFIG_FILE" --username "$GALAXY_DEFAULT_ADMIN_USER" --key "$GALAXY_DEFAULT_ADMIN_KEY"
 	# If there is a need to execute actions that would require a live galaxy instance, such as adding workflows, setting quotas, adding more users, etc.
 	# then place a file with that logic named post-start-actions.sg on the Galaxy working directory, it should have access to all environment variables 
 	# visible here.
