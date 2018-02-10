@@ -1,0 +1,22 @@
+- name: "Install most of the conditional dependencies"
+  # https://github.com/galaxyproject/galaxy/blob/dev/lib/galaxy/dependencies/conditional-requirements.txt
+  pip:
+    name: "{{item}}"
+    virtualenv: "{{ galaxy_venv_dir }}"
+    virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+    extra_args: --index-url https://wheels.galaxyproject.org/simple
+  become: True
+  become_user: "{{ galaxy_user_name }}"
+  with_items:
+    - "psycopg2==2.6.1"
+    - "WebError==0.10.3"
+    - "Pygments==2.0.2"
+    - "python-openid"
+    - "fluent-logger"
+    - "raven"
+    - "drmaa"
+    - "statsd"
+    - "graphitesend"
+    - "python-ldap==2.4.27"
+    - "kamaki"
+    - "azure-storage==0.32.0"
