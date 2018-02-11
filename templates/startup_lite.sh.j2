@@ -45,4 +45,9 @@ threadpool_workers = 10
 _EOF
 
 service postgresql start
+
+echo "Checking if database is up and running"
+until /usr/local/bin/check_database.py 2>&1 >/dev/null; do sleep 1; echo "Waiting for database"; done
+echo "Database connected"
+
 ./run.sh --daemon --skip-eggs --skip-wheels
