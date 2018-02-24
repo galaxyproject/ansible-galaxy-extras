@@ -1,6 +1,7 @@
 - name: "Install uwsgi for galaxy"
   pip: 
     name: uwsgi
+    version: 2.0.15
     virtualenv: "{{ galaxy_venv_dir }}"
     virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
     extra_args: "--extra-index-url https://wheels.galaxyproject.org/"
