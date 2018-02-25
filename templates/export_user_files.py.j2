@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # and if there is a realized version of these files in the export directory
     # replace Galaxy's copy with these. Use symbolic link instead of copying so
     # deployer can update and reload Galaxy and changes will be reflected.
-    for config in [ 'galaxy.ini', 'job_conf.xml' ]:
+    for config in [ 'galaxy.yml', 'job_conf.xml' ]:
         image_config = os.path.join('/etc/galaxy/', config)
         export_config = os.path.join( '/export/galaxy-central/config', config )
         export_sample = export_config + ".docker_sample"
