@@ -1,15 +1,28 @@
-- name: Install web related system packages
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
-    - nodejs-legacy
-    - npm
-  when: galaxy_extras_install_packages
+---
+- name: Check if the Ubuntu distro is supported
+  get_url: url="https://deb.nodesource.com/node/dists/{{ ansible_distribution_release }}/Release" dest=/dev/null
+  register: distro_supported
 
-- name: Symlinks node to nodejs
-  file:
-    src: /usr/bin/nodejs
-    dest: /usr/bin/node
-    state: link
+- name: Ensure apt-transport-https is installed.
+  apt: name=apt-transport-https state={{ galaxy_extras_apt_package_state }}
+
+- name: Add Nodesource apt key.
+  apt_key:
+    url: https://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x1655A0AB68576280
+    id: "68576280"
+    state: {{ galaxy_extras_apt_package_state }}
+
+- name: Add NodeSource repositories for Node.js.
+  apt_repository:
+    repo: "{{ item }}"
+    state: {{ galaxy_extras_apt_package_state }}
+  with_items:
+    - "deb https://deb.nodesource.com/node_{{ nodejs_version }} {{ ansible_distribution_release }} main"
+    - "deb-src https://deb.nodesource.com/node_{{ nodejs_version }} {{ ansible_distribution_release }} main"
+
+- name: Install nodejs (npm is included)
+  when: distro_supported|success
+  apt: pkg=nodejs state=latest update_cache=true
 
 - name: "Install proxy dependencies."
   shell: "cd {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js && npm install"
