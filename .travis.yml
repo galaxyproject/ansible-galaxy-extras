@@ -29,10 +29,10 @@ install:
 
   # download the Galaxy Docker image and build it to test the playrole
   - mkdir $HOME/galaxy-docker
-  - wget -q -O - https://github.com/bgruening/docker-galaxy-stable/archive/master.tar.gz | tar xzf - --strip-components=1 -C $HOME/galaxy-docker
+  - wget -q -O - https://github.com/bgruening/docker-galaxy-stable/archive/dev.tar.gz | tar xzf - --strip-components=1 -C $HOME/galaxy-docker
   # remove the submodule role
   - rm $HOME/galaxy-docker/galaxy/roles/galaxyprojectdotorg.galaxyextras/* -rf
-  - wget https://raw.githubusercontent.com/galaxyproject/galaxy-flavor-testing/master/Makefile -O $HOME/galaxy-docker/Makefile
+  - wget https://raw.githubusercontent.com/galaxyproject/galaxy-flavor-testing/18.01/Makefile -O $HOME/galaxy-docker/Makefile
   # install BioBlend
   - make install -f $HOME/galaxy-docker/Makefile
 
