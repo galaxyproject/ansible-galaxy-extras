@@ -75,16 +75,6 @@ if [ "x$PROXY_PREFIX" != "x" ]
         then
             export GALAXY_CONFIG_NGINX_UPLOAD_PATH="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_UPLOAD_PATH}"
     fi
-
-    if [ "$GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE" == "/_x_accel_redirect" ]
-        then
-            export GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE}"
-    fi
-
-    if [ "$GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE" == "/_x_accel_redirect" ]
-        then
-            export GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE}"
-    fi
 fi
 
 # Disable authentication of Galaxy reports
@@ -430,14 +420,14 @@ if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
         python /usr/local/bin/create_galaxy_user.py --user "$GALAXY_DEFAULT_ADMIN_EMAIL" --password "$GALAXY_DEFAULT_ADMIN_PASSWORD" \
 		-c "$GALAXY_CONFIG_FILE" --username "$GALAXY_DEFAULT_ADMIN_USER" --key "$GALAXY_DEFAULT_ADMIN_KEY"
 	# If there is a need to execute actions that would require a live galaxy instance, such as adding workflows, setting quotas, adding more users, etc.
-	# then place a file with that logic named post-start-actions.sh on the /export/ directory, it should have access to all environment variables 
+	# then place a file with that logic named post-start-actions.sh on the /export/ directory, it should have access to all environment variables
 	# visible here.
 	# The file needs to be executable (chmod a+x post-start-actions.sh)
         if [ -x /export/post-start-actions.sh ]
             then
 	       # uses ephemeris, present in docker-galaxy-stable, to wait for the local instance
 	       galaxy-wait -g http://127.0.0.1 -v --timeout 120 > {{ galaxy_log_dir }}/post-start-actions.log &&
-	       /export/post-start-actions.sh >> {{ galaxy_log_dir }}/post-start-actions.log &    
+	       /export/post-start-actions.sh >> {{ galaxy_log_dir }}/post-start-actions.log &
 	fi
 
 
