@@ -5,19 +5,29 @@
     state: directory
     path: "{{ nginx_upload_store_path }}"
     owner: "{{ galaxy_user_name }}"
-    
+
 - name: Place configuration files
   template: >
     src={{ item.src }}
     dest={{ item.dest }}
     owner=root group=root mode=0600
   with_items:
-    - { src: 'htpasswd.j2',                     dest: '/etc/nginx/htpasswd' }
     - { src: 'nginx_galaxy_web.conf.j2',        dest: '{{ nginx_conf_directory }}/galaxy_web.conf' }
     - { src: 'nginx_uwsgi.conf.j2',             dest: '{{ nginx_conf_directory }}/uwsgi.conf' }
     - { src: 'nginx_reports_noauth.conf.j2',    dest: '{{ nginx_conf_directory }}/reports_auth.conf' }
     - { src: 'nginx_reports_auth.conf.j2',      dest: '{{ nginx_conf_directory }}/reports_auth.conf.source' }
     - { src: 'nginx.conf.j2',                   dest: '{{ nginx_conf_path }}' }
+  notify: restart nginx
+  tags:
+    - https
+
+- name: Place reports auth configuration file
+  template: >
+    src={{ item.src }}
+    dest={{ item.dest }}
+    owner=galaxy group=galaxy mode=0600
+  with_items:
+    - { src: 'htpasswd.j2',                     dest: '/etc/nginx/htpasswd' }
   notify: restart nginx
   tags:
     - https
