@@ -51,8 +51,23 @@ ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf sectio
 # Configure proxy prefix filtering
 if [ "x$PROXY_PREFIX" != "x" ]
     then
-    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=filter:proxy-prefix option=prefix value=${PROXY_PREFIX}" &> /dev/null
-    ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=app:main option=filter-with value=proxy-prefix" &> /dev/null
+    if [ ${GALAXY_CONFIG_FILE: -4} == ".ini" ]
+        then
+        ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=filter:proxy-prefix option=prefix value=${PROXY_PREFIX}" &> /dev/null
+        ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_FILE} section=app:main option=filter-with value=proxy-prefix" &> /dev/null
+    else
+        ansible localhost -m lineinfile -a "path=${GALAXY_CONFIG_FILE} regexp='^  module:' state=absent" &> /dev/null
+        ansible localhost -m lineinfile -a "path=${GALAXY_CONFIG_FILE} regexp='^  socket:' state=absent" &> /dev/null
+        ansible localhost -m lineinfile -a "path=${GALAXY_CONFIG_FILE} regexp='^  mount:' state=absent" &> /dev/null
+        ansible localhost -m lineinfile -a "path=${GALAXY_CONFIG_FILE} regexp='^  manage-script-name:' state=absent" &> /dev/null
+        ansible localhost -m lineinfile -a "path=${GALAXY_CONFIG_FILE} insertafter='^uwsgi:' line='  manage-script-name: true'" &> /dev/null
+        ansible localhost -m lineinfile -a "path=${GALAXY_CONFIG_FILE} insertafter='^uwsgi:' line='  mount: ${PROXY_PREFIX}=galaxy.webapps.galaxy.buildapp:uwsgi_app()'" &> /dev/null
+        ansible localhost -m lineinfile -a "path=${GALAXY_CONFIG_FILE} insertafter='^uwsgi:' line='  socket: unix:///srv/galaxy/var/uwsgi.sock'" &> /dev/null
+
+        # Also set SCRIPT_NAME. It's not always necessary due to manage-script-name: true in galaxy.yml, but it makes life easier in this container + it does no harm
+        ansible localhost -m lineinfile -a "path={{ nginx_conf_directory }}/uwsgi.conf regexp='^    uwsgi_param SCRIPT_NAME' state=absent" &> /dev/null
+        ansible localhost -m lineinfile -a "path={{ nginx_conf_directory }}/uwsgi.conf insertafter='^    include uwsgi_params' line='    uwsgi_param SCRIPT_NAME ${PROXY_PREFIX};'" &> /dev/null
+    fi
 
     ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_DIR}/reports_wsgi.ini section=filter:proxy-prefix option=prefix value=${PROXY_PREFIX}/reports" &> /dev/null
     ansible localhost -m ini_file -a "dest=${GALAXY_CONFIG_DIR}/reports_wsgi.ini section=app:main option=filter-with value=proxy-prefix" &> /dev/null
@@ -75,16 +90,6 @@ if [ "x$PROXY_PREFIX" != "x" ]
         then
             export GALAXY_CONFIG_NGINX_UPLOAD_PATH="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_UPLOAD_PATH}"
     fi
-
-    if [ "$GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE" == "/_x_accel_redirect" ]
-        then
-            export GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_X_ACCEL_REDIRECT_BASE}"
-    fi
-
-    if [ "$GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE" == "/_x_accel_redirect" ]
-        then
-            export GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE}"
-    fi
 fi
 
 # Disable authentication of Galaxy reports
@@ -92,12 +97,11 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
     then
         # disable authentification
         echo "Disable Galaxy reports authentification "
-        rm -f /etc/nginx/htpasswd
-        echo "" > /etc/nginx/conf.d/reports_auth.conf
+        echo "" > {{ nginx_conf_directory }}/reports_auth.conf
     else
         # enable authentification
         echo "Enable Galaxy reports authentification "
-        cp /etc/nginx/conf.d/reports_auth.conf.source /etc/nginx/conf.d/reports_auth.conf
+        cp {{ nginx_conf_directory }}/reports_auth.conf.source {{ nginx_conf_directory }}/reports_auth.conf
 fi
 
 cd {{ galaxy_server_dir }}
@@ -430,14 +434,14 @@ if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
         python /usr/local/bin/create_galaxy_user.py --user "$GALAXY_DEFAULT_ADMIN_EMAIL" --password "$GALAXY_DEFAULT_ADMIN_PASSWORD" \
 		-c "$GALAXY_CONFIG_FILE" --username "$GALAXY_DEFAULT_ADMIN_USER" --key "$GALAXY_DEFAULT_ADMIN_KEY"
 	# If there is a need to execute actions that would require a live galaxy instance, such as adding workflows, setting quotas, adding more users, etc.
-	# then place a file with that logic named post-start-actions.sh on the /export/ directory, it should have access to all environment variables 
+	# then place a file with that logic named post-start-actions.sh on the /export/ directory, it should have access to all environment variables
 	# visible here.
 	# The file needs to be executable (chmod a+x post-start-actions.sh)
         if [ -x /export/post-start-actions.sh ]
             then
 	       # uses ephemeris, present in docker-galaxy-stable, to wait for the local instance
 	       galaxy-wait -g http://127.0.0.1 -v --timeout 120 > {{ galaxy_log_dir }}/post-start-actions.log &&
-	       /export/post-start-actions.sh >> {{ galaxy_log_dir }}/post-start-actions.log &    
+	       /export/post-start-actions.sh >> {{ galaxy_log_dir }}/post-start-actions.log &
 	fi
 
 
