@@ -2,7 +2,6 @@
 
 cd $GALAXY_ROOT
 
-cp config/galaxy.ini.sample $GALAXY_CONFIG_FILE
 export GALAXY_CONFIG_STATIC_ENABLED=True
 export GALAXY_CONFIG_ALLOW_LIBRARY_PATH_PASTE=True
 unset GALAXY_CONFIG_NGINX_UPLOAD_STORE
@@ -36,6 +35,8 @@ done
 export GALAXY_CONFIG_JOB_CONFIG_FILE=$JOB_CONF
 
 service postgresql start
+
+. {{ galaxy_venv_dir }}/bin/activate
 
 echo "Checking if database is up and running"
 until /usr/local/bin/check_database.py 2>&1 >/dev/null; do sleep 1; echo "Waiting for database"; done
