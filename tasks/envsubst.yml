@@ -1,0 +1,9 @@
+- name: "Remove all envsubst placeholders from nginx templates"
+  shell: "envsubst '{{ item.env }}' < {{ item.src|quote }} > /tmp/env_replace && mv /tmp/env_replace {{ item.src|quote }}"
+  with_items:
+    - { env: '$RUNTIME_ENVS_NGINX_PREFIX_LOCATION', src: '{{ nginx_conf_directory }}/uwsgi.conf' }
+    - { env: '$RUNTIME_ENVS_NGINX_PREFIX_LOCATION', src: '{{ nginx_conf_path }}' }
+  # remove the placeholder completely when envsubst_remove_runtime_envs is set to true
+  environment:
+    RUNTIME_ENVS_NGINX_PREFIX_LOCATION: ''
+  when: envsubst_remove_runtime_envs

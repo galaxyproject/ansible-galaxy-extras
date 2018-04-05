@@ -85,7 +85,16 @@ if [ "x$PROXY_PREFIX" != "x" ]
         then
             export GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE="${PROXY_PREFIX}${GALAXY_CONFIG_NGINX_X_ARCHIVE_FILES_BASE}"
     fi
+    # Change the nginx configuration. We have included some placeholders into nginx that can be replaced with with envsubst easily, by
+    # setting the placeholder ENV var and running envsubst.
+    export RUNTIME_ENVS_NGINX_PREFIX_LOCATION=$PROXY_PREFIX
 fi
+
+# If no PROXY_PREFIX is set, the RUNTIME_ENVS_NGINX_PREFIX_LOCATION is also empty and the placeholder in nginx is replaced by ""
+for file in /etc/nginx/nginx.conf /etc/nginx/conf.d/uwsgi.conf /etc/nginx/conf.d/galaxy_web.conf /etc/nginx/conf.d/reports_auth.conf /etc/nginx/conf.d/reports_auth.conf.source
+do
+    envsubst '$RUNTIME_ENVS_NGINX_PREFIX_LOCATION' < $file > /tmp/env_replace && mv /tmp/env_replace $file
+done
 
 # Disable authentication of Galaxy reports
 if [ "x$DISABLE_REPORTS_AUTH" != "x" ]

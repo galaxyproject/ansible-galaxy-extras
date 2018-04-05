@@ -82,3 +82,8 @@
   when: galaxy_extras_config_startup
   tags:
    - startup
+
+- include: envsubst.yml
+  when: envsubst_remove_runtime_envs
+  tags:
+   - envsubst
