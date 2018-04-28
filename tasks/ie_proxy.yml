@@ -25,7 +25,7 @@
   apt: pkg=nodejs state=latest update_cache=true
 
 - name: "Install proxy dependencies."
-  shell: "cd {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js && npm install"
+  shell: "cd {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js && npm config set strict-ssl false && npm install"
   become: True
   become_user: "{{ galaxy_user_name }}"
 
