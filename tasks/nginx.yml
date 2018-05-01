@@ -12,7 +12,7 @@
     dest={{ item.dest }}
     owner={{ item.owner }} group={{ item.owner }} mode=0600
   with_items:
-    - { src: 'htpasswd.j2',                     dest: '/etc/nginx/htpasswd',                                 owner: galaxy_user_name }
+    - { src: 'htpasswd.j2',                     dest: '/etc/nginx/htpasswd',                                 owner: '{{ galaxy_user_name }}' }
     - { src: 'nginx_galaxy_web.conf.j2',        dest: '{{ nginx_conf_directory }}/galaxy_web.conf',          owner: 'root' }
     - { src: 'nginx_uwsgi.conf.j2',             dest: '{{ nginx_conf_directory }}/uwsgi.conf',               owner: 'root' }
     - { src: 'nginx_reports_noauth.conf.j2',    dest: '{{ nginx_conf_directory }}/reports_auth.conf',        owner: 'root' }
