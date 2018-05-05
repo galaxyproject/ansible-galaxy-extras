@@ -1,34 +1,18 @@
 #!/bin/bash
 
 {% if startup_sleeplock|bool %}
-echo "Waiting for init"
-# Try to acquire the lock on $SLEEPLOCK_FILE.
-# When the init process finishes, it will lock the file.
+echo "Waiting for galaxy-init"
+# Wait until the $SLEEPLOCK_FILE existis in the /export folder.
 # Can be disabled by NONUSE=sleeplock
 if [[ $NONUSE != *"sleeplock"* ]]
 then
     SLEEPLOCK_FILE=${SLEEPLOCK_FILE:-/export/.initdone}
-    touch $SLEEPLOCK_FILE
-    (
-    while true
+    until [ -f ${SLEEPLOCK_FILE} ]
     do
-        if flock -xn 200
-        then
-            # In case the file is not locked by the init process
-            # clear it to ensure no other waiting process assumes
-            # we are the init process because the file is locked.
-            >$SLEEPLOCK_FILE
-            flock -u 200
-        elif [ "$(cat $SLEEPLOCK_FILE)" == "done" ]
-        then
-            # In this case the init file was locked and its contents
-            # equal "done" as written by the init process when it acquired
-            # the lock.
-            break
-        fi
-        sleep 1
+       sleep 5
     done
-    ) 200<$SLEEPLOCK_FILE
+    # Remove the file to be prepared for the next start
+    rm ${SLEEPLOCK_FILE}
     echo "Init done"
 fi
 {% endif %}
