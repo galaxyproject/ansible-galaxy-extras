@@ -7,12 +7,14 @@ echo "Waiting for galaxy-init"
 if [[ $NONUSE != *"sleeplock"* ]]
 then
     SLEEPLOCK_FILE=${SLEEPLOCK_FILE:-/export/.initdone}
-    until [ -f ${SLEEPLOCK_FILE} ]
+
+    touch $SLEEPLOCK_FILE
+    until [ "$(cat $SLEEPLOCK_FILE)" == "done"  ]
     do
+       echo "Sleeping another 5s and wait for the galaxy-init container."
        sleep 5
     done
-    # Remove the file to be prepared for the next start
-    rm ${SLEEPLOCK_FILE}
+
     echo "Init done"
 fi
 {% endif %}
