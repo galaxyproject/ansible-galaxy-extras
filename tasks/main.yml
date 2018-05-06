@@ -84,5 +84,6 @@
    - startup
 
 - include: client.yml
+  when: galaxy_extras_config_startup
   tags:
    - client
