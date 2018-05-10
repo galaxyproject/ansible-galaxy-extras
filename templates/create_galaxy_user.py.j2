@@ -38,7 +38,7 @@ def add_user(sa_session, security_agent, email, password, key=None, username="ad
 
 
 if __name__ == "__main__":
-    db_url = get_config(sys.argv)['db_url']
+    db_url = get_config(sys.argv, use_argparse=False)['db_url']
 
     parser = argparse.ArgumentParser(description='Create Galaxy Admin User.')
 

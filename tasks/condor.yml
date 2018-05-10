@@ -19,3 +19,6 @@
 
 - name: "Set TRUST_UID_DOMAIN to True in Condor configs"
   lineinfile: dest=/etc/condor/condor_config.local line='TRUST_UID_DOMAIN=true' state=present create=yes
+
+- name: "Set ALLOW_NEGIOTIATOR to * in Condor configs"
+  lineinfile: dest=/etc/condor/condor_config.local line='ALLOW_NEGOTIATOR=*' state=present create=yes
