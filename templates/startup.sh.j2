@@ -34,6 +34,14 @@ echo "127.0.0.1      galaxy" >> /etc/hosts
 # Set number of Galaxy handlers via GALAXY_HANDLER_NUMPROCS or default to 2
 ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}" &> /dev/null
 
+# If the Galaxy config file is not in the expected place, copy from the sample
+# and hope for the best (that the admin has done all the setup through env vars.)
+if [ ! -f $GALAXY_CONFIG_FILE ]
+  then
+  # this should succesfully copy either .yml or .ini sample file to the expected location
+  cp /export/config/galaxy${GALAXY_CONFIG_FILE: -4}.sample $GALAXY_CONFIG_FILE
+fi
+
 # Configure proxy prefix filtering
 if [ "x$PROXY_PREFIX" != "x" ]
     then
