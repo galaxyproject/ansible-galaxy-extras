@@ -73,7 +73,7 @@ http {
             expires 24h;
         }
         location {{ nginx_reports_location }}/static/scripts {
-            alias {{ galaxy_server_dir }}/static/scripts/packed;
+            alias {{ galaxy_server_dir }}/static/scripts;
             gzip on;
             gzip_types text/plain text/javascript application/x-javascript;
             expires 24h;
