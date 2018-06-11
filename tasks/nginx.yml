@@ -21,6 +21,7 @@
   notify: restart nginx
   tags:
     - https
+    - nginx_configs
 
 - name: Letsencrypts-specific tasks
   include: letsencrypt.yml

@@ -61,6 +61,18 @@ if [ "x$PROXY_PREFIX" != "x" ]
     # Fix path to html assets
     ansible localhost -m replace -a "dest=$GALAXY_CONFIG_DIR/web/welcome.html regexp='(href=\"|\')[/\\w]*(/static)' replace='\\1${PROXY_PREFIX}\\2'" &> /dev/null
 
+    echo "Configuring nginx with prefix: $PROXY_PREFIX"
+    ansible-playbook -c local /ansible/provision.yml \
+    --extra-vars gather_facts=False \
+    --extra-vars galaxy_server_dir="{{ galaxy_server_dir }}" \
+    --extra-vars nginx_galaxy_location="$PROXY_PREFIX" \
+    --extra-vars nginx_interactive_environment_location="$PROXY_PREFIX" \
+    # TODO: Need values for these variables 
+    # --extra-vars nginx_welcome_path=
+    # --extra-vars nginx_welcome_location=
+    # --extra-vars nginx_upload_store_path=
+    --tags nginx_configs
+
     # Set some other vars based on that prefix
     if [ "x$GALAXY_CONFIG_COOKIE_PATH" == "x" ]
         then
