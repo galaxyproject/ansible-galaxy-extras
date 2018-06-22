@@ -11,21 +11,24 @@
   when: galaxy_extras_install_packages
 
 # Install & setup CermVM-FS
-- name: Download cvmfs
-  get_url:
-    url="{{ cvmfs_deb_url }}"
-    dest="/tmp/cvmfs.deb"
+- name: Configure CernVM apt repository
+  apt_repository:
+    filename: "cernvm.list"
+    mode: 422
+    repo: https://cvmrepo.web.cern.ch/cvmrepo/apt/
 
-- name: Download cvmfs-config
-  get_url:
-    url="{{ cvmfs_deb_config_url }}"
-    dest="/tmp/cvmfs-config.deb"
+- name: Install CernVM apt key
+  apt_key:
+    url: https://cvmrepo.web.cern.ch/cvmrepo/apt/cernvm.gpg
 
-- name: Install cvmfs-config
-  apt: deb="/tmp/cvmfs-config.deb"
-
-- name: Install cvmfs
-  apt: deb="/tmp/cvmfs.deb"
+- name: Install CernVM-FS client (apt)
+  apt:
+    name: "{{ item }}"
+    state: "{{ galaxy_extras_apt_package_state }}"
+    update_cache: yes
+  with_items:
+    - cvmfs
+    - cvmfs-config
 
 - name: Install CernVM-FS keys
   copy:
