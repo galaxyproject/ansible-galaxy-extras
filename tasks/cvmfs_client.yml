@@ -15,7 +15,7 @@
   apt_repository:
     filename: "cernvm.list"
     mode: 422
-    repo: https://cvmrepo.web.cern.ch/cvmrepo/apt/
+    repo: deb https://cvmrepo.web.cern.ch/cvmrepo/apt/ stable main
 
 - name: Install CernVM apt key
   apt_key:
