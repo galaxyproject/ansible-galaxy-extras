@@ -130,6 +130,7 @@ uwsgi_threads: 2
 # Set the following to true - to run paste processes for Galaxy
 # handlers (should not longer be needed).
 galaxy_paste_handlers: false
+galaxy_mule_handlers: false
 galaxy_web_processes: 2
 galaxy_handler_processes: 2
 

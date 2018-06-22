@@ -113,6 +113,12 @@ priority        = 200
 {% if galaxy_uwsgi|bool %}
 {% if galaxy_uwsgi_static_conf|bool %}
 command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --{{ galaxy_config_style }} {{ galaxy_config_file }} --logdate --thunder-lock --master --processes {{ galaxy_web_processes }} --threads {{ uwsgi_threads }} --logto {{ uwsgi_log }} --socket 127.0.0.1:{{ uwsgi_port }} --pythonpath lib --stats 127.0.0.1:9191 -b 16384
+{% if galaxy_mule_handlers|bool %}
+  {%- for i in range(galaxy_handler_processes) %}
+ --mule=lib/galaxy/main.py
+  {%- endfor %}
+ --farm=job-handlers:{{ range(1, galaxy_handler_processes + 1) | join(',') }}
+{% endif %}
 {% else %}
 command         = {{ galaxy_venv_dir }}/bin/uwsgi --virtualenv {{ galaxy_venv_dir }} --{{ galaxy_config_style }} {{ galaxy_config_file }} --logdate --thunder-lock --master --processes %(ENV_UWSGI_PROCESSES)s --threads %(ENV_UWSGI_THREADS)s --logto {{ uwsgi_log }} --socket 127.0.0.1:{{ uwsgi_port }} --pythonpath lib --stats 127.0.0.1:9191 -b 16384
 {% endif %}
@@ -143,6 +149,7 @@ startretries    = {{ supervisor_galaxy_startretries }}
 stopasgroup     = true
 {% endif %}
 
+{% if not galaxy_mule_handlers|bool %}
 [program:handler]
 {% if not galaxy_paste_handlers|bool %}
 command         = {{ galaxy_venv_dir }}/bin/python ./lib/galaxy/main.py -c {{ galaxy_config_file }} --server-name=handler%(process_num)s --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
@@ -158,6 +165,7 @@ autorestart     = true
 startsecs       = {{ supervisor_galaxy_startsecs }}
 user            = {{ galaxy_user_name }}
 startretries    = {{ supervisor_galaxy_startretries }}
+{% endif %}
 
 {% if supervisor_manage_reports|bool %}
 [program:reports]
@@ -220,8 +228,10 @@ autorestart     = true
 {% endif %}
 
 [group:galaxy]
-{% if supervisor_manage_ie_proxy|bool %}
-programs = handler, galaxy_web, galaxy_nodejs_proxy
-{% else %}
-programs = handler, galaxy_web
-{% endif %}
+programs = galaxy_web
+{%- if not galaxy_mule_handlers|bool %}
+, handler
+{%- endif -%}
+{%- if supervisor_manage_ie_proxy|bool %}
+, galaxy_nodejs_proxy
+{%- endif %}
