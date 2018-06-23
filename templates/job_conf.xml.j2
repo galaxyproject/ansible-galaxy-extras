@@ -43,16 +43,20 @@
 {% endif %}
         <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
     </plugins>
+{% if not galaxy_mule_handlers %}
     <!-- The default handler can be changed by specifying the GALAXY_HANDLERS_DEFAULT environment variable. -->
     <handlers default_from_environ="GALAXY_HANDLERS_DEFAULT" default="handlers">
-{% if galaxy_handler_processes == 0 %}
+  {% if galaxy_handler_processes == 0 %}
         <handler id="web0" tags="handlers"/>
-{% else %}
-  {% for i in range(galaxy_handler_processes) %}
+  {% else %}
+    {% for i in range(galaxy_handler_processes) %}
         <handler id="handler{{ i }}" tags="handlers"/>
-  {% endfor %}
-{% endif %}
+    {% endfor %}
+  {% endif %}
     </handlers>
+{% else %}
+    <!-- uWSGI mule job handlers are enabled, so the <handlers> section is not used -->
+{% endif %}
     <!-- The default destination can be changed by specifying the GALAXY_DESTINATIONS_DEFAULT environment variable. -->
     <destinations default_from_environ="GALAXY_DESTINATIONS_DEFAULT" default="{{ galaxy_extras_galaxy_destination_default }}">
         <destination id="docker_dispatch" runner="dynamic">
