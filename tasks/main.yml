@@ -48,6 +48,11 @@
   tags:
    - k8s
 
+- include: isatools.yml
+  when: isatools_lite_install
+  tags:
+   - isatools 
+
 - include: condor.yml
   when: galaxy_extras_config_condor
   tags:
