@@ -52,7 +52,7 @@
 
 - name: Check if Galaxy uses eggs or wheels
   stat:
-    path: "{{ galaxy_server_dir }}/lib/galaxy/dependencies/requirements.txt"
+    path: "{{ galaxy_server_dir }}/lib/galaxy/dependencies/pinned-requirements.txt"
   register: requirements_txt
 
 - name: Fetch DRMAA egg for Galaxy
