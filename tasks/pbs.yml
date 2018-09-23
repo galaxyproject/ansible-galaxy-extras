@@ -5,15 +5,6 @@
     - pbs-drmaa-dev
   when: galaxy_extras_install_packages
 
-- name: Check if Galaxy uses eggs or wheels
-  stat:
-    path: "{{ galaxy_server_dir }}/lib/galaxy/dependencies/requirements.txt"
-  register: requirements_txt
-
-- name: Fetch DRMAA egg for Galaxy
-  shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_server_dir }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
-  when: not requirements_txt.stat.exists
-
 # If job_conf.xml is installed before running galaxyprojectdotorg.galaxy, this would already be installed.
 - name: Fetch DRMAA wheel for Galaxy
   pip:
@@ -23,7 +14,6 @@
   environment:
     PYTHOPATH: null
     VIRTUAL_ENV: "{{ galaxy_venv_dir }}"
-  when: requirements_txt.stat.exists
 
 - name: "Install Galaxy job conf"
   template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
