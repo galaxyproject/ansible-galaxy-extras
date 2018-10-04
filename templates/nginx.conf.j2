@@ -117,6 +117,9 @@ http {
             gzip_types text/plain text/javascript application/x-javascript;
             expires 24h;
         }
+        location /favicon.ico {
+            alias {{ galaxy_server_dir }}/static/favicon.ico;
+        }
 
         # delegated downloads
         location /_x_accel_redirect/ {
