@@ -3,6 +3,7 @@
   uri:
     url: https://deb.nodesource.com/node/dists/{{ ansible_distribution_release }}/Release
   register: distro_supported
+  ignore_errors: true
 
 - name: Ensure apt-transport-https is installed.
   apt: name=apt-transport-https state={{ galaxy_extras_apt_package_state }}
