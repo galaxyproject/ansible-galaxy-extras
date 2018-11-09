@@ -23,12 +23,10 @@
 
 - name: Install CernVM-FS client (apt)
   apt:
-    name: "{{ item }}"
+    name: ['cvmfs', 'cvmfs-config']
     state: "{{ galaxy_extras_apt_package_state }}"
     update_cache: yes
-  with_items:
-    - cvmfs
-    - cvmfs-config
+    allow_unauthenticated: yes
 
 - name: Install CernVM-FS keys
   copy:
