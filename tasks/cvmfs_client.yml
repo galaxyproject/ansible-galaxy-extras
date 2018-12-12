@@ -4,7 +4,9 @@
 
 # Install autofs
 - name: Install autofs system package
-  apt: pkg=['autofs', 'uuid-runtime'] state={{ galaxy_extras_apt_package_state }}
+  apt:
+    name: ['autofs', 'uuid-runtime']
+    state: "{{ galaxy_extras_apt_package_state }}"
   when: galaxy_extras_install_packages
 
 - name: Install CernVM apt key
