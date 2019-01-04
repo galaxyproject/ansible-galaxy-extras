@@ -443,6 +443,10 @@ if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
 	fi
 fi
 
+# migrate custom IEs or Visualisations (Galaxy plugins)
+# this is needed for by the new client build system
+python3 ${GALAXY_ROOT}/scripts/plugin_staging.py
+
 # Enable verbose output
 if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
     then
@@ -451,7 +455,3 @@ if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
         tail -f {{ galaxy_log_dir }}/*.log
 fi
 
-
-# migrate custom IEs or Visualisations (Galaxy plugins)
-# this is needed for by the new client build system
-python3 ${GALAXY_ROOT}/scripts/plugin_staging.py
