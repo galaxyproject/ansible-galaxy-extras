@@ -37,6 +37,17 @@ def change_path( src ):
                         os.unlink( stripped_src )
                     os.symlink( dest, src.rstrip('/') )
 
+
+def copy_samples(src, dest):
+    if not os.path.realpath(src) == os.path.realpath(dest):
+        for filename in os.listdir(src):
+            if filename.endswith('ml.sample') or filename.endswith('ml.sample_advanced') or filename.endswith('ml.sample_basic'):
+                distrib_file = os.path.join(src, filename)
+                export_file = os.path.join(dest, filename)
+                shutil.copy(distrib_file, export_file)
+                os.chown(export_file, int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']))
+
+
 def _makedir(path):
     if not os.path.exists( path ):
         os.makedirs( path )
@@ -63,6 +74,24 @@ if __name__ == "__main__":
 
     shutil.copy('/galaxy-central/requirements.txt','/export/galaxy-central/requirements.txt')
 
+    _makedir('/export/galaxy-central/')
+    _makedir('/export/ftp/')
+
+    change_path( os.path.join(galaxy_root_dir, 'config') )
+
+    # Copy all sample config files to config dir
+    # TODO find a way to update plugins/ without breaking user customizations
+    config_src = os.path.join(galaxy_root_dir, 'config')
+    config_dest = os.path.join('/export/', galaxy_root_dir, 'config')
+    copy_samples(config_src, config_dest)
+
+    # Copy all sample files to tool-data dir
+    # TODO find a way to update shared/ without breaking user customizations
+    tool_data_src = os.path.join(galaxy_root_dir, 'tool-data')
+    tool_data_dest = os.path.join('/export/', galaxy_root_dir, 'tool-data')
+    copy_samples(tool_data_src, tool_data_dest)
+
+    # TODO find a way to update /export/galaxy-central/display_applications/ without breaking user customizations
 
     # Copy all files starting with "welcome"
     # This enables a flexible start page design.
@@ -72,11 +101,6 @@ if __name__ == "__main__":
             image_file = os.path.join('/etc/galaxy/web/', filename)
             shutil.copy(export_file, image_file)
             os.chown( image_file, int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
-
-    _makedir('/export/galaxy-central/')
-    _makedir('/export/ftp/')
-
-    change_path( os.path.join(galaxy_root_dir, 'config') )
 
     # copy image defaults to config/<file>.docker_sample to base derivatives on,
     # and if there is a realized version of these files in the export directory
