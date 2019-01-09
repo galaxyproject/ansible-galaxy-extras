@@ -98,9 +98,31 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         cp {{ nginx_conf_directory }}/reports_auth.conf.source {{ nginx_conf_directory }}/reports_auth.conf
 fi
 
+# Try to guess if we are running under --privileged mode
+{% if host_docker_legacy|bool %}
+if mount | grep "/proc/kcore"; then
+    PRIVILEGED=false
+else
+    PRIVILEGED=true
+fi
+{% else %}
+# Taken from http://stackoverflow.com/questions/32144575/how-to-know-if-a-docker-container-is-running-in-privileged-mode
+ip link add dummy0 type dummy >/dev/null
+if [[ $? -eq 0 ]]; then
+    PRIVILEGED=true
+    # clean the dummy0 link
+    ip link delete dummy0 >/dev/null
+else
+    PRIVILEGED=false
+fi
+{% endif %}
+
 cd {{ galaxy_server_dir }}
 . {{ galaxy_venv_dir }}/bin/activate
-umount /var/lib/docker
+
+if $PRIVILEGED; then
+    umount /var/lib/docker
+fi
 
 {% if startup_export_user_files is defined and startup_export_user_files|bool %}
 # If /export/ is mounted, export_user_files file moving all data to /export/
@@ -334,25 +356,6 @@ then
 fi
 {% endif %}
 
-# Try to guess if we are running under --privileged mode
-{% if host_docker_legacy|bool %}
-if mount | grep "/proc/kcore"; then
-    PRIVILEGED=false
-else
-    PRIVILEGED=true
-fi
-{% else %}
-# Taken from http://stackoverflow.com/questions/32144575/how-to-know-if-a-docker-container-is-running-in-privileged-mode
-ip link add dummy0 type dummy >/dev/null
-if [[ $? -eq 0 ]]; then
-    PRIVILEGED=true
-    # clean the dummy0 link
-    ip link delete dummy0 >/dev/null
-else
-    PRIVILEGED=false
-fi
-{% endif %}
-# Try to guess if we are running under --privileged mode
 if $PRIVILEGED; then
     echo "Enable Galaxy Interactive Environments."
     export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY="config/plugins/interactive_environments"
