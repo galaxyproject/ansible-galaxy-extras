@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import glob
 import sys
 import os
 import shutil
@@ -89,6 +90,16 @@ if __name__ == "__main__":
         if os.path.exists(export_config):
             subprocess.call('ln -s -f %s %s' % (export_config, image_config), shell=True)
 
+    # Update Conda version if needed
+    if os.environ.get('GALAXY_AUTO_UPDATE_CONDA', '0') != 0:
+        src_conda = '/tool_deps/_conda/'
+        dest_conda = '/export/tool_deps/_conda/'
+        if not os.path.realpath(src_conda) == os.path.realpath(dest_conda):
+            for subdir in ['bin', 'compiler_compat', 'conda-meta', 'envs', 'etc', 'include', 'lib', 'share', 'ssl', 'x86_64-conda_cos6-linux-gnu']:
+                if os.path.exists(os.path.join(dest_conda, subdir)):
+                    shutil.rmtree(os.path.join(dest_conda, subdir))
+                shutil.copytree(os.path.join(src_conda, subdir), os.path.join(dest_conda, subdir))
+
     change_path( os.path.join(galaxy_root_dir, 'tools.yaml') )
     change_path( os.path.join(galaxy_root_dir, 'integrated_tool_panel.xml') )
     change_path( os.path.join(galaxy_root_dir, 'display_applications') )
@@ -96,7 +107,7 @@ if __name__ == "__main__":
     change_path( os.path.join(galaxy_root_dir, 'tool-data') )
     change_path( os.path.join(galaxy_root_dir, 'database') )
     change_path( '/shed_tools/' )
-    
+
     if os.path.exists('/export/reports_htpasswd'):
         shutil.copy('/export/reports_htpasswd', '/etc/nginx/htpasswd')
 
