@@ -280,6 +280,14 @@ function start_supervisor {
     fi
     {% endif %}
     wait_for_postgres
+
+    # Make sure the database is automatically updated
+    if [ "x$GALAXY_AUTO_UPDATE_DB" != "x" ]
+    then
+        echo "Updating Galaxy database"
+        sh manage_db.sh -c /etc/galaxy/galaxy.yml upgrade
+    fi
+
     {% if supervisor_manage_cron|bool %}
     if [[ $NONUSE != *"cron"* ]]
     then
