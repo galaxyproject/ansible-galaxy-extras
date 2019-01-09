@@ -106,6 +106,7 @@ umount /var/lib/docker
 # If /export/ is mounted, export_user_files file moving all data to /export/
 # symlinks will point from the original location to the new path under /export/
 # If /export/ is not given, nothing will happen in that step
+echo "Checking /export..."
 python /usr/local/bin/export_user_files.py $PG_DATA_DIR_DEFAULT
 {% endif %}
 
@@ -240,7 +241,7 @@ fi
 # Waits until postgres is ready
 function wait_for_postgres {
     echo "Checking if database is up and running"
-    until /usr/local/bin/check_database.py; do sleep 1; echo "Waiting for database"; done
+    until /usr/local/bin/check_database.py 2>&1 >/dev/null; do sleep 1; echo "Waiting for database"; done
     echo "Database connected"
 }
 
