@@ -455,6 +455,21 @@ if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
 	fi
 fi
 
+# Reinstall tools if the user want to
+if [ "x$GALAXY_AUTO_UPDATE_TOOLS" != "x" ]
+    then
+        galaxy-wait -g http://127.0.0.1 -v --timeout 120 > /home/galaxy/logs/post-start-actions.log &&
+        OLDIFS=$IFS
+        IFS=','
+        for TOOL_YML in `echo "$GALAXY_AUTO_UPDATE_TOOLS"`
+        do
+            echo "Installing tools from $TOOLS_YML"
+            install-tools "$TOOL_YML" -v
+            /tool_deps/_conda/bin/conda clean --tarballs --yes
+        done
+        IFS=$OLDIFS
+fi
+
 # migrate custom IEs or Visualisations (Galaxy plugins)
 # this is needed for by the new client build system
 python3 ${GALAXY_ROOT}/scripts/plugin_staging.py
