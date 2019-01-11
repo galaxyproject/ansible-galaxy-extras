@@ -118,7 +118,7 @@ if __name__ == "__main__":
     if os.environ.get('GALAXY_AUTO_UPDATE_CONDA', '0') != 0:
         src_conda = '/tool_deps/_conda/'
         dest_conda = '/export/tool_deps/_conda/'
-        if not os.path.realpath(src_conda) == os.path.realpath(dest_conda):
+        if os.path.exists(dest_conda) and os.path.realpath(src_conda) != os.path.realpath(dest_conda):
             for subdir in ['bin', 'compiler_compat', 'conda-meta', 'etc', 'include', 'lib', 'share', 'ssl', 'x86_64-conda_cos6-linux-gnu']:
                 if os.path.exists(os.path.join(dest_conda, subdir)):
                     shutil.rmtree(os.path.join(dest_conda, subdir))
