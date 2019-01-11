@@ -119,7 +119,7 @@ if __name__ == "__main__":
         src_conda = '/tool_deps/_conda/'
         dest_conda = '/export/tool_deps/_conda/'
         if not os.path.realpath(src_conda) == os.path.realpath(dest_conda):
-            for subdir in ['bin', 'compiler_compat', 'conda-meta', 'envs', 'etc', 'include', 'lib', 'share', 'ssl', 'x86_64-conda_cos6-linux-gnu']:
+            for subdir in ['bin', 'compiler_compat', 'conda-meta', 'etc', 'include', 'lib', 'share', 'ssl', 'x86_64-conda_cos6-linux-gnu']:
                 if os.path.exists(os.path.join(dest_conda, subdir)):
                     shutil.rmtree(os.path.join(dest_conda, subdir))
                 subprocess.call('cp -p --preserve -R %s %s' % (os.path.join(src_conda, subdir), os.path.join(dest_conda, subdir)), shell=True)
