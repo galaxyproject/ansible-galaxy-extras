@@ -122,7 +122,7 @@ if __name__ == "__main__":
             for subdir in ['bin', 'compiler_compat', 'conda-meta', 'envs', 'etc', 'include', 'lib', 'share', 'ssl', 'x86_64-conda_cos6-linux-gnu']:
                 if os.path.exists(os.path.join(dest_conda, subdir)):
                     shutil.rmtree(os.path.join(dest_conda, subdir))
-                shutil.copytree(os.path.join(src_conda, subdir), os.path.join(dest_conda, subdir))
+                subprocess.call('cp -p --preserve -R %s %s' % (os.path.join(src_conda, subdir), os.path.join(dest_conda, subdir)), shell=True)
 
     change_path( os.path.join(galaxy_root_dir, 'tools.yaml') )
     change_path( os.path.join(galaxy_root_dir, 'integrated_tool_panel.xml') )
@@ -154,4 +154,3 @@ if __name__ == "__main__":
         subprocess.call('chown -R postgres:postgres /export/postgresql/', shell=True)
         subprocess.call('chmod -R 0755 /export/', shell=True)
         subprocess.call('chmod -R 0700 %s' % PG_DATA_DIR_HOST, shell=True)
-
