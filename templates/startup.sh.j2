@@ -463,7 +463,7 @@ if [ "x$GALAXY_AUTO_UPDATE_TOOLS" != "x" ]
         IFS=','
         for TOOL_YML in `echo "$GALAXY_AUTO_UPDATE_TOOLS"`
         do
-            echo "Installing tools from $TOOLS_YML"
+            echo "Installing tools from $TOOL_YML"
             install-tools "$TOOL_YML" -v
             /tool_deps/_conda/bin/conda clean --tarballs --yes
         done
@@ -481,4 +481,3 @@ if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
     else
         tail -f {{ galaxy_log_dir }}/*.log
 fi
-
