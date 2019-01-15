@@ -164,6 +164,15 @@ if [ "x$BARE" != "x" ]
         export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_ROOT/test/functional/tools/upload_tool_conf.xml
 fi
 
+# If auto installing conda envs, make sure bcftools is installed for __set_metadata__ tool
+if [ "x$GALAXY_CONFIG_CONDA_AUTO_INSTALL" != "x" ]
+    then
+        if [ ! -d "/tool_deps/_conda/envs/__bcftools@1.5" ]; then
+            /tool_deps/_conda/bin/conda create -y --override-channels --channel iuc --channel conda-forge --channel bioconda --channel defaults --name __bcftools@1.5 bcftools=1.5
+            /tool_deps/_conda/bin/conda clean --tarballs --yes
+        fi
+fi
+
 {% if galaxy_extras_config_postgres|bool %}
 if [[ $NONUSE != *"postgres"* ]]
 then
