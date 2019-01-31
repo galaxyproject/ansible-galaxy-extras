@@ -98,14 +98,37 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         cp {{ nginx_conf_directory }}/reports_auth.conf.source {{ nginx_conf_directory }}/reports_auth.conf
 fi
 
+# Try to guess if we are running under --privileged mode
+{% if host_docker_legacy|bool %}
+if mount | grep "/proc/kcore"; then
+    PRIVILEGED=false
+else
+    PRIVILEGED=true
+fi
+{% else %}
+# Taken from http://stackoverflow.com/questions/32144575/how-to-know-if-a-docker-container-is-running-in-privileged-mode
+ip link add dummy0 type dummy >/dev/null
+if [[ $? -eq 0 ]]; then
+    PRIVILEGED=true
+    # clean the dummy0 link
+    ip link delete dummy0 >/dev/null
+else
+    PRIVILEGED=false
+fi
+{% endif %}
+
 cd {{ galaxy_server_dir }}
 . {{ galaxy_venv_dir }}/bin/activate
-umount /var/lib/docker
+
+if $PRIVILEGED; then
+    umount /var/lib/docker
+fi
 
 {% if startup_export_user_files is defined and startup_export_user_files|bool %}
 # If /export/ is mounted, export_user_files file moving all data to /export/
 # symlinks will point from the original location to the new path under /export/
 # If /export/ is not given, nothing will happen in that step
+echo "Checking /export..."
 python /usr/local/bin/export_user_files.py $PG_DATA_DIR_DEFAULT
 {% endif %}
 
@@ -139,6 +162,15 @@ if [ "x$BARE" != "x" ]
     then
         echo "Remove all tools from the tool_conf.xml file."
         export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_ROOT/test/functional/tools/upload_tool_conf.xml
+fi
+
+# If auto installing conda envs, make sure bcftools is installed for __set_metadata__ tool
+if [ "x$GALAXY_CONFIG_CONDA_AUTO_INSTALL" != "x" ]
+    then
+        if [ ! -d "/tool_deps/_conda/envs/__bcftools@1.5" ]; then
+            /tool_deps/_conda/bin/conda create -y --override-channels --channel iuc --channel conda-forge --channel bioconda --channel defaults --name __bcftools@1.5 bcftools=1.5
+            /tool_deps/_conda/bin/conda clean --tarballs --yes
+        fi
 fi
 
 {% if galaxy_extras_config_postgres|bool %}
@@ -240,7 +272,7 @@ fi
 # Waits until postgres is ready
 function wait_for_postgres {
     echo "Checking if database is up and running"
-    until /usr/local/bin/check_database.py; do sleep 1; echo "Waiting for database"; done
+    until /usr/local/bin/check_database.py 2>&1 >/dev/null; do sleep 1; echo "Waiting for database"; done
     echo "Database connected"
 }
 
@@ -257,6 +289,14 @@ function start_supervisor {
     fi
     {% endif %}
     wait_for_postgres
+
+    # Make sure the database is automatically updated
+    if [ "x$GALAXY_AUTO_UPDATE_DB" != "x" ]
+    then
+        echo "Updating Galaxy database"
+        sh manage_db.sh -c /etc/galaxy/galaxy.yml upgrade
+    fi
+
     {% if supervisor_manage_cron|bool %}
     if [[ $NONUSE != *"cron"* ]]
     then
@@ -333,25 +373,6 @@ then
 fi
 {% endif %}
 
-# Try to guess if we are running under --privileged mode
-{% if host_docker_legacy|bool %}
-if mount | grep "/proc/kcore"; then
-    PRIVILEGED=false
-else
-    PRIVILEGED=true
-fi
-{% else %}
-# Taken from http://stackoverflow.com/questions/32144575/how-to-know-if-a-docker-container-is-running-in-privileged-mode
-ip link add dummy0 type dummy >/dev/null
-if [[ $? -eq 0 ]]; then
-    PRIVILEGED=true
-    # clean the dummy0 link
-    ip link delete dummy0 >/dev/null
-else
-    PRIVILEGED=false
-fi
-{% endif %}
-# Try to guess if we are running under --privileged mode
 if $PRIVILEGED; then
     echo "Enable Galaxy Interactive Environments."
     export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY="config/plugins/interactive_environments"
@@ -443,6 +464,21 @@ if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
 	fi
 fi
 
+# Reinstall tools if the user want to
+if [ "x$GALAXY_AUTO_UPDATE_TOOLS" != "x" ]
+    then
+        galaxy-wait -g http://127.0.0.1 -v --timeout 120 > /home/galaxy/logs/post-start-actions.log &&
+        OLDIFS=$IFS
+        IFS=','
+        for TOOL_YML in `echo "$GALAXY_AUTO_UPDATE_TOOLS"`
+        do
+            echo "Installing tools from $TOOL_YML"
+            shed-tools install -g "http://127.0.0.1" -a "$GALAXY_DEFAULT_ADMIN_KEY" -t "$TOOL_YML"
+            /tool_deps/_conda/bin/conda clean --tarballs --yes
+        done
+        IFS=$OLDIFS
+fi
+
 # migrate custom IEs or Visualisations (Galaxy plugins)
 # this is needed for by the new client build system
 python3 ${GALAXY_ROOT}/scripts/plugin_staging.py
@@ -454,4 +490,3 @@ if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]
     else
         tail -f {{ galaxy_log_dir }}/*.log
 fi
-
