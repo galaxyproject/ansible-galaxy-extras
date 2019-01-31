@@ -473,7 +473,7 @@ if [ "x$GALAXY_AUTO_UPDATE_TOOLS" != "x" ]
         for TOOL_YML in `echo "$GALAXY_AUTO_UPDATE_TOOLS"`
         do
             echo "Installing tools from $TOOL_YML"
-            install-tools "$TOOL_YML" -v
+            shed-tools install -g "http://127.0.0.1" -a "$GALAXY_DEFAULT_ADMIN_KEY" -t "$TOOL_YML"
             /tool_deps/_conda/bin/conda clean --tarballs --yes
         done
         IFS=$OLDIFS
