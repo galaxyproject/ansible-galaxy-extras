@@ -120,6 +120,7 @@ http {
         location {{ nginx_galaxy_location }}/_x_accel_redirect {
             internal;
             alias /;
+            proxy_force_ranges {{ nginx_proxy_force_ranges }};
         }
 
         # this is needed if 'welcome_url' is set to /etc/galaxy/web

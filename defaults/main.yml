@@ -121,6 +121,9 @@ codebox_port: 8991
 # Additional configurations to be appended to nginx config
 nginx_additional_config : []
 
+# Byte-range support for NGINX delegated downloads (possible 'on' or 'off')
+nginx_galaxy_location: off
+
 # Configure proxy to planemo-machine-web.
 nginx_serve_planemo_machine_web: false
 nginx_proxy_reports: true
