@@ -168,8 +168,8 @@ fi
 if [ "x$GALAXY_CONFIG_CONDA_AUTO_INSTALL" != "x" ]
     then
         if [ ! -d "/tool_deps/_conda/envs/__bcftools@1.5" ]; then
-            /tool_deps/_conda/bin/conda create -y --override-channels --channel iuc --channel conda-forge --channel bioconda --channel defaults --name __bcftools@1.5 bcftools=1.5
-            /tool_deps/_conda/bin/conda clean --tarballs --yes
+            su $GALAXY_USER -c "/tool_deps/_conda/bin/conda create -y --override-channels --channel iuc --channel conda-forge --channel bioconda --channel defaults --name __bcftools@1.5 bcftools=1.5"
+            su $GALAXY_USER -c "/tool_deps/_conda/bin/conda clean --tarballs --yes"
         fi
 fi
 
