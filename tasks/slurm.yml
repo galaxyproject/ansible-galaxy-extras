@@ -68,7 +68,6 @@
   environment:
     PYTHOPATH: null
     VIRTUAL_ENV: "{{ galaxy_venv_dir }}"
-  when: requirements_txt.stat.exists
 
 # TODO: Move the following two out of this file since it is no longer SLURM specific.
 - name: "Install Galaxy job conf"

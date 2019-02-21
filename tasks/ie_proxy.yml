@@ -1,6 +1,6 @@
 ---
 - name: Check if the Ubuntu distro is supported
-  shell: 'ls -l'
+  get_url: url="https://deb.nodesource.com/node_10.x/dists/{{ ansible_distribution_release }}/Release" dest=/dev/null
   register: distro_supported
 
 - name: Ensure apt-transport-https is installed.
