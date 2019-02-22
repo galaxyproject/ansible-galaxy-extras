@@ -7,6 +7,12 @@
     - supervisor
   when: galaxy_extras_install_packages
 
+- name: Install cron
+  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
+  with_items:
+    - cron
+  when: supervisor_manage_cron|bool
+
 - name: Create Galaxy configuration file
   template: src=supervisor.conf.j2 dest={{ supervisor_conf_path }}
 

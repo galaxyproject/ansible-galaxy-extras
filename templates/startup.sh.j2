@@ -34,6 +34,14 @@ echo "127.0.0.1      galaxy" >> /etc/hosts
 # Set number of Galaxy handlers via GALAXY_HANDLER_NUMPROCS or default to 2
 ansible localhost -m ini_file -a "dest=/etc/supervisor/conf.d/galaxy.conf section=program:handler option=numprocs value=${GALAXY_HANDLER_NUMPROCS:-2}" &> /dev/null
 
+# If the Galaxy config file is not in the expected place, copy from the sample
+# and hope for the best (that the admin has done all the setup through env vars.)
+if [ ! -f $GALAXY_CONFIG_FILE ]
+  then
+  # this should succesfully copy either .yml or .ini sample file to the expected location
+  cp /export/config/galaxy${GALAXY_CONFIG_FILE: -4}.sample $GALAXY_CONFIG_FILE
+fi
+
 # Configure proxy prefix filtering
 if [ "x$PROXY_PREFIX" != "x" ]
     then
@@ -90,14 +98,37 @@ if [ "x$DISABLE_REPORTS_AUTH" != "x" ]
         cp {{ nginx_conf_directory }}/reports_auth.conf.source {{ nginx_conf_directory }}/reports_auth.conf
 fi
 
+# Try to guess if we are running under --privileged mode
+{% if host_docker_legacy|bool %}
+if mount | grep "/proc/kcore"; then
+    PRIVILEGED=false
+else
+    PRIVILEGED=true
+fi
+{% else %}
+# Taken from http://stackoverflow.com/questions/32144575/how-to-know-if-a-docker-container-is-running-in-privileged-mode
+ip link add dummy0 type dummy >/dev/null
+if [[ $? -eq 0 ]]; then
+    PRIVILEGED=true
+    # clean the dummy0 link
+    ip link delete dummy0 >/dev/null
+else
+    PRIVILEGED=false
+fi
+{% endif %}
+
 cd {{ galaxy_server_dir }}
 . {{ galaxy_venv_dir }}/bin/activate
-umount /var/lib/docker
+
+if $PRIVILEGED; then
+    umount /var/lib/docker
+fi
 
 {% if startup_export_user_files is defined and startup_export_user_files|bool %}
 # If /export/ is mounted, export_user_files file moving all data to /export/
 # symlinks will point from the original location to the new path under /export/
 # If /export/ is not given, nothing will happen in that step
+echo "Checking /export..."
 python /usr/local/bin/export_user_files.py $PG_DATA_DIR_DEFAULT
 {% endif %}
 
@@ -131,6 +162,15 @@ if [ "x$BARE" != "x" ]
     then
         echo "Remove all tools from the tool_conf.xml file."
         export GALAXY_CONFIG_TOOL_CONFIG_FILE=config/shed_tool_conf.xml,$GALAXY_ROOT/test/functional/tools/upload_tool_conf.xml
+fi
+
+# If auto installing conda envs, make sure bcftools is installed for __set_metadata__ tool
+if [ "x$GALAXY_CONFIG_CONDA_AUTO_INSTALL" != "x" ]
+    then
+        if [ ! -d "/tool_deps/_conda/envs/__bcftools@1.5" ]; then
+            su $GALAXY_USER -c "/tool_deps/_conda/bin/conda create -y --override-channels --channel iuc --channel conda-forge --channel bioconda --channel defaults --name __bcftools@1.5 bcftools=1.5"
+            su $GALAXY_USER -c "/tool_deps/_conda/bin/conda clean --tarballs --yes"
+        fi
 fi
 
 {% if galaxy_extras_config_postgres|bool %}
@@ -249,6 +289,14 @@ function start_supervisor {
     fi
     {% endif %}
     wait_for_postgres
+
+    # Make sure the database is automatically updated
+    if [ "x$GALAXY_AUTO_UPDATE_DB" != "x" ]
+    then
+        echo "Updating Galaxy database"
+        sh manage_db.sh -c /etc/galaxy/galaxy.yml upgrade
+    fi
+
     {% if supervisor_manage_cron|bool %}
     if [[ $NONUSE != *"cron"* ]]
     then
@@ -325,25 +373,6 @@ then
 fi
 {% endif %}
 
-# Try to guess if we are running under --privileged mode
-{% if host_docker_legacy|bool %}
-if mount | grep "/proc/kcore"; then
-    PRIVILEGED=false
-else
-    PRIVILEGED=true
-fi
-{% else %}
-# Taken from http://stackoverflow.com/questions/32144575/how-to-know-if-a-docker-container-is-running-in-privileged-mode
-ip link add dummy0 type dummy >/dev/null
-if [[ $? -eq 0 ]]; then
-    PRIVILEGED=true
-    # clean the dummy0 link
-    ip link delete dummy0 >/dev/null
-else
-    PRIVILEGED=false
-fi
-{% endif %}
-# Try to guess if we are running under --privileged mode
 if $PRIVILEGED; then
     echo "Enable Galaxy Interactive Environments."
     export GALAXY_CONFIG_INTERACTIVE_ENVIRONMENT_PLUGINS_DIRECTORY="config/plugins/interactive_environments"
@@ -390,6 +419,7 @@ then
     --extra-vars galaxy_extras_config_ssl=True \
     --extra-vars galaxy_extras_config_ssl_method=letsencrypt \
     --extra-vars galaxy_extras_galaxy_domain="GALAXY_CONFIG_GALAXY_INFRASTRUCTURE_URL" \
+    --extra-vars galaxy_extras_config_nginx_upload=False \
     --tags https
 fi
 if [ "$USE_HTTPS" != "False" ]
@@ -403,6 +433,7 @@ then
         --extra-vars galaxy_extras_config_ssl_method=own \
         --extra-vars src_nginx_ssl_certificate_key=/export/server.key \
         --extra-vars src_nginx_ssl_certificate=/export/server.crt \
+        --extra-vars galaxy_extras_config_nginx_upload=False \
         --tags https
     else
         echo "Setting up self-signed SSL keys"
@@ -410,6 +441,7 @@ then
         --extra-vars gather_facts=False \
         --extra-vars galaxy_extras_config_ssl=True \
         --extra-vars galaxy_extras_config_ssl_method=self-signed \
+        --extra-vars galaxy_extras_config_nginx_upload=False \
         --tags https
     fi
 fi
@@ -430,9 +462,26 @@ if [ "x$GALAXY_DEFAULT_ADMIN_USER" != "x" ]
 	       galaxy-wait -g http://127.0.0.1 -v --timeout 120 > {{ galaxy_log_dir }}/post-start-actions.log &&
 	       /export/post-start-actions.sh >> {{ galaxy_log_dir }}/post-start-actions.log &
 	fi
-
-
 fi
+
+# Reinstall tools if the user want to
+if [ "x$GALAXY_AUTO_UPDATE_TOOLS" != "x" ]
+    then
+        galaxy-wait -g http://127.0.0.1 -v --timeout 120 > /home/galaxy/logs/post-start-actions.log &&
+        OLDIFS=$IFS
+        IFS=','
+        for TOOL_YML in `echo "$GALAXY_AUTO_UPDATE_TOOLS"`
+        do
+            echo "Installing tools from $TOOL_YML"
+            shed-tools install -g "http://127.0.0.1" -a "$GALAXY_DEFAULT_ADMIN_KEY" -t "$TOOL_YML"
+            /tool_deps/_conda/bin/conda clean --tarballs --yes
+        done
+        IFS=$OLDIFS
+fi
+
+# migrate custom IEs or Visualisations (Galaxy plugins)
+# this is needed for by the new client build system
+python3 ${GALAXY_ROOT}/scripts/plugin_staging.py
 
 # Enable verbose output
 if [ `echo ${GALAXY_LOGGING:-'no'} | tr [:upper:] [:lower:]` = "full" ]

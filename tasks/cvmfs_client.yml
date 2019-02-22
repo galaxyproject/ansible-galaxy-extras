@@ -4,31 +4,27 @@
 
 # Install autofs
 - name: Install autofs system package
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
-    - autofs
-    - uuid-runtime
+  apt:
+    name: ['autofs', 'uuid-runtime']
+    state: "{{ galaxy_extras_apt_package_state }}"
   when: galaxy_extras_install_packages
+
+- name: Install CernVM apt key
+  apt_key:
+    url: https://cvmrepo.web.cern.ch/cvmrepo/apt/cernvm.gpg
 
 # Install & setup CermVM-FS
 - name: Configure CernVM apt repository
   apt_repository:
     filename: "cernvm.list"
     mode: 422
-    repo: deb https://cvmrepo.web.cern.ch/cvmrepo/apt/ stable main
-
-- name: Install CernVM apt key
-  apt_key:
-    url: https://cvmrepo.web.cern.ch/cvmrepo/apt/cernvm.gpg
+    repo: deb https://cvmrepo.web.cern.ch/cvmrepo/apt/ {{ ansible_distribution_release }}-prod main
 
 - name: Install CernVM-FS client (apt)
   apt:
-    name: "{{ item }}"
+    name: ['cvmfs', 'cvmfs-config']
     state: "{{ galaxy_extras_apt_package_state }}"
     update_cache: yes
-  with_items:
-    - cvmfs
-    - cvmfs-config
 
 - name: Install CernVM-FS keys
   copy:

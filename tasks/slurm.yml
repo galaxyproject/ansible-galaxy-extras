@@ -50,6 +50,15 @@
 - name: Create slurm configuration file
   template: src=configure_slurm.py.j2 dest=/usr/sbin/configure_slurm.py
 
+- name: Check if Galaxy uses eggs or wheels
+  stat:
+    path: "{{ galaxy_server_dir }}/lib/galaxy/dependencies/pinned-requirements.txt"
+  register: requirements_txt
+
+- name: Fetch DRMAA egg for Galaxy
+  shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_server_dir }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
+  when: not requirements_txt.stat.exists
+
 # If job_conf.xml is installed before running galaxyprojectdotorg.galaxy, this would already be installed.
 - name: Fetch DRMAA wheel for Galaxy
   pip:
