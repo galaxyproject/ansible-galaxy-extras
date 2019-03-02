@@ -1,36 +1,34 @@
 - name: Install pip
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
+  apt: 
+    state: "{{ galaxy_extras_apt_package_state }}"
+    name: "{{ packages }}"
+  vars:
+    packages:
     - python-pip
   when: galaxy_extras_install_packages
 
 - name: Create munge.service configuration file
   template: src=munge.service.j2 dest=/etc/systemd/system/munge.service
-  when: galaxy_extras_install_packages|bool and ansible_distribution_version >= "15.04"
+  when: galaxy_extras_install_packages
 
 - name: Install munge system package
   apt: pkg=munge state={{ galaxy_extras_apt_package_state }}
   when: galaxy_extras_install_packages
 
 - name: Install SLURM system packages
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
+  apt: 
+    state: "{{ galaxy_extras_apt_package_state }}"
+    name: "{{ packages }}"
+  vars:
+    packages:
     - slurm-llnl
     - slurm-drmaa-dev
     - python-psutil
   when: galaxy_extras_install_packages
 
 - name: Install SLURM system packages
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
-    - slurm-llnl-torque
-  when: galaxy_extras_install_packages|bool and ansible_distribution_version <= "15.04"
-
-- name: Install SLURM system packages
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
-    - slurm-wlm-torque
-  when: galaxy_extras_install_packages|bool and ansible_distribution_version >= "15.04"
+  apt: pkg=['slurm-wlm-torque'] state={{ galaxy_extras_apt_package_state }}
+  when: galaxy_extras_install_packages
 
 - name: Create Munge Key
   command: /usr/sbin/create-munge-key creates=/etc/munge/munge.key

@@ -223,7 +223,7 @@ supervisor_manage_slurm: true
 supervisor_manage_uwsgi: true
 supervisor_slurm_config_dir: "/home/galaxy"
 supervisor_manage_postgres: true
-postgresql_version: 9.3
+postgresql_version: 10
 supervisor_postgres_config_path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
 supervisor_postgres_database_path: "/export/postgresql/{{ postgresql_version }}/main"
 supervisor_postgres_options: "-D {{ supervisor_postgres_database_path }} -c \"config_file={{ supervisor_postgres_config_path }}\""

@@ -77,12 +77,14 @@ SlurmctldDebug=3
 SlurmdDebug=3
 #SlurmdLogFile=
 NodeName=$hostname CPUs=$cpus RealMemory=$memory State=UNKNOWN
-PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State=UP Shared=YES {% if ansible_distribution=='Ubuntu' and ansible_distribution_version | version_compare('15.04', '>=') %}DefMemPerCPU=$mem_per_cpu
+PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State=UP Shared=YES {% if ansible_distribution=='Ubuntu' %}DefMemPerCPU=$mem_per_cpu
 {% endif %}
 '''
+
 slurm_status = subprocess.check_output(['slurmd', '-C'])
-cpus = slurm_status.split("CPUs=")[1].split(" Boards")[0]
-memory = slurm_status.split("RealMemory=")[1].split(" TmpDisk")[0]
+dict_status = dict(z.split('=') for z in slurm_status.split())
+cpus = dict_status['CPUs']
+memory = dict_status['RealMemory']
 mem_per_cpu = int(memory) / int(cpus)
 
 def main():
