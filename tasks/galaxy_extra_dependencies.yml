@@ -8,7 +8,7 @@
   become: True
   become_user: "{{ galaxy_user_name }}"
   with_items:
-    - "psycopg2==2.7.7"
+    - "psycopg2-binary==2.7.7"
     - "weberror==0.10.3"
     - "python-openid"
     - "fluent-logger"
