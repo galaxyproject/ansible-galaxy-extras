@@ -11,6 +11,7 @@ location {{ nginx_galaxy_location }}/ {
     # forward the remote_user header in case it is set by a previous proxy
     if ($remote_user) {
         proxy_set_header REMOTE_USER $remote_user;
+	proxy_set_header GX_SECRET $http_gx_secret;
     }
 {% endif %}
 }
