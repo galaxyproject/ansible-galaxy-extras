@@ -41,6 +41,7 @@ stopasgroup     = true
 user=root
 command=/bin/bash -c "/usr/bin/python /usr/sbin/configure_slurm.py && /usr/sbin/slurmctld -D -L {{supervisor_slurm_config_dir}}/slurmctld.log"
 redirect_stderr=true
+autostart       = {{ supervisor_slurm_autostart }}
 autorestart     = true
 priority        = 200
 stopasgroup     = true
@@ -48,6 +49,7 @@ stopasgroup     = true
 [program:slurmd]
 user=root
 command=/usr/sbin/slurmd -D -L {{supervisor_slurm_config_dir}}/slurmd.log
+autostart       = {{ supervisor_slurm_autostart }}
 redirect_stderr = true
 autorestart     = true
 priority        = 300

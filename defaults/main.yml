@@ -245,6 +245,7 @@ supervisor_galaxy_startretries: 15
 supervisor_ie_proxy_autostart: false
 supervisor_reports_autostart: false
 supervisor_condor_autostart: false
+supervisor_slurm_autostart: true
 supervisor_proftpd_autostart: false
 supervisor_postgres_autostart: true
 supervisor_cron_autostart: false
