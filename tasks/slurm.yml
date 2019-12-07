@@ -63,7 +63,7 @@
 - name: Fetch DRMAA wheel for Galaxy
   pip:
     name: "drmaa"
-    extra_args: "--index-url https://wheels.galaxyproject.org/simple/"
+    version: 0.7.9
     virtualenv: "{{ galaxy_venv_dir }}"
   environment:
     PYTHOPATH: null
