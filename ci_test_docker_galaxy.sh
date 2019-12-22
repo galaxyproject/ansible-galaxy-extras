@@ -2,8 +2,11 @@
 
 set -e
 
-mkdir $HOME/galaxy-docker
-wget -q -O - https://github.com/bgruening/docker-galaxy-stable/archive/master.tar.gz | tar xzf - --strip-components=1 -C $HOME/galaxy-docker
+# this failed because galaxy-postgresql is not recursively imported
+# mkdir $HOME/galaxy-docker
+# wget -q -O - https://github.com/bgruening/docker-galaxy-stable/archive/master.tar.gz | tar xzf - --strip-components=1 -C $HOME/galaxy-docker
+
+git clone --recursive https://github.com/bgruening/docker-galaxy-stable $HOME/galaxy-docker
 
 # remove the submodule role
 rm $HOME/galaxy-docker/galaxy/roles/galaxyprojectdotorg.galaxyextras/* -rf
