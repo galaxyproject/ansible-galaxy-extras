@@ -77,7 +77,7 @@ SlurmctldDebug=3
 SlurmdDebug=3
 #SlurmdLogFile=
 NodeName=$hostname CPUs=$cpus RealMemory=$memory State=UNKNOWN
-PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State=UP Shared=YES {% if ansible_distribution=='Ubuntu' and ansible_distribution_version | version_compare('15.04', '>=') %}DefMemPerCPU=$mem_per_cpu
+PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State=UP Shared=YES {% if ansible_distribution=='Ubuntu' and ansible_distribution_version is version('15.04', '>=') %}DefMemPerCPU=$mem_per_cpu
 {% endif %}
 '''
 slurm_status = subprocess.check_output(['slurmd', '-C'])
