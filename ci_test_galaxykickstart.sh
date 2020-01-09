@@ -40,7 +40,7 @@ sudo su $GALAXY_TRAVIS_USER -c 'pip install --ignore-installed --user https://gi
 sudo -E su $GALAXY_TRAVIS_USER -c "export PATH=$GALAXY_HOME/.local/bin/:$PATH &&
 cd $GALAXY_HOME &&
 bioblend-galaxy-tests -v -k 'not test_collections_in_history_index and \
-              not test_create_list_in_history \
+              not test_create_list_in_history and \
               not download_dataset and \
               not download_history and \
               not export_and_download and \
