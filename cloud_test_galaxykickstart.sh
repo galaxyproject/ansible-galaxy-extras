@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -e
+
+/usr/local/bin/pip install --ignore-installed ansible==2.7.4 && ansible --version
+
+# Add ansible.cfg to pick up roles path.
+printf '[defaults]\nroles_path = ../' > ansible.cfg
+
 export GALAXY_USER="admin@galaxy.org"
 export GALAXY_USER_EMAIL="admin@galaxy.org"
 export GALAXY_USER_PASSWD="admin"
@@ -11,13 +17,31 @@ export BIOBLEND_GALAXY_API_KEY=admin
 export BIOBLEND_GALAXY_URL=http://127.0.0.1:80
 export BIOBLEND_TEST_JOB_TIMEOUT=240
 
-sudo /etc/init.d/postgresql stop
-sudo apt-get -y --purge remove postgresql libpq-dev libpq5 postgresql-client-common postgresql-common
-sudo rm -rf /var/lib/postgresql
+# remove postgresql if present
+if service --status-all | grep -Fq 'postgres'; then
+    sudo /etc/init.d/postgresql stop
+    sudo apt-get -y --purge remove postgresql libpq-dev libpq5 postgresql-client-common postgresql-common
+    sudo rm -rf /var/lib/postgresql
+fi
 
-git clone http://github.com/artbio/galaxykickstart -b test_19.09 $HOME/galaxykickstart
+if [[ ! -d /home/galaxy ]]
+then
+    sudo groupadd -r $GALAXY_TRAVIS_USER -g $GALAXY_GID
+    sudo useradd -u $GALAXY_UID -r -g $GALAXY_TRAVIS_USER -d $GALAXY_HOME -p travis_testing -c "Galaxy user" $GALAXY_TRAVIS_USER
+    sudo mkdir $GALAXY_HOME
+    sudo chown -R $GALAXY_TRAVIS_USER:$GALAXY_TRAVIS_USER $GALAXY_HOME
+fi
+
+if [[ ! -d $HOME/galaxykickstart ]]
+then
+    git clone http://github.com/artbio/galaxykickstart -b test_19.09 $HOME/galaxykickstart
+else
+   git -C $HOME/galaxykickstart pull origin test_19.09 
+fi
+
 ansible-galaxy install -r $HOME/galaxykickstart/upstream_requirements_roles.yml \
   -p $HOME/galaxykickstart/roles -f
+
 # remove ansible-galaxy-extras for testing
 rm -rf $HOME/galaxykickstart/roles/galaxyprojectdotorg.galaxy-extras/*
 cp -r ./* $HOME/galaxykickstart/roles/galaxyprojectdotorg.galaxy-extras/
@@ -39,9 +63,7 @@ sudo su $GALAXY_TRAVIS_USER -c 'pip install --ignore-installed --user https://gi
 
 sudo -E su $GALAXY_TRAVIS_USER -c "export PATH=$GALAXY_HOME/.local/bin/:$PATH &&
 cd $GALAXY_HOME &&
-bioblend-galaxy-tests -v -k 'not test_collections_in_history_index and \
-              not test_create_list_in_history and \
-              not download_dataset and \
+bioblend-galaxy-tests -v -k 'not download_dataset and \
               not download_history and \
               not export_and_download and \
               not test_show_nonexistent_dataset and \
