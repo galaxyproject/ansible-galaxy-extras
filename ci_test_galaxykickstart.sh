@@ -34,7 +34,7 @@ date > $HOME/date.txt && curl --fail -T $HOME/date.txt ftp://127.0.0.1:21 --user
 # install bioblend testing, GKS way.
 pip --version
 sudo rm -f /etc/boto.cfg
-sudo su $GALAXY_TRAVIS_USER -c 'pip install --ignore-installed --user https://github.com/galaxyproject/bioblend/archive/master.zip pytest'
+sudo su $GALAXY_TRAVIS_USER -c 'pip install --ignore-installed --user bioblend==0.14.0 pytest'
 
 
 sudo -E su $GALAXY_TRAVIS_USER -c "export PATH=$GALAXY_HOME/.local/bin/:$PATH &&
