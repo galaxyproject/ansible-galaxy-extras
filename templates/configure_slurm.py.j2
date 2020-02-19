@@ -80,9 +80,14 @@ NodeName=$hostname CPUs=$cpus RealMemory=$memory State=UNKNOWN
 PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State=UP Shared=YES {% if ansible_distribution=='Ubuntu' and ansible_distribution_version is version('15.04', '>=') %}DefMemPerCPU=$mem_per_cpu
 {% endif %}
 '''
-slurm_status = subprocess.check_output(['slurmd', '-C'])
-cpus = slurm_status.split("CPUs=")[1].split(" Boards")[0]
-memory = slurm_status.split("RealMemory=")[1].split(" TmpDisk")[0]
+
+slurm_status = {}
+for kv in subprocess.check_output(['slurmd', '-C']).split():
+  split_kv = kv.split('=')
+  slurm_status[split_kv[0]] = split_kv[1]
+
+cpus = slurm_status["CPUs"]
+memory = slurm_status["RealMemory"]
 mem_per_cpu = int(memory) / int(cpus)
 
 def main():
