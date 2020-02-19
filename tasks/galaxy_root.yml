@@ -13,7 +13,6 @@
     name: "watchdog"
     virtualenv: "{{ galaxy_venv_dir }}"
     virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
-    extra_args: --index-url https://wheels.galaxyproject.org/simple
   become: True
   become_user: "{{ galaxy_user_name }}"
 
