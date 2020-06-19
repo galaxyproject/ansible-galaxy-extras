@@ -14,4 +14,8 @@ rm -rf ${PLANEMO_MACHINE_DIR}/roles/galaxyprojectdotorg.galaxy-extras/*
 cp -r ./* "${PLANEMO_MACHINE_DIR}/roles/galaxyprojectdotorg.galaxy-extras/"
 
 cd "${PLANEMO_MACHINE_DIR}"
+
+# Ugly temp fix for python3
+sed -i 's/return unicode(\(.*\))/return \1/' yaml-to-json.py
+
 bash ci_test.sh
