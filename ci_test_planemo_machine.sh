@@ -14,5 +14,4 @@ rm -rf ${PLANEMO_MACHINE_DIR}/roles/galaxyprojectdotorg.galaxy-extras/*
 cp -r ./* "${PLANEMO_MACHINE_DIR}/roles/galaxyprojectdotorg.galaxy-extras/"
 
 cd "${PLANEMO_MACHINE_DIR}"
-
 bash ci_test.sh
