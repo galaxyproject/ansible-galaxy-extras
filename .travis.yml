@@ -1,17 +1,12 @@
 ---
 language: python
 python: 2.7
-dist: xenial
-sudo: required
+dist: bionic
+os: linux
 
 env:
   global:
-    - TOX_ENV=py27
-  matrix:
-    - SUITE=galaxykickstart
-    - SUITE=docker-galaxy
-    - SUITE=planemo-machine
-    - SUITE=syntax
+    - TOX_ENV=py37
 
 services:
   - docker
@@ -24,7 +19,7 @@ before_install:
   - export GALAXY_UID=1450
   - export GALAXY_GID=1450
   - sudo groupadd -r $GALAXY_TRAVIS_USER -g $GALAXY_GID
-  - sudo useradd -u $GALAXY_UID -r -g $GALAXY_TRAVIS_USER -d $GALAXY_HOME -p travis_testing -c "Galaxy user" $GALAXY_TRAVIS_USER
+  - sudo useradd -u $GALAXY_UID -r -g $GALAXY_TRAVIS_USER -d $GALAXY_HOME -p travis_testing -s /bin/bash -c "Galaxy user" $GALAXY_TRAVIS_USER
   - sudo mkdir $GALAXY_HOME
   - sudo chown -R $GALAXY_TRAVIS_USER:$GALAXY_TRAVIS_USER $GALAXY_HOME
 
@@ -36,8 +31,34 @@ install:
   # Add ansible.cfg to pick up roles path.
   - printf '[defaults]\nroles_path = ../' > ansible.cfg
 
-script:
-  - if [ "$SUITE" == "syntax" ]; then ansible-playbook -i "localhost," tests/syntax.yml --syntax-check; fi
-  - if [ "$SUITE" == "docker-galaxy" ]; then bash ci_test_docker_galaxy.sh; fi
-  - if [ "$SUITE" == "galaxykickstart" ]; then bash ci_test_galaxykickstart.sh; fi
-  - if [ "$SUITE" == "planemo-machine" ]; then bash ci_test_planemo_machine.sh; fi
+jobs:
+  include:
+    - name: "Syntax"
+      env: SUITE=syntax
+      script:
+        - ansible-playbook -i "localhost," tests/syntax.yml --syntax-check
+
+    - name: "Galaxy Kickstart"
+      python: "3.7"
+      env: SUITE=galaxykickstart
+      script:
+        - bash ci_test_galaxykickstart.sh
+
+    - name: "Galaxy Docker"
+      python: "3.7"
+      env: SUITE=docker-galaxy TOX_ENV=py37
+      addons:
+        apt:
+          sources:
+            - deadsnakes
+          packages:
+            - python3.7-dev
+      script:
+        - bash ci_test_docker_galaxy.sh
+
+    # 2020.06.19: Failing because the Docker image there fails to build (python 2.7 can't install setuptools)
+    #- name: "Planemo Machine"
+    #  python: "2.7"
+    #  env: SUITE=planemo-machine
+    #  script:
+    #    - bash ci_test_planemo_machine.sh

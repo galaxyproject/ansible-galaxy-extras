@@ -34,10 +34,10 @@ date > $HOME/date.txt && curl --fail -T $HOME/date.txt ftp://127.0.0.1:21 --user
 # install bioblend testing, GKS way.
 pip --version
 sudo rm -f /etc/boto.cfg
-sudo su $GALAXY_TRAVIS_USER -c 'pip install --ignore-installed --user https://github.com/galaxyproject/bioblend/archive/master.zip pytest'
+pip install --ignore-installed https://github.com/galaxyproject/bioblend/archive/master.zip pytest
 
-
-sudo -E su $GALAXY_TRAVIS_USER -c "export PATH=$GALAXY_HOME/.local/bin/:$PATH &&
+chmod a+rx /home/travis/
+sudo -E su $GALAXY_TRAVIS_USER -c "source /home/travis/virtualenv/python3.7/bin/activate &&
 cd $GALAXY_HOME &&
 bioblend-galaxy-tests -v -k 'not download_dataset and \
               not download_history and \
@@ -47,5 +47,5 @@ bioblend-galaxy-tests -v -k 'not download_dataset and \
               not test_update_dataset_tags and \
               not test_upload_file_contents_with_tags and \
               not test_create_local_user and \
-              not test_show_workflow_versions' $GALAXY_HOME/.local/lib/python2.7/site-packages/bioblend/_tests/TestGalaxy*.py"
+              not test_show_workflow_versions' /home/travis/virtualenv/python3.7/lib/python3.7/site-packages/bioblend/_tests/TestGalaxy*.py"
 cd $TRAVIS_BUILD_DIR
