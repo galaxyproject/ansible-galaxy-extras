@@ -105,7 +105,7 @@ galaxy_toolshed_config_file: "{{ galaxy_config_dir }}/tool_shed.ini"
 galaxy_tool_data_table_config_file: "{{ galaxy_config_dir }}/tool_data_table_conf.xml"
 
 # the other option for galaxy_config_style is "ini-paste"
-galaxy_config_style: "yaml" 
+galaxy_config_style: "yaml"
 galaxy_config_file: "{{ galaxy_config_dir }}/galaxy.ini"
 galaxy_reports_port: "9001"
 galaxy_reports_log: "{{ galaxy_log_dir }}/reports.log"
@@ -114,7 +114,7 @@ galaxy_db_port: "5432"
 galaxy_database_connection: "postgres://{{ galaxy_user_name }}@localhost:{{ galaxy_db_port }}/galaxy"
 
 # Minimum version to target with configuration.
-galaxy_minimum_version: "17.01"
+galaxy_minimum_version: "19.01"
 
 # Port to serve uwsgi on.
 galaxy_uwsgi: true
