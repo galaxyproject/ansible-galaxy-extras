@@ -14,8 +14,13 @@ def add_user(sa_session, security_agent, email, password, key=None, username="ad
         From John https://gist.github.com/jmchilton/4475646
     """
     query = sa_session.query( User ).filter_by( email=email )
+    user = None
     if query.count() > 0:
-        return query.first()
+        user = query.first()
+        user.username = username
+        user.set_password_cleartext(password)
+        sa_session.add(user)
+        sa_session.flush()
     else:
         User.use_pbkdf2 = {{ use_pbkdf2 }}
         user = User(email)
@@ -28,13 +33,16 @@ def add_user(sa_session, security_agent, email, password, key=None, username="ad
         if not user.default_permissions:
             security_agent.user_set_default_permissions( user, history=True, dataset=True )
 
-        if key is not None:
-            api_key = APIKeys()
-            api_key.user_id = user.id
-            api_key.key = key
-            sa_session.add(api_key)
-            sa_session.flush()
-        return user
+    if key is not None:
+        query = sa_session.query( APIKeys ).filter_by( user_id=user.id ).delete()
+        sa_session.flush()
+        
+        api_key = APIKeys()
+        api_key.user_id = user.id
+        api_key.key = key
+        sa_session.add(api_key)
+        sa_session.flush()
+    return user
 
 
 if __name__ == "__main__":
