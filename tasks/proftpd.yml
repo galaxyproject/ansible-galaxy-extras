@@ -1,7 +1,10 @@
 
 - name: Install proftpd related system packages
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
+  apt: 
+    state: "{{ galaxy_extras_apt_package_state }}"
+    name: "{{ packages }}"
+  vars:
+    packages:
     - proftpd
     - proftpd-mod-pgsql
   when: galaxy_extras_install_packages

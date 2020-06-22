@@ -8,8 +8,11 @@
   when: galaxy_extras_install_packages
 
 - name: Install Condor system packages
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
+  apt: 
+    state: "{{ galaxy_extras_apt_package_state }}"
+    name: "{{ packages }}"
+  vars:
+    packages:
     - condor
     - pbs-drmaa-dev
   when: galaxy_extras_install_packages

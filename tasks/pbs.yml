@@ -1,6 +1,9 @@
 - name: Install PBS/torque system packages
-  apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
-  with_items:
+  apt: 
+    state: "{{ galaxy_extras_apt_package_state }}"
+    name: "{{ packages }}"
+  vars:
+    packages:
     - torque-client
     - pbs-drmaa-dev
   when: galaxy_extras_install_packages
@@ -9,7 +12,7 @@
 - name: Fetch DRMAA wheel for Galaxy
   pip:
     name: "drmaa"
-    extra_args: "--index-url https://wheels.galaxyproject.org/simple/"
+    extra_args: "--index-url https://wheels.galaxyproject.org/simple/ --extra-index-url https://pypi.python.org/simple"
     virtualenv: "{{ galaxy_venv_dir }}"
   environment:
     PYTHOPATH: null

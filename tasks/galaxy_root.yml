@@ -11,9 +11,9 @@
 - name: "Install watchdog for galaxy"
   pip:
     name: "watchdog"
-    version: 0.9.0
     virtualenv: "{{ galaxy_venv_dir }}"
     virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+    extra_args: --index-url https://wheels.galaxyproject.org/simple --extra-index-url https://pypi.python.org/simple
   become: True
   become_user: "{{ galaxy_user_name }}"
 
