@@ -11,7 +11,7 @@ sleep 30
 echo "Check auth_conf.xml's presence"
 docker exec -u 1450 $CONTAINER_ID cat /galaxy-central/config/auth_conf.xml
 echo "Wait some more for the dependency to install"
-sleep 30
+sleep 180
 echo "Testing presence of conditional dependency in virtual environment..."
 ldap_installed=`docker exec -u 1450 $CONTAINER_ID  \
 /galaxy_venv/bin/pip list --format=columns | grep python-ldap | wc -l`
