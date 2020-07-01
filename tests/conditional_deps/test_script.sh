@@ -16,6 +16,6 @@ echo "Testing presence of conditional dependency in virtual environment..."
 ldap_installed=`docker exec -u 1450 $CONTAINER_ID  \
 /galaxy_venv/bin/pip list --format=columns | grep python-ldap | wc -l`
 if [ $ldap_installed == 0 ]
-  then echo "Conditional dependency not loaded!" && exit 1
+  then echo "Conditional dependency not loaded! Docker logs:" && docker logs $CONTAINER_ID && echo "Conditional dependency not loaded!" && exit 1
   else echo "Conditional dependency loaded."
 fi
