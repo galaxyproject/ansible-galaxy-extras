@@ -9,7 +9,7 @@ docker ps
 echo "Waiting for container to load..."
 sleep 30
 echo "Check auth_conf.xml's presence"
-docker exec -u 1450 $CONTAINER_ID cat /galaxy-central/config/auth_conf.xml
+docker exec -u 1450 $CONTAINER_ID cat /opt/auth_conf.xml
 echo "Wait some more for the dependency to install"
 sleep 180
 echo "Testing presence of conditional dependency in virtual environment..."
