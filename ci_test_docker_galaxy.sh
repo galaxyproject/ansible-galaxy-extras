@@ -20,7 +20,7 @@ ansible-playbook -i "localhost," tests/syntax.yml --syntax-check
 # Copy the ansible-playbook from this repo into the Docker roles directory and build the image.
 cp -r ./* $HOME/galaxy-docker/galaxy/roles/galaxyprojectdotorg.galaxyextras/
 ls -l $HOME/galaxy-docker/galaxy/roles/galaxyprojectdotorg.galaxyextras/
-cat $./templates/startup.sh.j2
+cat ./templates/startup.sh.j2
 cat $HOME/galaxy-docker/galaxy/roles/galaxyprojectdotorg.galaxyextras/templates/startup.sh.j2
 cd $HOME/galaxy-docker/ && docker build -t galaxy-docker/test ./galaxy/
 # run various tests against the container
