@@ -138,7 +138,7 @@ if [[ "x$LOAD_GALAXY_CONDITIONAL_DEPENDENCIES" != "x" ]]
     then
         echo "Installing optional dependencies in galaxy virtual environment..."
         : ${GALAXY_WHEELS_INDEX_URL:="https://wheels.galaxyproject.org/simple"}
-        GALAXY_CONDITIONAL_DEPENDENCIES=$(PYTHONPATH=lib python -c "import galaxy.dependencies; print '\n'.join(galaxy.dependencies.optional('$GALAXY_CONFIG_FILE'))")
+        GALAXY_CONDITIONAL_DEPENDENCIES=$(PYTHONPATH=lib python -c "import galaxy.dependencies; print('\n'.join(galaxy.dependencies.optional('$GALAXY_CONFIG_FILE')))")
         [ -z "$GALAXY_CONDITIONAL_DEPENDENCIES" ] || echo "$GALAXY_CONDITIONAL_DEPENDENCIES" | pip install -q -r /dev/stdin --index-url "${GALAXY_WHEELS_INDEX_URL}" --extra-index-url https://pypi.python.org/simple
 fi
 
@@ -405,7 +405,7 @@ if $PRIVILEGED; then
             docker pull {{ galaxy_extras_ie_neo_image }}
         {% endif %}
     fi
-    
+
     # in privileged mode autofs and CVMFS is available
     # install autofs
     echo "Installing autofs to enable automatic CVMFS mounts"
