@@ -39,7 +39,7 @@ service postgresql start
 . {{ galaxy_venv_dir }}/bin/activate
 
 echo "Checking if database is up and running"
-until /usr/local/bin/check_database.py 2>&1 >/dev/null; do sleep 1; echo "Waiting for database"; done
+until nc -z -w 2 postgres 5432 && echo Postgres started; do sleep 1; echo "Waiting for database"; done
 echo "Database connected"
 
 ./run.sh -d galaxy_startup_lite.log --pidfile galaxy_startup_lite.pid --http-timeout 3000 
