@@ -272,7 +272,7 @@ fi
 # Waits until postgres is ready
 function wait_for_postgres {
     echo "Checking if database is up and running"
-    until /usr/local/bin/check_database.py 2>&1 >/dev/null; do sleep 1; echo "Waiting for database"; done
+    until nc -z -w 2 127.0.0.1 5432 && echo Postgres started; do sleep 1; echo "Waiting for database"; done
     echo "Database connected"
 }
 
