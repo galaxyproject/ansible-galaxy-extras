@@ -15,7 +15,7 @@ sudo /etc/init.d/postgresql stop
 sudo apt-get -y --purge remove postgresql libpq-dev libpq5 postgresql-client-common postgresql-common
 sudo rm -rf /var/lib/postgresql
 
-git clone http://github.com/artbio/galaxykickstart $HOME/galaxykickstart
+git clone http://github.com/artbio/galaxykickstart -b newgks $HOME/galaxykickstart
 ansible-galaxy install -r $HOME/galaxykickstart/upstream_requirements_roles.yml \
   -p $HOME/galaxykickstart/roles -f
 # remove ansible-galaxy-extras for testing
