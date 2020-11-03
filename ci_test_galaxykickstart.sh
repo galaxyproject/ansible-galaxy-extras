@@ -22,9 +22,10 @@ ansible-galaxy install -r $HOME/galaxykickstart/upstream_requirements_roles.yml 
 rm -rf $HOME/galaxykickstart/roles/galaxyprojectdotorg.galaxy-extras/*
 cp -r ./* $HOME/galaxykickstart/roles/galaxyprojectdotorg.galaxy-extras/
 
-# install and update galaxykickstart with ansible
+# install galaxy and user&tools
 ansible-playbook -i $HOME/galaxykickstart/inventory_files/galaxy-kickstart $HOME/galaxykickstart/galaxy.yml
-ansible-playbook -i $HOME/galaxykickstart/inventory_files/galaxy-kickstart $HOME/galaxykickstart/galaxy.yml
+sleep 30
+ansible-playbook -i $HOME/galaxykickstart/inventory_files/galaxy-kickstart $HOME/galaxykickstart/galaxy_tool_install.yml
 
 sudo supervisorctl status
 curl http://localhost:80/api/version| grep version_major
