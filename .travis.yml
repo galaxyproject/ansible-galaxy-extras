@@ -39,7 +39,7 @@ jobs:
         - ansible-playbook -i "localhost," tests/syntax.yml --syntax-check
 
     - name: "Galaxy Kickstart"
-      python: "3.6"
+      python: "3.7"
       env: SUITE=galaxykickstart
       script:
         - bash ci_test_galaxykickstart.sh
