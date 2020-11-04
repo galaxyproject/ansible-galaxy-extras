@@ -2,7 +2,7 @@
 set -e
 export GALAXY_USER="admin@galaxy.org"
 export GALAXY_USER_EMAIL="admin@galaxy.org"
-export GALAXY_USER_PASSWD="admin"
+export GALAXY_USER_PASSWD="artbio2020"
 export GALAXY_HOME=/home/galaxy
 export GALAXY_TRAVIS_USER=galaxy
 export GALAXY_UID=1450
@@ -31,12 +31,9 @@ sudo supervisorctl status
 curl http://localhost:80/api/version| grep version_major
 curl --fail $BIOBLEND_GALAXY_URL/api/version
 
-sleep 15
-
+echo "test proftpd"
 proftpd --version
-sudo -E su $GALAXY_TRAVIS_USER -c "ftp localhost"
-
-date > $HOME/date.txt && curl --fail -T $HOME/date.txt ftp://127.0.0.1:21 --user $GALAXY_USER:$GALAXY_USER_PASSWD
+date > $HOME/date.txt && curl --fail -T $HOME/date.txt ftp://127.0.0.1:21 --user $GALAXY_USER_EMAIL:$GALAXY_USER_PASSWD
 
 # install bioblend testing, GKS way.
 pip --version
