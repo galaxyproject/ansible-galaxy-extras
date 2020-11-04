@@ -24,12 +24,18 @@ cp -r ./* $HOME/galaxykickstart/roles/galaxyprojectdotorg.galaxy-extras/
 
 # install galaxy and user&tools
 ansible-playbook -i $HOME/galaxykickstart/inventory_files/galaxy-kickstart $HOME/galaxykickstart/galaxy.yml
-sleep 30
+sleep 45
 ansible-playbook -i $HOME/galaxykickstart/inventory_files/galaxy-kickstart $HOME/galaxykickstart/galaxy_tool_install.yml
 
 sudo supervisorctl status
 curl http://localhost:80/api/version| grep version_major
 curl --fail $BIOBLEND_GALAXY_URL/api/version
+
+sleep 15
+
+proftpd --version
+sudo -E su $GALAXY_TRAVIS_USER -c "ftp localhost"
+
 date > $HOME/date.txt && curl --fail -T $HOME/date.txt ftp://127.0.0.1:21 --user $GALAXY_USER:$GALAXY_USER_PASSWD
 
 # install bioblend testing, GKS way.
