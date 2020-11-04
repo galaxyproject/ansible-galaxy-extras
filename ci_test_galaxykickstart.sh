@@ -7,7 +7,7 @@ export GALAXY_HOME=/home/galaxy
 export GALAXY_TRAVIS_USER=galaxy
 export GALAXY_UID=1450
 export GALAXY_GID=1450
-export BIOBLEND_GALAXY_API_KEY=admin
+export BIOBLEND_GALAXY_API_KEY="artbio2020"
 export BIOBLEND_GALAXY_URL=http://127.0.0.1:80
 export BIOBLEND_TEST_JOB_TIMEOUT=240
 
