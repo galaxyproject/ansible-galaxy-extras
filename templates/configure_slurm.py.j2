@@ -81,7 +81,7 @@ PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State
 {% endif %}
 '''
 
-slurm_status = subprocess.check_output(['slurmd', '-C'])
+slurm_status = subprocess.check_output(['slurmd', '-C'], universal_newlines=True)
 dict_status = dict(z.split('=') for z in slurm_status.split())
 cpus = dict_status['CPUs']
 memory = dict_status['RealMemory']
