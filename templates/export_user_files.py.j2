@@ -55,19 +55,22 @@ def _makedir(path):
     os.chown( path, int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
 
 
-def _ignore_static(dir, *patterns):
-    def __ignore_static(path, names):
+def _ignore_patterns(*patterns):
+    def __ignore_patterns(path, names):
         ignored_names = []
-        if dir in path:
-            for pattern in patterns:
-                ignored_names.extend(fnmatch.filter(names, pattern))
-        return set(ignored_names)
-    return __ignore_static
+        # Construct full path so we can match against it
+        full_paths = list(map(lambda n: os.path.join(path, n), names))
+        for pattern in patterns:
+            ignored_names.extend(fnmatch.filter(full_paths, pattern))
+        # Restore relative paths
+        return list(map(lambda p: os.path.relpath(p, path), set(ignored_names)))
+    return __ignore_patterns
+
 
 if __name__ == "__main__":
     """
         If the '/export/' folder exist, meaning docker was started with '-v /home/foo/bar:/export',
-        we will link every file that needs to persist to the host system. Addionaly a file (/.galaxy_save) is
+        we will link every file that needs to persist to the host system. Additionally, a file (/.galaxy_save) is
         created that indicates all linking is already done.
         If the user re-starts (with docker start) the container the file /.galaxy_save is found and the linking
         is aborted.
@@ -75,16 +78,23 @@ if __name__ == "__main__":
 
     galaxy_root_dir = os.environ.get('GALAXY_ROOT', '/galaxy-central/')
 
-    galaxy_distrib_paths = {'/galaxy-central/config/': '/export/.distribution_config',
-                            '/galaxy-central/lib': '/export/galaxy-central/lib',
-                            '/galaxy-central/tools': '/export/galaxy-central/tools'}
+    galaxy_distrib_paths = {f'{galaxy_root_dir}/config/': '/export/.distribution_config',
+                            f'{galaxy_root_dir}/lib': '/export/galaxy-central/lib',
+                            f'{galaxy_root_dir}/tools': '/export/galaxy-central/tools'}
     for image_path, export_path in galaxy_distrib_paths.items():
         if os.path.exists(export_path):
             shutil.rmtree(export_path)
         # Ignore 2 dead symlinks in galaxy code: see https://github.com/galaxyproject/galaxy/issues/9847
-        shutil.copytree( image_path, export_path, ignore=_ignore_static('/galaxy-central/lib/galaxy/web/framework/static/style', 'question-octagon-frame.png', 'ok_small.png') )
+        shutil.copytree(
+          image_path, export_path, ignore=_ignore_patterns(
+            '*/lib/galaxy/datatypes/test/1.fastqsanger.gz',
+            '*/lib/galaxy/datatypes/test/1.fastqsanger.bz2',
+            '*/lib/galaxy/datatypes/test/1.tiff',
+            '*/lib/galaxy/datatypes/test/1.fasta.gz',
+            '*/lib/galaxy/web/framework/static/style/ok_small.png',
+            '*/lib/galaxy/web/framework/static/style/question-octagon-frame.png'))
 
-    shutil.copy('/galaxy-central/requirements.txt','/export/galaxy-central/requirements.txt')
+    shutil.copy(f'{galaxy_root_dir}/requirements.txt','/export/galaxy-central/requirements.txt')
 
     _makedir('/export/galaxy-central/')
     _makedir('/export/ftp/')
@@ -95,6 +105,7 @@ if __name__ == "__main__":
     # TODO find a way to update plugins/ without breaking user customizations
     config_src = os.path.join(galaxy_root_dir, 'config')
     config_dest = os.path.join('/export/', galaxy_root_dir, 'config')
+    _makedir(config_dest)
     copy_samples(config_src, config_dest)
 
     # Copy all sample files to tool-data dir
@@ -118,9 +129,10 @@ if __name__ == "__main__":
     # and if there is a realized version of these files in the export directory
     # replace Galaxy's copy with these. Use symbolic link instead of copying so
     # deployer can update and reload Galaxy and changes will be reflected.
+    _makedir('/export/galaxy-central/config')
     for config in [ 'galaxy.yml', 'job_conf.xml' ]:
         image_config = os.path.join('/etc/galaxy/', config)
-        export_config = os.path.join( '/export/galaxy-central/config', config )
+        export_config = os.path.join('/export/galaxy-central/config', config)
         export_sample = export_config + ".docker_sample"
         shutil.copy(image_config, export_sample)
         if os.path.exists(export_config):
