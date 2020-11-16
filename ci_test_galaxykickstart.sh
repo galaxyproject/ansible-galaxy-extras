@@ -2,12 +2,12 @@
 set -e
 export GALAXY_USER="admin@galaxy.org"
 export GALAXY_USER_EMAIL="admin@galaxy.org"
-export GALAXY_USER_PASSWD="admin"
+export GALAXY_USER_PASSWD="artbio2020"
 export GALAXY_HOME=/home/galaxy
 export GALAXY_TRAVIS_USER=galaxy
 export GALAXY_UID=1450
 export GALAXY_GID=1450
-export BIOBLEND_GALAXY_API_KEY=admin
+export BIOBLEND_GALAXY_API_KEY="artbio2020"
 export BIOBLEND_GALAXY_URL=http://127.0.0.1:80
 export BIOBLEND_TEST_JOB_TIMEOUT=240
 
@@ -15,21 +15,25 @@ sudo /etc/init.d/postgresql stop
 sudo apt-get -y --purge remove postgresql libpq-dev libpq5 postgresql-client-common postgresql-common
 sudo rm -rf /var/lib/postgresql
 
-git clone http://github.com/artbio/galaxykickstart $HOME/galaxykickstart
-ansible-galaxy install -r $HOME/galaxykickstart/upstream_requirements_roles.yml \
+git clone http://github.com/artbio/galaxykickstart -b newgks $HOME/galaxykickstart
+ansible-galaxy install -r $HOME/galaxykickstart/requirements_roles.yml \
   -p $HOME/galaxykickstart/roles -f
 # remove ansible-galaxy-extras for testing
 rm -rf $HOME/galaxykickstart/roles/galaxyprojectdotorg.galaxy-extras/*
 cp -r ./* $HOME/galaxykickstart/roles/galaxyprojectdotorg.galaxy-extras/
 
-# install and update galaxykickstart with ansible
+# install galaxy and user&tools
 ansible-playbook -i $HOME/galaxykickstart/inventory_files/galaxy-kickstart $HOME/galaxykickstart/galaxy.yml
-ansible-playbook -i $HOME/galaxykickstart/inventory_files/galaxy-kickstart $HOME/galaxykickstart/galaxy.yml
+sleep 15
+ansible-playbook -i $HOME/galaxykickstart/inventory_files/galaxy-kickstart $HOME/galaxykickstart/galaxy_tool_install.yml
 
 sudo supervisorctl status
 curl http://localhost:80/api/version| grep version_major
 curl --fail $BIOBLEND_GALAXY_URL/api/version
-date > $HOME/date.txt && curl --fail -T $HOME/date.txt ftp://127.0.0.1:21 --user $GALAXY_USER:$GALAXY_USER_PASSWD
+
+echo "test proftpd"
+proftpd --version
+date > $HOME/date.txt && curl --fail -T $HOME/date.txt ftp://127.0.0.1:21 --user $GALAXY_USER_EMAIL:$GALAXY_USER_PASSWD
 
 # install bioblend testing, GKS way.
 pip --version
@@ -47,5 +51,6 @@ bioblend-galaxy-tests -v -k 'not download_dataset and \
               not test_update_dataset_tags and \
               not test_upload_file_contents_with_tags and \
               not test_create_local_user and \
+              not test_update_dataset_datatype and \
               not test_show_workflow_versions' /home/travis/virtualenv/python3.7/lib/python3.7/site-packages/bioblend/_tests/TestGalaxy*.py"
 cd $TRAVIS_BUILD_DIR

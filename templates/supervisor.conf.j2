@@ -202,6 +202,7 @@ command         = {{ galaxy_server_dir }}/lib/galaxy/web/proxy/js/lib/main.js --
 autostart       = {{ supervisor_ie_proxy_autostart }}
 autorestart     = unexpected
 user            = {{ galaxy_user_name }}
+environment     = PATH={{ galaxy_venv_dir }}/bin:%(ENV_PATH)s
 startsecs       = 5
 redirect_stderr = true
 {% endif %}

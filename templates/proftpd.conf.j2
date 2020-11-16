@@ -51,7 +51,7 @@ AuthPAM                         off
 
 {% macro SQL_Auth() -%}
 
-# Set up mod_sql_password - Galaxy passwords are stored as hex-encoded SHA1
+# Set up mod_sql_password - Galaxy passwords used to be stored as hex-encoded SHA1 and are now stored as base64 encoded SHA256 (PBKDF2 function)
 SQLPasswordEngine               on
 {% if proftpd_sql_auth_type == "SHA1" %}
 SQLPasswordEncoding             hex
@@ -77,11 +77,11 @@ SQLNamedQuery                   LookupGalaxyUser SELECT "email,password,'%{env:G
 
 {% elif proftpd_sql_auth_type == "PBKDF2" %}
 
-SQLNamedQuery                   LookupGalaxyUser SELECT "email, (CASE WHEN substring(password from 1 for 6) = 'PBKDF2' THEN substring(password from 38 for 69) ELSE password END) AS password2,'{{ galaxy_user_uid }}','{{ galaxy_user_gid }}','{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
-SQLNamedQuery                   GetUserSalt SELECT "(CASE WHEN SUBSTRING (password from 1 for 6) = 'PBKDF2' THEN SUBSTRING (password from 21 for 16) END) AS salt FROM galaxy_user WHERE email='%U'"
+SQLNamedQuery                   LookupGalaxyUser SELECT "email, (CASE WHEN substring(password from 1 for 6) = 'PBKDF2' THEN split_part(password, '$', 5) ELSE password END) AS password2,'{{ galaxy_user_uid }}','{{ galaxy_user_gid }}','{{ proftpd_files_dir }}/%U','/bin/bash' FROM galaxy_user WHERE email='%U'"
+SQLNamedQuery                   GetUserSalt SELECT "(CASE WHEN SUBSTRING (password from 1 for 6) = 'PBKDF2' THEN split_part(password, '$', 4) END) AS salt FROM galaxy_user WHERE email='%U'"
 SQLDefaultGID                   %{env:GALAXY_GID}
 SQLDefaultUID                   %{env:GALAXY_UID}
-SQLPasswordPBKDF2               SHA256 10000 24
+SQLPasswordPBKDF2               SHA256 100000 24
 SQLPasswordUserSalt             sql:/GetUserSalt
 
 {% endif %}
