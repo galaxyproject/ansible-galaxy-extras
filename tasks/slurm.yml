@@ -4,7 +4,7 @@
     name: "{{ packages }}"
   vars:
     packages:
-    - python-pip
+    - python3-pip
   when: galaxy_extras_install_packages
 
 - name: Create munge.service configuration file
@@ -26,20 +26,20 @@
     - python-psutil
   when: galaxy_extras_install_packages and ansible_distribution_version < "18.04"
 
-- name: Add custom Galaxy PPA (used for Slurm DRMAA package in Ubuntu 18.04)
+- name: Add custom Galaxy PPA (used for Slurm DRMAA package in Ubuntu >= 18.04)
   apt_repository:
     repo: ppa:natefoo/slurm-drmaa
     state: present
     update_cache: yes
-  when: galaxy_extras_install_packages and ansible_distribution_version == "18.04"
+  when: galaxy_extras_install_packages and  ansible_distribution_version is version('18.04', '>=')
 
-- name: Install SLURM system packages for Ubuntu 18.04
+- name: Install SLURM system packages for Ubuntu >= 18.04
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
     - slurm-wlm
     - slurm-drmaa-dev
     - python-psutil
-  when: galaxy_extras_install_packages and ansible_distribution_version == "18.04"
+  when: galaxy_extras_install_packages and ansible_distribution_version is version('18.04', '>=')
 
 - name: Install SLURM system packages
   apt: pkg=slurm-wlm-torque state={{ galaxy_extras_apt_package_state }}

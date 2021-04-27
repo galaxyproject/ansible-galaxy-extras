@@ -8,7 +8,18 @@
     - uwsgi
     - uwsgi-plugin-python
     - supervisor
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages and ansible_distribution_version is version('20.04', '<')
+
+- name: Install web related system packages
+  apt: 
+    state: "{{ galaxy_extras_apt_package_state }}"
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - uwsgi
+    - uwsgi-plugin-python3
+    - supervisor
+  when: galaxy_extras_install_packages and ansible_distribution_version is version('20.04', '==')
 
 - name: Install cron
   apt: 
