@@ -1,7 +1,10 @@
 # Letsencrypt-specific configuration:
 
 - name: Create self-signed SSL cert  # For initial challenge need either http-only or self-signed
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=selfsigned" -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}" -extensions v3_ca creates="{{ nginx_ssl_certificate }}"
+  command: >
+    openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=selfsigned"
+    -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}"
+    -extensions v3_ca creates="{{ nginx_ssl_certificate }}"
   when: galaxy_extras_config_ssl_method == 'self-signed'
 
 - name: Create letsencrypt configuration directory
@@ -31,7 +34,10 @@
 
 - meta: flush_handlers
 
-- shell: /usr/local/bin/letsencrypt_refresh.sh "{{ galaxy_extras_galaxy_domain }}"
+- name: Refresh letsencrypt certificate
+  command: /usr/local/bin/letsencrypt_refresh.sh "{{ galaxy_extras_galaxy_domain }}"
+  tags:
+    - skip_ansible_lint
 
 - name: Add letsencrypt renewal script to crontab
   cron: name="letsencrypt cert renewal" special_time=daily job="/usr/local/bin/letsencrypt_refresh.sh {{ galaxy_extras_galaxy_domain }}"

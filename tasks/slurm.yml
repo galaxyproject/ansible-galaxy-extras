@@ -4,7 +4,7 @@
     name: "{{ packages }}"
   vars:
     packages:
-    - python-pip
+    - python3-pip
   when: galaxy_extras_install_packages
 
 - name: Create munge.service configuration file
@@ -26,20 +26,20 @@
     - python-psutil
   when: galaxy_extras_install_packages and ansible_distribution_version < "18.04"
 
-- name: Add custom Galaxy PPA (used for Slurm DRMAA package in Ubuntu 18.04)
+- name: Add custom Galaxy PPA (used for Slurm DRMAA package in Ubuntu >= 18.04)
   apt_repository:
     repo: ppa:natefoo/slurm-drmaa
     state: present
     update_cache: yes
-  when: galaxy_extras_install_packages and ansible_distribution_version == "18.04"
+  when: galaxy_extras_install_packages and  ansible_distribution_version is version('18.04', '>=')
 
-- name: Install SLURM system packages for Ubuntu 18.04
+- name: Install SLURM system packages for Ubuntu >= 18.04
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
     - slurm-wlm
     - slurm-drmaa-dev
     - python-psutil
-  when: galaxy_extras_install_packages and ansible_distribution_version == "18.04"
+  when: galaxy_extras_install_packages and ansible_distribution_version is version('18.04', '>=')
 
 - name: Install SLURM system packages
   apt: pkg=slurm-wlm-torque state={{ galaxy_extras_apt_package_state }}
@@ -69,7 +69,7 @@
   register: requirements_txt
 
 - name: Fetch DRMAA egg for Galaxy
-  shell: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_server_dir }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
+  command: "{{ galaxy_venv_dir }}/bin/python {{ galaxy_server_dir }}/scripts/fetch_eggs.py -e drmaa -c {{ galaxy_config_file }}"
   when: not requirements_txt.stat.exists
 
 # If job_conf.xml is installed before running galaxyprojectdotorg.galaxy, this would already be installed.
@@ -84,10 +84,10 @@
 
 # TODO: Move the following two out of this file since it is no longer SLURM specific.
 - name: "Install Galaxy job conf"
-  template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
+  template: src=job_conf.xml.j2 dest={{ galaxy_job_conf_path }} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
   tags: galaxy_extras_job_conf
 
 - name: "Install Galaxy container resolution configuration"
-  template: src=container_resolvers_conf.xml.j2 dest={{galaxy_container_resolvers_conf_path}} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
+  template: src=container_resolvers_conf.xml.j2 dest={{ galaxy_container_resolvers_conf_path }} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
   when: galaxy_extras_config_container_resolution|bool
   tags: galaxy_extras_job_conf

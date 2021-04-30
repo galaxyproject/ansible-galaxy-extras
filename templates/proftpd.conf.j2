@@ -1,3 +1,7 @@
+# set environment variables
+SetEnv GALAXY_GID "{{ galaxy_user_gid }}"
+SetEnv GALAXY_UID "{{ galaxy_user_uid }}"
+
 # Includes DSO modules
 Include /etc/proftpd/modules.conf
 
