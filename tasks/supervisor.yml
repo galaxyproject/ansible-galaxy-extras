@@ -1,6 +1,6 @@
 
 - name: Install web related system packages
-  apt: 
+  apt:
     state: "{{ galaxy_extras_apt_package_state }}"
     name: "{{ packages }}"
   vars:
@@ -8,7 +8,7 @@
     - supervisor
 
 - name: Install cron
-  apt: 
+  apt:
     state: "{{ galaxy_extras_apt_package_state }}"
     name: "{{ packages }}"
   vars:

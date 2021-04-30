@@ -1,6 +1,6 @@
 
 - name: Install proftpd related system packages
-  apt: 
+  apt:
     state: "{{ galaxy_extras_apt_package_state }}"
     name: "{{ packages }}"
   vars:
@@ -40,7 +40,7 @@
   when: proftpd_use_sftp
 
 - name: Generate new SSH keys (rsa)
-  shell: ssh-keygen -b 2048 -t rsa -f /etc/proftpd/ssh_host_keys/rsa -N ""
+  command: ssh-keygen -b 2048 -t rsa -f /etc/proftpd/ssh_host_keys/rsa -N ""
   args:
     creates: /etc/proftpd/ssh_host_keys/rsa
   when:
@@ -48,7 +48,7 @@
     - proftpd_generate_ssh_key
 
 - name: Generate new SSH keys (dsa)
-  shell: ssh-keygen -b 1024 -t dsa -f /etc/proftpd/ssh_host_keys/dsa -N ""
+  command: ssh-keygen -b 1024 -t dsa -f /etc/proftpd/ssh_host_keys/dsa -N ""
   args:
     creates: /etc/proftpd/ssh_host_keys/dsa
   when:

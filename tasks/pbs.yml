@@ -1,5 +1,5 @@
 - name: Install PBS/torque system packages
-  apt: 
+  apt:
     state: "{{ galaxy_extras_apt_package_state }}"
     name: "{{ packages }}"
   vars:
@@ -19,7 +19,7 @@
     VIRTUAL_ENV: "{{ galaxy_venv_dir }}"
 
 - name: "Install Galaxy job conf"
-  template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
+  template: src=job_conf.xml.j2 dest={{ galaxy_job_conf_path }} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
   tags: galaxy_extras_job_conf
 
 - name: "Set PBS/torque server name"
