@@ -15,6 +15,7 @@ def add_user(sa_session, security_agent, email, password, key=None, username="ad
     """
     query = sa_session.query( User ).filter_by( email=email )
     user = None
+    User.use_pbkdf2 = {{ use_pbkdf2 }}
     if query.count() > 0:
         user = query.first()
         user.username = username
@@ -22,7 +23,6 @@ def add_user(sa_session, security_agent, email, password, key=None, username="ad
         sa_session.add(user)
         sa_session.flush()
     else:
-        User.use_pbkdf2 = {{ use_pbkdf2 }}
         user = User(email)
         user.username = username
         user.set_password_cleartext(password)
@@ -36,7 +36,7 @@ def add_user(sa_session, security_agent, email, password, key=None, username="ad
     if key is not None:
         query = sa_session.query( APIKeys ).filter_by( user_id=user.id ).delete()
         sa_session.flush()
-        
+
         api_key = APIKeys()
         api_key.user_id = user.id
         api_key.key = key

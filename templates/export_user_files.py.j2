@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import fnmatch
 import glob
 import sys
 import os
@@ -53,6 +54,16 @@ def _makedir(path):
         os.makedirs( path )
     os.chown( path, int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
 
+
+def _ignore_static(dir, *patterns):
+    def __ignore_static(path, names):
+        ignored_names = []
+        if dir in path:
+            for pattern in patterns:
+                ignored_names.extend(fnmatch.filter(names, pattern))
+        return set(ignored_names)
+    return __ignore_static
+
 if __name__ == "__main__":
     """
         If the '/export/' folder exist, meaning docker was started with '-v /home/foo/bar:/export',
@@ -70,7 +81,8 @@ if __name__ == "__main__":
     for image_path, export_path in galaxy_distrib_paths.items():
         if os.path.exists(export_path):
             shutil.rmtree(export_path)
-        shutil.copytree( image_path, export_path )
+        # Ignore 2 dead symlinks in galaxy code: see https://github.com/galaxyproject/galaxy/issues/9847
+        shutil.copytree( image_path, export_path, ignore=_ignore_static('/galaxy-central/lib/galaxy/web/framework/static/style', 'question-octagon-frame.png', 'ok_small.png') )
 
     shutil.copy('/galaxy-central/requirements.txt','/export/galaxy-central/requirements.txt')
 
