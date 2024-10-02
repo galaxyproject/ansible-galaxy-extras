@@ -17,10 +17,10 @@
   tags:
    - extra_dependencies
 
-- include: uwsgi.yml
-  when: galaxy_extras_config_uwsgi
+- include: gravity.yml
+  when: galaxy_extras_config_gravity
   tags:
-   - uwsgi
+   - gravity
 
 - include: nginx.yml
   when: galaxy_extras_config_nginx
@@ -58,32 +58,42 @@
   tags:
    - cvmfs
 
+- include: rabbitmq.yml
+  when: galaxy_extras_config_rabbitmq
+  tags:
+   - rabbitmq
+
+- include: redis.yml
+  when: galaxy_extras_config_redis
+  tags:
+   - redis
+
+- include: flower.yml
+  when: galaxy_extras_config_flower
+  tags:
+   - flower
+
+- include: tusd.yml
+  when: galaxy_extras_config_tusd
+  tags:
+   - tusd
+
 - include: supervisor.yml
   when: galaxy_extras_config_supervisor
   tags:
    - supervisor
-
-- include: ie_proxy.yml
-  when: galaxy_extras_config_ie_proxy
-  tags:
-   - ie
 
 - include: galaxy_scripts.yml
   when: galaxy_extras_config_scripts
   tags:
    - scripts
 
-- include: rabbitmq.yml
-  when: galaxy_extras_config_rabbitmq
+- include: galaxy_job_conf.yml
+  when: galaxy_extras_config_galaxy_job_conf
   tags:
-   - rabbitmq
+   - job_conf
 
 - include: startup.yml
   when: galaxy_extras_config_startup
   tags:
    - startup
-
-- include: client.yml
-  when: galaxy_extras_config_startup
-  tags:
-   - client

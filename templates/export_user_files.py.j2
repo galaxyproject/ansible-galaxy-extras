@@ -9,8 +9,8 @@ import subprocess
 if len( sys.argv ) == 2:
     PG_DATA_DIR_DEFAULT = sys.argv[1]
 else:
-    PG_DATA_DIR_DEFAULT = "/var/lib/postgresql/9.3/main"
-PG_DATA_DIR_HOST = os.environ.get("PG_DATA_DIR_HOST", "/export/postgresql/9.3/main/")
+    PG_DATA_DIR_DEFAULT = "/var/lib/postgresql/15/main"
+PG_DATA_DIR_HOST = os.environ.get("PG_DATA_DIR_HOST", "/export/postgresql/15/main/")
 
 def change_path( src ):
     """
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         is aborted.
     """
 
-    galaxy_root_dir = os.environ.get('GALAXY_ROOT', '/galaxy-central/')
+    galaxy_root_dir = os.environ.get('GALAXY_ROOT_DIR', '/galaxy-central/')
 
     galaxy_distrib_paths = {'/galaxy-central/config/': '/export/.distribution_config',
                             '/galaxy-central/lib': '/export/galaxy-central/lib',
@@ -144,8 +144,8 @@ if __name__ == "__main__":
     change_path( os.path.join(galaxy_root_dir, 'database') )
     change_path( '/shed_tools/' )
 
-    if os.path.exists('/export/reports_htpasswd'):
-        shutil.copy('/export/reports_htpasswd', '/etc/nginx/htpasswd')
+    if os.path.exists('/export/common_htpasswd'):
+        shutil.copy('/export/common_htpasswd', '/etc/nginx/htpasswd')
 
     try:
         change_path('/var/lib/docker/')

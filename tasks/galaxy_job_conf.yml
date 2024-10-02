@@ -1,0 +1,8 @@
+- name: "Install Galaxy job conf"
+  template: src=job_conf.xml.j2 dest={{ galaxy_job_conf_path }} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
+  tags: galaxy_extras_job_conf
+
+- name: "Install Galaxy container resolution configuration"
+  template: src=container_resolvers_conf.xml.j2 dest={{ galaxy_container_resolvers_conf_path }} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
+  when: galaxy_extras_config_container_resolution|bool
+  tags: galaxy_extras_job_conf

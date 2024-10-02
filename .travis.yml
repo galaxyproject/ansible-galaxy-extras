@@ -6,7 +6,7 @@ os: linux
 
 env:
   global:
-    - TOX_ENV=py37
+    - TOX_ENV=py310
 
 services:
   - docker
@@ -39,20 +39,20 @@ jobs:
         - ansible-playbook -i "localhost," tests/syntax.yml --syntax-check
 
     - name: "Galaxy Kickstart"
-      python: "3.7"
+      python: "3.10"
       env: SUITE=galaxykickstart
       script:
         - bash ci_test_galaxykickstart.sh
 
     - name: "Galaxy Docker"
-      python: "3.7"
-      env: SUITE=docker-galaxy TOX_ENV=py37
+      python: "3.10"
+      env: SUITE=docker-galaxy TOX_ENV=py310
       addons:
         apt:
           sources:
             - deadsnakes
           packages:
-            - python3.7-dev
+            - python3.10-dev
       script:
         - bash ci_test_docker_galaxy.sh
 

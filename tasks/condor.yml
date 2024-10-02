@@ -1,10 +1,10 @@
 
 - name: Add Condor apt key
-  shell: "wget -qO - http://research.cs.wisc.edu/htcondor/ubuntu/HTCondor-Release.gpg.key | apt-key add -"
+  shell: "wget -qO - https://research.cs.wisc.edu/htcondor/repo/keys/HTCondor-current-Key | apt-key add -"
   when: galaxy_extras_install_packages
 
 - name: Add Condor repository
-  apt_repository: repo='deb http://research.cs.wisc.edu/htcondor/ubuntu/stable/ {{ ansible_distribution_release }} contrib' update_cache=yes
+  apt_repository: repo='deb https://research.cs.wisc.edu/htcondor/repo/ubuntu/current {{ ansible_distribution_release }} main' update_cache=yes
   when: galaxy_extras_install_packages
 
 - name: Install Condor system packages

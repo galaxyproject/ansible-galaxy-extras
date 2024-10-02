@@ -5,8 +5,6 @@
     name: "{{ packages }}"
   vars:
     packages:
-    - uwsgi
-    - uwsgi-plugin-python
     - supervisor
   when: galaxy_extras_install_packages
 
@@ -25,12 +23,6 @@
 - name: Stop supervisor
   service: name=supervisor state=stopped
   tags: stop_supervisor
-
-- name: Stop and remove uwsgi.
-  service: name={{ item }} state=stopped enabled=no
-  with_items:
-    - uwsgi
-  when: galaxy_extras_config_uwsgi|bool and supervisor_manage_uwsgi|bool and galaxy_extras_install_packages
 
 - name: Stop and remove munge.
   service: name={{ item }} state=stopped enabled=no
@@ -63,7 +55,17 @@
     - nginx
   when: galaxy_extras_config_nginx|bool and supervisor_manage_nginx|bool
 
-# Do not start supervisor when building docker-galaxy-stable
+- name: Stop and remove rabbitmq.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - rabbitmq-server
+  when: galaxy_extras_config_rabbitmq|bool and supervisor_manage_rabbitmq|bool
+
+- name: Stop and remove redis.
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - redis-server
+  when: galaxy_extras_config_redis|bool and supervisor_manage_redis|bool
+
 - name: Start supervisor
   service: name=supervisor state=started
-  when: galaxy_uwsgi_static_conf

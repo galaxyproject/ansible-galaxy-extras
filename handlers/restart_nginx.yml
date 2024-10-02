@@ -1,10 +1,11 @@
 # Attempt to restart nginx (if nginx is running)
-#- name: nginx status
-#  stat: path=/run/nginx.pid
-#  register: nginx_status
+- name: nginx status
+  shell: pgrep -x nginx
+  register: nginx_status
+  ignore_errors: true
 
-#- name: Restart Nginx
-#  command: /usr/sbin/nginx -s reload
-#  become: yes
-#  become_user: root
-#  when: nginx_status.stat.islnk is defined
+- name: Restart Nginx
+  command: /usr/sbin/nginx -s reload
+  become: yes
+  become_user: root
+  when: nginx_status.rc == 0

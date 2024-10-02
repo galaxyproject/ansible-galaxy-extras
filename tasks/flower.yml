@@ -1,0 +1,25 @@
+- name: Ensure Flower config directory exists
+  file:
+    state: directory
+    path: "{{ flower_conf_path | dirname }}"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Ensure Python Flower package is installed
+  pip:
+    name: "flower"
+    version: "1.2.0"
+    virtualenv: "{{ galaxy_venv_dir }}"
+    virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+    extra_args: --index-url https://wheels.galaxyproject.org/simple --extra-index-url https://pypi.python.org/simple
+  become: True
+  become_user: "{{ galaxy_user_name }}"
+
+- name: Ensure Flower configuration file is correct
+  template:
+    src: flowerconfig.py.j2
+    dest: "{{ flower_conf_path }}"
+    owner: root
+    group: "{{ galaxy_user_name }}"
+    mode: 0640

@@ -13,6 +13,9 @@
             <param id="docker_volumes_from" from_environ="GALAXY_DOCKER_VOLUMES_FROM">{{ galaxy_docker_volumes_from }}</param>
             <!-- For a stock Galaxy instance and traditional job runner $defaults will expand out as: $galaxy_root:ro,$tool_directory:ro,$working_directory:rw,$default_file_path:rw -->
             <param id="docker_volumes" from_environ="GALAXY_DOCKER_VOLUMES">{{ galaxy_docker_volumes }}</param>
+            <param id="docker_net" from_environ="GALAXY_DOCKER_NET">{{ galaxy_docker_net }}</param>
+            <param id="docker_auto_rm" from_environ="GALAXY_DOCKER_AUTO_RM">{{ galaxy_docker_auto_rm }}</param>
+            <param id="docker_set_user" from_environ="GALAXY_DOCKER_SET_USER">{{ galaxy_docker_set_user }}</param>
             {% if force_container %}
                 <param id="docker_default_container_id" from_environ="GALAXY_DOCKER_DEFAULT_CONTAINER">{{ galaxy_docker_default_image }}</param>
             {% endif %}

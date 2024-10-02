@@ -1,4 +1,4 @@
-# pass to uWSGI by default
+# pass to gunicorn by default
 location {{ nginx_galaxy_location }}/ {
 	proxy_pass http://galaxy_web_app;
 	proxy_set_header X-Forwarded-Host $host;
@@ -9,8 +9,6 @@ location {{ nginx_galaxy_location }}/ {
 {% endif %}
 {% if nginx_use_remote_header %}
     # forward the remote_user header in case it is set by a previous proxy
-    if ($remote_user) {
-        proxy_set_header REMOTE_USER $remote_user;
-    }
+    proxy_set_header REMOTE_USER $remote_user;
 {% endif %}
 }

@@ -7,6 +7,7 @@
     packages:
     - proftpd
     - proftpd-mod-pgsql
+    - proftpd-mod-crypto
   when: galaxy_extras_install_packages
   tags:
     - proftpd_apt
