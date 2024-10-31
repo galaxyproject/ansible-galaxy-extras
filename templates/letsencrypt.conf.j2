@@ -1,27 +1,39 @@
 ########################################################
-# This is the main config file for letsencrypt.sh      #
+# This is the main config file for dehydrated          #
 #                                                      #
 # This file is looked for in the following locations:  #
 # $SCRIPTDIR/config (next to this script)              #
-# /usr/local/etc/letsencrypt.sh/config                 #
-# /etc/letsencrypt.sh/config                           #
+# /usr/local/etc/dehydrated/config                     #
+# /etc/dehydrated/config                               #
 # ${PWD}/config (in current working-directory)         #
 #                                                      #
 # Default values of this config are in comments        #
 ########################################################
+
+# Which user should dehydrated run as? This will be implicitly enforced when running as root
+#DEHYDRATED_USER=
+
+# Which group should dehydrated run as? This will be implicitly enforced when running as root
+#DEHYDRATED_GROUP=
 
 # Resolve names to addresses of IP version only. (curl)
 # supported values: 4, 6
 # default: <unset>
 #IP_VERSION=
 
-# Path to certificate authority (default: https://acme-v01.api.letsencrypt.org/directory)
-#CA="https://acme-v01.api.letsencrypt.org/directory"
+# URL to certificate authority or internal preset
+# Presets: letsencrypt, letsencrypt-test, zerossl, buypass, buypass-test
+# default: letsencrypt
+#CA="letsencrypt"
 
-# Path to license agreement (default: https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf)
-#LICENSE="https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf"
+# Path to old certificate authority
+# Set this value to your old CA value when upgrading from ACMEv1 to ACMEv2 under a different endpoint.
+# If dehydrated detects an account-key for the old CA it will automatically reuse that key
+# instead of registering a new one.
+# default: https://acme-v01.api.letsencrypt.org/directory
+#OLDCA="https://acme-v01.api.letsencrypt.org/directory"
 
-# Which challenge should be used? Currently http-01 and dns-01 are supported
+# Which challenge should be used? Currently http-01, dns-01 and tls-alpn-01 are supported
 #CHALLENGETYPE="http-01"
 
 # Path to a directory containing additional config files, allowing to override
@@ -30,22 +42,30 @@
 # default: <unset>
 #CONFIG_D=
 
+# Directory for per-domain configuration files.
+# If not set, per-domain configurations are sourced from each certificates output directory.
+# default: <unset>
+#DOMAINS_D=
+
 # Base directory for account key, generated certificates and list of domains (default: $SCRIPTDIR -- uses config directory if undefined)
-#BASEDIR=$SCRIPTDIR (default)
+#BASEDIR=$SCRIPTDIR
 BASEDIR="/etc/letsencrypt"
 
 # File containing the list of domains to request certificates for (default: $BASEDIR/domains.txt)
 #DOMAINS_TXT="${BASEDIR}/domains.txt"
 
 # Output directory for generated certificates
-#CERTDIR="${BASEDIR}/certs" (default)
+#CERTDIR="${BASEDIR}/certs"
 CERTDIR="/etc/ssl/private"
+
+# Output directory for alpn verification certificates
+#ALPNCERTDIR="${BASEDIR}/alpn-certs"
 
 # Directory for account keys and registration information
 #ACCOUNTDIR="${BASEDIR}/accounts"
 
-# Output directory for challenge-tokens to be served by webserver or deployed in HOOK (default: /var/www/letsencrypt)
-#WELLKNOWN="/var/www/letsencrypt" (default)
+# Output directory for challenge-tokens to be served by webserver or deployed in HOOK (default: /var/www/dehydrated)
+#WELLKNOWN="/var/www/dehydrated"
 WELLKNOWN="${BASEDIR}/wellknown"
 
 # Default keysize for private keys (default: 4096)
@@ -53,6 +73,12 @@ WELLKNOWN="${BASEDIR}/wellknown"
 
 # Path to openssl config file (default: <unset> - tries to figure out system default)
 #OPENSSL_CNF=
+
+# Path to OpenSSL binary (default: "openssl")
+#OPENSSL="openssl"
+
+# Extra options passed to the curl binary (default: <unset>)
+#CURL_OPTS=
 
 # Program or function called in certain situations
 #
@@ -75,8 +101,11 @@ WELLKNOWN="${BASEDIR}/wellknown"
 # Regenerate private keys instead of just signing new certificates on renewal (default: yes)
 #PRIVATE_KEY_RENEW="yes"
 
+# Create an extra private key for rollover (default: no)
+#PRIVATE_KEY_ROLLOVER="no"
+
 # Which public key algorithm should be used? Supported: rsa, prime256v1 and secp384r1
-#KEY_ALGO=rsa
+#KEY_ALGO=secp384r1
 
 # E-mail to use during the registration (default: <unset>)
 #CONTACT_EMAIL=
@@ -86,3 +115,21 @@ WELLKNOWN="${BASEDIR}/wellknown"
 
 # Option to add CSR-flag indicating OCSP stapling to be mandatory (default: no)
 #OCSP_MUST_STAPLE="no"
+
+# Fetch OCSP responses (default: no)
+#OCSP_FETCH="no"
+
+# OCSP refresh interval (default: 5 days)
+#OCSP_DAYS=5
+
+# Issuer chain cache directory (default: $BASEDIR/chains)
+#CHAINCACHE="${BASEDIR}/chains"
+
+# Automatic cleanup (default: no)
+#AUTO_CLEANUP="no"
+
+# ACME API version (default: auto)
+#API=auto
+
+# Preferred issuer chain (default: <unset> -> uses default chain)
+#PREFERRED_CHAIN=

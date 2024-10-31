@@ -12,7 +12,7 @@
 
 - name: Get letsencrypt script from github repository
   get_url:
-    url: https://raw.githubusercontent.com/lukas2511/letsencrypt.sh/d81eb58536e3ae1170de3eda305688ae28d0575b/letsencrypt.sh
+    url: https://raw.githubusercontent.com/dehydrated-io/dehydrated/4fd777e87e589652b1127b79ac6688ed7cb151fe/dehydrated
     dest: /usr/bin/letsencrypt.sh
     mode: "u=rwx,g=rx,o=r"
     force: no
