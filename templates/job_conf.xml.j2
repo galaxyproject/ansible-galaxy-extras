@@ -72,18 +72,18 @@
 {% endif %}
 {% if galaxy_extras_config_slurm %}
         {% call macros.destination("slurm_cluster", "slurm") %}
-            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask | string }} --share</param>
         {% endcall %}
         <!-- Docker -->
         {% call macros.destination("slurm_cluster_docker", "slurm", container_type="docker") %}
-            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask | string }} --share</param>
         {% endcall %}
         {% call macros.destination("slurm_cluster_force_docker", "slurm", container_type="docker", force_container=True) %}
-            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask | string }} --share</param>
         {% endcall %}
         <!-- Singularity -->
         {% call macros.destination("slurm_cluster_singularity", "slurm", container_type="singularity") %}
-            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask }} --share</param>
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks={{ galaxy_extras_slurm_ntask | string }} --share</param>
         {% endcall %}
 
 {% endif %}
