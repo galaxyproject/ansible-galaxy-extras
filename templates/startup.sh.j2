@@ -532,10 +532,6 @@ fi
 
 if $PRIVILEGED; then
     # in privileged mode autofs and CVMFS is available
-    # install autofs
-    echo "Installing autofs to enable automatic CVMFS mounts"
-    apt-get install autofs --no-install-recommends -y
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
     export GALAXY_CONFIG_TOOL_DATA_TABLE_CONFIG_PATH="{{ galaxy_tool_data_table_config_file }},/cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml,/cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml"
 
     echo "Enable Galaxy Interactive Tools."
