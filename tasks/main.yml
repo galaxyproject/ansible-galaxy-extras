@@ -27,11 +27,14 @@
   tags:
    - nginx_config
    - nginx
+   - https
+   - proxy_prefix
 
 - include_tasks: proftpd.yml
   when: galaxy_extras_config_proftpd | bool
   tags:
    - proftpd
+   - proftpd_apt
 
 - include_tasks: slurm.yml
   when: galaxy_extras_config_slurm | bool

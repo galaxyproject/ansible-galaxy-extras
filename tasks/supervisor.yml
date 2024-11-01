@@ -22,7 +22,6 @@
 
 - name: Stop supervisor
   service: name=supervisor state=stopped
-  tags: stop_supervisor
 
 - name: Stop and remove munge.
   service: name={{ item }} state=stopped enabled=no
