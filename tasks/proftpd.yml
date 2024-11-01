@@ -8,7 +8,7 @@
     - proftpd
     - proftpd-mod-pgsql
     - proftpd-mod-crypto
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
   tags:
     - proftpd_apt
 
@@ -28,33 +28,33 @@
     - LoadModule mod_sftp.c
     - LoadModule mod_sftp_pam.c
     - LoadModule mod_sftp_sql.c
-  when: proftpd_use_sftp
+  when: proftpd_use_sftp | bool
 
 - name: Install OpenSSH client package
   apt: pkg=openssh-client
-  when: proftpd_use_sftp
+  when: proftpd_use_sftp | bool
   tags:
    - proftpd_apt
 
 - name: Create /etc/proftpd/ssh_host_keys/ directory
   file: path=/etc/proftpd/ssh_host_keys/ state=directory
-  when: proftpd_use_sftp
+  when: proftpd_use_sftp | bool
 
 - name: Generate new SSH keys (rsa)
   shell: ssh-keygen -b 2048 -t rsa -f /etc/proftpd/ssh_host_keys/rsa -N ""
   args:
     creates: /etc/proftpd/ssh_host_keys/rsa
   when:
-    - proftpd_use_sftp
-    - proftpd_generate_ssh_key
+    - proftpd_use_sftp | bool
+    - proftpd_generate_ssh_key | bool
 
 - name: Generate new SSH keys (dsa)
   shell: ssh-keygen -b 1024 -t dsa -f /etc/proftpd/ssh_host_keys/dsa -N ""
   args:
     creates: /etc/proftpd/ssh_host_keys/dsa
   when:
-    - proftpd_use_sftp
-    - proftpd_generate_ssh_key
+    - proftpd_use_sftp | bool
+    - proftpd_generate_ssh_key | bool
 
 # Proftpd ships with default keys, and it makes sense to change them.
 # But we've decided not to do this, because this task takes nearly a day.
@@ -63,7 +63,7 @@
 #   with_nested:
 #     - [2, 5]
 #     - [1024, 1536, 2048, 4096, 6144, 8192]
-#   when: proftpd_use_sftp
+#   when: proftpd_use_sftp | bool
 
 
 

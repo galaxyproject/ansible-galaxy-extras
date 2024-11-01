@@ -5,15 +5,15 @@
   vars:
     packages:
     - python-pip
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Create munge.service configuration file
   template: src=munge.service.j2 dest=/etc/systemd/system/munge.service
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Install munge system package
   apt: pkg=munge state={{ galaxy_extras_apt_package_state }}
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Install SLURM system packages for Ubuntu < 18.04
   apt:
@@ -24,14 +24,14 @@
     - slurm-llnl
     - slurm-drmaa-dev
     - python-psutil
-  when: galaxy_extras_install_packages and ansible_distribution_version < "18.04"
+  when: galaxy_extras_install_packages | bool and ansible_distribution_version < "18.04"
 
 - name: Add custom Galaxy PPA (used for Slurm DRMAA package in Ubuntu >= 18.04)
   apt_repository:
     repo: ppa:natefoo/slurm-drmaa
     state: present
     update_cache: yes
-  when: galaxy_extras_install_packages and ansible_distribution_version >= "18.04"
+  when: galaxy_extras_install_packages | bool and ansible_distribution_version >= "18.04"
 
 - name: Install SLURM system packages for Ubuntu >= 18.04
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
@@ -39,11 +39,11 @@
     - slurm-wlm
     - slurm-drmaa-dev
     - python3-psutil
-  when: galaxy_extras_install_packages and ansible_distribution_version >= "18.04"
+  when: galaxy_extras_install_packages | bool and ansible_distribution_version >= "18.04"
 
 - name: Install SLURM system packages
   apt: pkg=slurm-wlm-torque state={{ galaxy_extras_apt_package_state }}
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Create Munge Key
   command: /usr/sbin/mungekey -f creates=/etc/munge/munge.key

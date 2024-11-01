@@ -1,11 +1,11 @@
 
 - name: Add Condor apt key
   shell: "wget -qO - https://research.cs.wisc.edu/htcondor/repo/keys/HTCondor-current-Key | apt-key add -"
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Add Condor repository
   apt_repository: repo='deb https://research.cs.wisc.edu/htcondor/repo/ubuntu/current {{ ansible_distribution_release }} main' update_cache=yes
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Install Condor system packages
   apt: 
@@ -15,7 +15,7 @@
     packages:
     - condor
     - pbs-drmaa-dev
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: "Set DISCARD_SESSION_KEYRING_ON_STARTUP to False in Condor configs"
   lineinfile: dest=/etc/condor/condor_config.local line='DISCARD_SESSION_KEYRING_ON_STARTUP=False' state=present create=yes

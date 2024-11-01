@@ -2,7 +2,7 @@
   apt:
     state: "{{ galaxy_extras_apt_package_state }}"
     name: "redis-server"
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: "Install redis python package for galaxy"
   pip:

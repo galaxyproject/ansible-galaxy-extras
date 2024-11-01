@@ -7,7 +7,7 @@
   apt:
     name: ['autofs', 'uuid-runtime']
     state: "{{ galaxy_extras_apt_package_state }}"
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Install CernVM apt key
   apt_key:

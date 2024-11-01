@@ -23,7 +23,7 @@
     - proxy_prefix
 
 - name: Letsencrypts-specific tasks
-  include: letsencrypt.yml
+  include_tasks: letsencrypt.yml
   when: galaxy_extras_config_ssl_method == 'letsencrypt'
   tags:
     - https
@@ -60,6 +60,6 @@
       command: update-ca-certificates
       notify: restart nginx
 
-  when: galaxy_extras_config_ssl | lower == 'true'
+  when: galaxy_extras_config_ssl | bool
   tags:
     - https
