@@ -1,0 +1,50 @@
+---
+
+- name: tusd version block
+  block:
+
+    - name: Fetch latest tusd release information
+      uri:
+        url: https://api.github.com/repos/tus/tusd/releases/latest
+      register: __tusd_release_latest_response
+
+    - name: Set latest tusd release number
+      set_fact:
+        tusd_version: "{{ __tusd_release_latest_response.json.tag_name }}"
+
+- name: tusd install block
+  block:
+
+    - name: Create tempdir for unarchive
+      tempfile:
+        prefix: ansible.galaxyproject.tusd.
+        state: directory
+      register: __tusd_tempdir
+
+    - name: Extract tusd binary
+      unarchive:
+        remote_src: true
+        src: "https://github.com/tus/tusd/releases/download/{{ tusd_version }}/tusd_linux_amd64.tar.gz"
+        dest: "{{ __tusd_tempdir.path }}/"
+
+    - name: Install tusd binary
+      copy:
+        remote_src: true
+        src: "{{ __tusd_tempdir.path }}/tusd_linux_amd64/tusd"
+        dest: "{{ tusd_path }}"
+        mode: "0755"
+
+  always:
+
+    - name: Clean tempdir
+      file:
+        path: "{{ __tusd_tempdir.path }}"
+        state: absent
+      when: __tusd_tempdir is defined
+
+- name: Create tus upload_store dir
+  file:
+    state: directory
+    path: "{{ tus_upload_store_path }}"
+    owner: "{{ galaxy_user_name }}"
+    group: "{{ galaxy_user_name }}"

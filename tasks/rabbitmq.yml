@@ -1,2 +1,17 @@
+- name: Ensure rabbitmq server is installed.
+  apt:
+    state: "{{ galaxy_extras_apt_package_state }}"
+    name: "rabbitmq-server"
+  when: galaxy_extras_install_packages | bool
+
 - name: Copy startup script for rabbitmq
   template: src=rabbitmq.sh.j2 dest=/usr/local/bin/rabbitmq.sh
+
+- name: Enable 'rabbitmq_management' plugin
+  rabbitmq_plugin:
+    name: rabbitmq_management
+    broker_state: offline
+    state: enabled
+
+- name: "Install rabbitmq users configuration script."
+  template: src=configure_rabbitmq_users.yml.j2 dest=/usr/local/bin/configure_rabbitmq_users.yml

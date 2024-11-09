@@ -9,13 +9,10 @@ SLURM_CONFIG_TEMPLATE = '''
 # Put this file on all nodes of your cluster.
 # See the slurm.conf man page for more information.
 #
-ControlMachine=$control_machine
-#ControlAddr=
-#BackupController=
-#BackupAddr=
+SlurmctldHost=$control_machine
+#SlurmctldAddr=
 #
 AuthType=auth/munge
-CacheGroups=0
 #CheckpointType=checkpoint/none
 CryptoType=crypto/munge
 MpiDefault=none
@@ -54,14 +51,12 @@ SlurmdTimeout=300
 #UnkillableStepTimeout=60
 #VSizeFactor=0
 Waittime=0
-FastSchedule=1
 SchedulerType=sched/backfill
-SchedulerPort=7321
 SelectType=select/cons_res
 SelectTypeParameters=CR_Core_Memory
 AccountingStorageType=accounting_storage/none
 #AccountingStorageUser=
-AccountingStoreJobComment=YES
+AccountingStoreFlags=job_comment
 ClusterName=$cluster_name
 #DebugFlags=
 #JobCompHost=
@@ -81,11 +76,11 @@ PartitionName=$partition_name Nodes=$hostname Default=YES MaxTime=INFINITE State
 {% endif %}
 '''
 
-slurm_status = subprocess.check_output(['slurmd', '-C'])
+slurm_status = subprocess.check_output(['slurmd', '-C']).decode('utf-8')
 dict_status = dict(z.split('=') for z in slurm_status.split())
 cpus = dict_status['CPUs']
 memory = dict_status['RealMemory']
-mem_per_cpu = int(memory) / int(cpus)
+mem_per_cpu = int(int(memory) / int(cpus))
 
 def main():
     hostname = gethostname()
@@ -97,10 +92,10 @@ def main():
         "partition_name": environ.get('SLURM_PARTITION_NAME', 'debug'),
         "cpus": environ.get("SLURM_CPUS", cpus),
         "memory": environ.get("SLURM_MEMORY", memory),
-        "mem_per_cpu": environ.get("SLURM_MEMORY_PER_CPU", int(memory)/int(cpus))
+        "mem_per_cpu": environ.get("SLURM_MEMORY_PER_CPU", mem_per_cpu)
     }
     config_contents = Template(SLURM_CONFIG_TEMPLATE).substitute(template_params)
-    open("/etc/slurm-llnl/slurm.conf", "w").write(config_contents)
+    open("/etc/slurm/slurm.conf", "w").write(config_contents)
 
 if __name__ == "__main__":
     main()

@@ -1,35 +1,35 @@
 ---
 
-- name: Create nginx upload_store dir
-  file:
-    state: directory
-    path: "{{ nginx_upload_store_path }}"
-    owner: "{{ galaxy_user_name }}"
-
 - name: Place configuration files
   template: >
     src={{ item.src }}
     dest={{ item.dest }}
     owner={{ item.owner }} group={{ item.owner }} mode=0600
   with_items:
-    - { src: 'htpasswd.j2',                     dest: '/etc/nginx/htpasswd',                                 owner: '{{ galaxy_user_name }}' }
-    - { src: 'nginx_galaxy_web.conf.j2',        dest: '{{ nginx_conf_directory }}/galaxy_web.conf',          owner: 'root' }
-    - { src: 'nginx_uwsgi.conf.j2',             dest: '{{ nginx_conf_directory }}/uwsgi.conf',               owner: 'root' }
-    - { src: 'nginx_reports_noauth.conf.j2',    dest: '{{ nginx_conf_directory }}/reports_auth.conf',        owner: 'root' }
-    - { src: 'nginx_reports_auth.conf.j2',      dest: '{{ nginx_conf_directory }}/reports_auth.conf.source', owner: 'root' }
-    - { src: 'nginx.conf.j2',                   dest: '{{ nginx_conf_path }}',                               owner: 'root' }
+    - { src: 'htpasswd.j2',                           dest: '/etc/nginx/htpasswd',                                          owner: '{{ galaxy_user_name }}' }
+    - { src: 'nginx_galaxy_web.conf.j2',              dest: '{{ nginx_conf_directory }}/galaxy_web.conf',                   owner: 'root' }
+    - { src: 'nginx_gunicorn.conf.j2',                dest: '{{ nginx_conf_directory }}/gunicorn.conf',                     owner: 'root' }
+    - { src: 'nginx_common_noauth.conf.j2',           dest: '{{ nginx_conf_directory }}/reports_auth.conf',                 owner: 'root' }
+    - { src: 'nginx_reports_auth.conf.j2',            dest: '{{ nginx_conf_directory }}/reports_auth.conf.source',          owner: 'root' }
+    - { src: 'nginx_common_noauth.conf.j2',           dest: '{{ nginx_conf_directory }}/flower_auth.conf',                  owner: 'root' }
+    - { src: 'nginx_flower_auth.conf.j2',             dest: '{{ nginx_conf_directory }}/flower_auth.conf.source',           owner: 'root' }
+    - { src: 'nginx_no_delegated_uploads.conf.j2',    dest: '{{ nginx_conf_directory }}/delegated_uploads.conf',            owner: 'root' }
+    - { src: 'nginx_delegated_uploads.conf.j2',       dest: '{{ nginx_conf_directory }}/delegated_uploads.conf.source',     owner: 'root' }
+    - { src: 'nginx_interactive_tools.conf.j2',       dest: '{{ nginx_conf_directory }}/interactive_tools.conf',            owner: 'root' }
+    - { src: 'nginx.conf.j2',                         dest: '{{ nginx_conf_path }}',                                        owner: 'root' }
   notify: restart nginx
   tags:
     - https
+    - proxy_prefix
 
 - name: Letsencrypts-specific tasks
-  include: letsencrypt.yml
+  include_tasks: letsencrypt.yml
   when: galaxy_extras_config_ssl_method == 'letsencrypt'
   tags:
     - https
 
 - name: Create self-signed SSL cert
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=selfsigned" -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}" -extensions v3_ca creates="{{ nginx_ssl_certificate }}"
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=selfsigned" -days 3650 -keyout "{{ nginx_ssl_certificate_key }}" -out "{{ nginx_ssl_certificate }}" -extensions v3_ca -addext "subjectAltName = DNS:localhost, IP:127.0.0.1" creates="{{ nginx_ssl_certificate }}"
   when: galaxy_extras_config_ssl_method == 'self-signed'
   notify: restart nginx
   tags:
@@ -42,5 +42,24 @@
    - { src: '{{ src_nginx_ssl_certificate_key }}',  dest: '{{ nginx_ssl_certificate_key }}'}
    - { src: '{{ src_nginx_ssl_certificate }}',  dest: '{{ nginx_ssl_certificate }}'}
   notify: restart nginx
+  tags:
+    - https
+
+- name: Manage nginx SSL certificate and update CA certificates
+  block:
+
+    - name: Create a symbolic link for the nginx SSL certificate in CA certificates directory
+      file:
+        src: "{{ nginx_ssl_certificate }}"
+        dest: "/usr/local/share/ca-certificates/nginx.crt"
+        state: link
+        owner: root
+        group: root
+
+    - name: Update CA certificates
+      command: update-ca-certificates
+      notify: restart nginx
+
+  when: galaxy_extras_config_ssl | bool
   tags:
     - https

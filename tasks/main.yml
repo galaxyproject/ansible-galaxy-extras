@@ -1,89 +1,102 @@
 
-- include: galaxy_root.yml
-  when: galaxy_extras_config_galaxy_root
+- include_tasks: galaxy_root.yml
+  when: galaxy_extras_config_galaxy_root | bool
   tags:
    - galaxy
 
 - name: Create directory for "galaxy_config_dir"
   file: path="{{ galaxy_config_dir }}" state=directory
 
-- include: galaxy_metrics.yml
-  when: galaxy_extras_config_galaxy_root
+- include_tasks: galaxy_metrics.yml
+  when: galaxy_extras_config_galaxy_root | bool
   tags:
    - metrics
 
-- include: galaxy_extra_dependencies.yml
-  when: galaxy_extras_config_galaxy_extra_dependencies
+- include_tasks: galaxy_extra_dependencies.yml
+  when: galaxy_extras_config_galaxy_extra_dependencies | bool
   tags:
    - extra_dependencies
 
-- include: uwsgi.yml
-  when: galaxy_extras_config_uwsgi
+- include_tasks: gravity.yml
+  when: galaxy_extras_config_gravity | bool
   tags:
-   - uwsgi
+   - gravity
 
-- include: nginx.yml
-  when: galaxy_extras_config_nginx
+- include_tasks: nginx.yml
+  when: galaxy_extras_config_nginx | bool
   tags:
    - nginx_config
    - nginx
+   - https
+   - proxy_prefix
 
-- include: proftpd.yml
-  when: galaxy_extras_config_proftpd
+- include_tasks: proftpd.yml
+  when: galaxy_extras_config_proftpd | bool
   tags:
    - proftpd
+   - proftpd_apt
 
-- include: slurm.yml
-  when: galaxy_extras_config_slurm
+- include_tasks: slurm.yml
+  when: galaxy_extras_config_slurm | bool
   tags:
    - slurm
 
-- include: pbs.yml
-  when: galaxy_extras_config_pbs
+- include_tasks: pbs.yml
+  when: galaxy_extras_config_pbs | bool
   tags:
    - pbs
 
-- include: k8s.yml
-  when: galaxy_extras_config_k8s_jobs
+- include_tasks: k8s.yml
+  when: galaxy_extras_config_k8s_jobs | bool
   tags:
    - k8s
 
-- include: condor.yml
-  when: galaxy_extras_config_condor
+- include_tasks: condor.yml
+  when: galaxy_extras_config_condor | bool
   tags:
    - condor
 
-- include: cvmfs_client.yml
-  when: galaxy_extras_config_cvmfs
+- include_tasks: cvmfs_client.yml
+  when: galaxy_extras_config_cvmfs | bool
   tags:
    - cvmfs
 
-- include: supervisor.yml
-  when: galaxy_extras_config_supervisor
-  tags:
-   - supervisor
-
-- include: ie_proxy.yml
-  when: galaxy_extras_config_ie_proxy
-  tags:
-   - ie
-
-- include: galaxy_scripts.yml
-  when: galaxy_extras_config_scripts
-  tags:
-   - scripts
-
-- include: rabbitmq.yml
-  when: galaxy_extras_config_rabbitmq
+- include_tasks: rabbitmq.yml
+  when: galaxy_extras_config_rabbitmq | bool
   tags:
    - rabbitmq
 
-- include: startup.yml
-  when: galaxy_extras_config_startup
+- include_tasks: redis.yml
+  when: galaxy_extras_config_redis | bool
+  tags:
+   - redis
+
+- include_tasks: flower.yml
+  when: galaxy_extras_config_flower | bool
+  tags:
+   - flower
+
+- include_tasks: tusd.yml
+  when: galaxy_extras_config_tusd | bool
+  tags:
+   - tusd
+
+- include_tasks: supervisor.yml
+  when: galaxy_extras_config_supervisor | bool
+  tags:
+   - supervisor
+
+- include_tasks: galaxy_scripts.yml
+  when: galaxy_extras_config_scripts | bool
+  tags:
+   - scripts
+
+- include_tasks: galaxy_job_conf.yml
+  when: galaxy_extras_config_galaxy_job_conf | bool
+  tags:
+   - job_conf
+
+- include_tasks: startup.yml
+  when: galaxy_extras_config_startup | bool
   tags:
    - startup
-
-- include: client.yml
-  when: galaxy_extras_config_startup
-  tags:
-   - client

@@ -5,17 +5,17 @@
   vars:
     packages:
     - python-pip
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Create munge.service configuration file
   template: src=munge.service.j2 dest=/etc/systemd/system/munge.service
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Install munge system package
   apt: pkg=munge state={{ galaxy_extras_apt_package_state }}
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
-- name: Install SLURM system packages
+- name: Install SLURM system packages for Ubuntu < 18.04
   apt:
     state: "{{ galaxy_extras_apt_package_state }}"
     name: "{{ packages }}"
@@ -24,29 +24,29 @@
     - slurm-llnl
     - slurm-drmaa-dev
     - python-psutil
-  when: galaxy_extras_install_packages and ansible_distribution_version < "18.04"
+  when: galaxy_extras_install_packages | bool and ansible_distribution_version < "18.04"
 
-- name: Add custom Galaxy PPA (used for Slurm DRMAA package in Ubuntu 18.04)
+- name: Add custom Galaxy PPA (used for Slurm DRMAA package in Ubuntu >= 18.04)
   apt_repository:
     repo: ppa:natefoo/slurm-drmaa
     state: present
     update_cache: yes
-  when: galaxy_extras_install_packages and ansible_distribution_version == "18.04"
+  when: galaxy_extras_install_packages | bool and ansible_distribution_version >= "18.04"
 
-- name: Install SLURM system packages for Ubuntu 18.04
+- name: Install SLURM system packages for Ubuntu >= 18.04
   apt: pkg={{ item }} state={{ galaxy_extras_apt_package_state }}
   with_items:
     - slurm-wlm
     - slurm-drmaa-dev
-    - python-psutil
-  when: galaxy_extras_install_packages and ansible_distribution_version == "18.04"
+    - python3-psutil
+  when: galaxy_extras_install_packages | bool and ansible_distribution_version >= "18.04"
 
 - name: Install SLURM system packages
   apt: pkg=slurm-wlm-torque state={{ galaxy_extras_apt_package_state }}
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Create Munge Key
-  command: /usr/sbin/create-munge-key creates=/etc/munge/munge.key
+  command: /usr/sbin/mungekey -f creates=/etc/munge/munge.key
 
 - name: Setup Munge permissions and folder
   file: path={{ item }} state=directory owner=root group=root recurse=yes
@@ -81,13 +81,3 @@
   environment:
     PYTHOPATH: null
     VIRTUAL_ENV: "{{ galaxy_venv_dir }}"
-
-# TODO: Move the following two out of this file since it is no longer SLURM specific.
-- name: "Install Galaxy job conf"
-  template: src=job_conf.xml.j2 dest={{galaxy_job_conf_path}} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
-  tags: galaxy_extras_job_conf
-
-- name: "Install Galaxy container resolution configuration"
-  template: src=container_resolvers_conf.xml.j2 dest={{galaxy_container_resolvers_conf_path}} owner={{ galaxy_user_name }} group={{ galaxy_user_name }}
-  when: galaxy_extras_config_container_resolution|bool
-  tags: galaxy_extras_job_conf

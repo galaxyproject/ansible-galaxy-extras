@@ -7,13 +7,13 @@
 - hosts: localhost
   connection: local
   tasks:
-  - include: tasks/slurm.yml
+  - include_tasks: tasks/slurm.yml
     tags: slurm
-  - include: tasks/pbs.yml
+  - include_tasks: tasks/pbs.yml
     tags: pbs
-  - include: tasks/nginx.yml
+  - include_tasks: tasks/nginx.yml
     tags: nginx
-  - include: tasks/proftpd.yml
+  - include_tasks: tasks/proftpd.yml
     tags: proftpd
-  - include: tasks/supervisor.yml
+  - include_tasks: tasks/supervisor.yml
     tags: supervisor

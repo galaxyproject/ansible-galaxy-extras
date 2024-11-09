@@ -7,7 +7,7 @@
   apt:
     name: ['autofs', 'uuid-runtime']
     state: "{{ galaxy_extras_apt_package_state }}"
-  when: galaxy_extras_install_packages
+  when: galaxy_extras_install_packages | bool
 
 - name: Install CernVM apt key
   apt_key:
@@ -18,13 +18,22 @@
   apt_repository:
     filename: "cernvm.list"
     mode: 422
-    repo: deb https://cvmrepo.web.cern.ch/cvmrepo/apt/ {{ ansible_distribution_release }}-prod main
+    repo: deb [allow-insecure=true] https://cvmrepo.web.cern.ch/cvmrepo/apt/ {{ ansible_distribution_release }}-prod main
 
 - name: Install CernVM-FS client (apt)
   apt:
     name: ['cvmfs', 'cvmfs-config']
     state: "{{ galaxy_extras_apt_package_state }}"
     update_cache: yes
+
+- name: Make CernVM-FS key directories
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  loop: "{{ cvmfs_keys | map(attribute='path') | map('dirname') | unique }}"
 
 - name: Install CernVM-FS keys
   copy:
@@ -38,41 +47,49 @@
 - name: Perform AutoFS and FUSE configuration for CernVM-FS
   command: cvmfs_config setup
 
-- name: Configure CernVM-FS domain
-  copy:
-    content: |
-      CVMFS_SERVER_URL="{{ item.urls | join(';') }}"
-    dest: "/etc/cvmfs/domain.d/{{ item.domain }}.conf"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-  with_items: "{{ cvmfs_server_urls }}"
+- name: Configure CernVM-FS config repository
+  block:
 
-- name: Configure CernVM-FS client settings
+    - name: Create config repo config
+      copy:
+        content: |
+          CVMFS_SERVER_URL="{{ cvmfs_config_repo.urls | join(';') }}"
+          CVMFS_PUBLIC_KEY="{{ cvmfs_config_repo.key.path }}"
+        dest: "/etc/cvmfs/config.d/{{ cvmfs_config_repo.repository.repository }}.conf"
+        owner: "root"
+        group: "root"
+        mode: "0444"
+
+    - name: Set config repo defaults
+      copy:
+        content: |
+          CVMFS_CONFIG_REPOSITORY="{{ cvmfs_config_repo.repository.repository }}"
+          CVMFS_DEFAULT_DOMAIN="{{ cvmfs_config_repo.domain }}"
+          CVMFS_USE_GEOAPI="{{ cvmfs_config_repo.use_geoapi | default('yes') }}"
+        dest: "/etc/cvmfs/default.d/80-galaxyproject-cvmfs.conf"
+        owner: "root"
+        group: "root"
+        mode: "0444"
+
+- name: Configure CernVM-FS global client settings
   copy:
     content: |
-      CVMFS_REPOSITORIES="{%- for repo in cvmfs_repositories -%}{{ ',' if loop.index0 > 0 else '' }}{{ repo.repository }}{%- endfor -%}"
       CVMFS_HTTP_PROXY="{{ cvmfs_http_proxies | join(';') }}"
       CVMFS_QUOTA_LIMIT="{{ cvmfs_quota_limit | default('4000') }}"
+      CVMFS_CACHE_BASE="{{ cvmfs_cache_base | default('/var/lib/cvmfs') }}"
       CVMFS_USE_GEOAPI="{{ cvmfs_use_geoapi | default('yes') }}"
     dest: "/etc/cvmfs/default.local"
     owner: "root"
     group: "root"
     mode: "0644"
 
-# Create a symlink from the CVMFS to /galaxy/data because that is where the
-# .loc files from CVMFS point (and consequently tool_data_table_conf.xml)
-- name: Create /galaxy dir
-  file: path=/galaxy state=directory
-
-# This is required to be able to use Galaxy .len files from Main w/o mods
-- name: Create a symlink from CVMFS to /galaxy/data
-  file: src=/cvmfs/data.galaxyproject.org/byhand dest=/galaxy/data state=link force=yes
-
 - name: Use tool_data_table_conf.xml from usegalaxy-playbook
   get_url:
-    url: https://raw.githubusercontent.com/galaxyproject/usegalaxy-playbook/067433f547f67b848f2e4597274a379f06da04b2/files/galaxy/usegalaxy.org/config/tool_data_table_conf.xml
+    url: https://raw.githubusercontent.com/galaxyproject/usegalaxy-playbook/8adb1f82c94fe95b09df2a2816440ce2420b7d39/env/main/files/galaxy/config/tool_data_table_conf.xml
     dest: "{{ galaxy_tool_data_table_config_file }}"
+    owner: "{{ galaxy_user_name }}"
+    group: "{{ galaxy_user_name }}"
+    mode: "0644"
 
 # The following two tasks need to be at the bottom of this file
 - name: Stop autofs service
